@@ -1,0 +1,75 @@
+//语法级别
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+//输出的包目录
+option java_package = "me.linx.vchat.core.packet";
+
+//输出的类名
+option java_outer_classname = "Packet";
+
+//文件级别优化
+//1 > SPEED: 表示生成的代码运行效率高，但是由此生成的代码编译后会占用更多的空间。
+//2 > CODE_SIZE: 和SPEED恰恰相反，代码运行效率较低，但是由此生成的代码编译后会占用更少的空间，通常用于资源有限的平台，如Mobile。
+//3 > LITE_RUNTIME: 生成的代码执行效率高，同时生成代码编译后的所占用的空间也是非常少。
+//      这是以牺牲Protocol Buffer提供的反射功能为代价的。在Java中仅需包含protobuf-java-2.4.1-lite.jar，而非protobuf-java-2.4.1.jar。
+//      SPEED和LITE_RUNTIME相比，在于调试级别上，例如 msg.SerializeToString(&str) 在SPEED模式下会利用反射机制打印出详细字段和字段值，
+//      但是LITE_RUNTIME则仅仅打印字段值组成的字符串;
+//      因此：可以在程序调试阶段使用 SPEED模式，而上线以后使用提升性能使用 LITE_RUNTIME 模式优化。
+option optimize_for = SPEED;
+
+
+// ------------------------------ 为了平台兼容性，使用下划线命名法，而非驼峰命名法 ------------------------------------
+// ------------------------------ 在 enum 枚举中，右边的值为实际的值。由于枚举值采用varint编码，
+//                                        所以为了提高效率，不建议枚举值取负数。 --------------------------------------
+// ---------- 在 message 消息中，右边的值为唯一标识不能重复，从1开始。1到15使用一个字节编码，16到2047使用2个字节编码，
+//                                               所以应该将编号1到15留给频繁使用的字段。
+// ----------------------------- 不要在生成的Java文件中写代码，修改后需要重新生成，修改麻烦 ---------------------------
+
+
+
+enum PacketType{
+  AUTH = 0;
+  TEXT = 1;
+}
+
+message PacketBox {
+  PacketType type = 1;
+  oneof packet {
+      AuthPacket authPacket = 2;
+      TextPacket textPacket = 3;
+    }
+}
+
+message AuthPacket {
+  int64 user_id = 1;
+  string token = 2;
+}
+
+message TextPacket {
+  int64 from_id = 1;  //发送者ID
+  int64 to_id = 2;  //接收者ID
+  string msg = 3;
+  google.protobuf.Timestamp create_time = 4;
+}
+
+//message RspTextPacket {
+  //PacketHeader header = 1;
+  //int32 status = 2;  //发送状态
+  //int64 packet_id = 3;  //服务器收到消息并保存后，由数据库生成的消息ID
+//}
+
+//文件头部消息，通知服务器将传一个文件
+//message FileHeaderPacket {
+  //PacketInfo packet_info = 1;
+  //string file_name = 2;
+  //int32 file_size = 3;
+//}
+
+//文件实体消息，用于断点续传
+//message FileBodyPacket {
+  //PacketInfo packet_info = 1;
+  //string file_name = 2;
+  //int32 file_size = 3;
+//}

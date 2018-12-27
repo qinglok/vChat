@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'me.linx'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+}
+
+dependencies {
+    implementation fileTree(dir:'libs',include:['*.jar'])
+    
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    //netty
+    implementation  'io.netty:netty-all:5.0.0.Alpha2'
+
+    //google 高性能序列化库
+    implementation 'com.google.protobuf:protobuf-java:3.6.1'
+}
