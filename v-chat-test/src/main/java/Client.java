@@ -33,9 +33,9 @@ public class Client {
 
 
 
-    public void write(Packet.PacketBox box) {
-        channel.writeAndFlush(box);
-    }
+//    public void write(Packet.PacketBox box) {
+//        channel.writeAndFlush(box);
+//    }
 
 //    public static String toMd5(Packet.TextPacket packet) {
 //        {

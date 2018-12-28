@@ -11,11 +11,11 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) {
 
-        ch.pipeline()
-                .addLast(new ProtobufVarint32FrameDecoder())
-                .addLast(new ProtobufDecoder(Packet.PacketBox.getDefaultInstance()))
-                .addLast(new ProtobufVarint32LengthFieldPrepender())
-                .addLast(new ProtobufEncoder())
-                .addLast(new SelectorHandler());
+//        ch.pipeline()
+//                .addLast(new ProtobufVarint32FrameDecoder())
+//                .addLast(new ProtobufDecoder(Packet.PacketBox.getDefaultInstance()))
+//                .addLast(new ProtobufVarint32LengthFieldPrepender())
+//                .addLast(new ProtobufEncoder())
+//                .addLast(new handler.SelectorHandler());
     }
 }

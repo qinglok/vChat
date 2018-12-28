@@ -48,6 +48,9 @@ dependencies {
     //Token 生成
     implementation 'com.auth0:java-jwt:3.4.1'
 
+    //ECC加密
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
+
     //盐加密
     implementation 'org.mindrot:jbcrypt:0.4'
 

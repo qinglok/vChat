@@ -14,158 +14,82 @@ public final class Packet {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  /**
-   * Protobuf enum {@code PacketType}
-   */
-  public enum PacketType
-      implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>AUTH = 0;</code>
-     */
-    AUTH(0),
-    /**
-     * <code>TEXT = 1;</code>
-     */
-    TEXT(1),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>AUTH = 0;</code>
-     */
-    public static final int AUTH_VALUE = 0;
-    /**
-     * <code>TEXT = 1;</code>
-     */
-    public static final int TEXT_VALUE = 1;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-            "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static PacketType valueOf(int value) {
-      return forNumber(value);
-    }
-
-    public static PacketType forNumber(int value) {
-      switch (value) {
-        case 0: return AUTH;
-        case 1: return TEXT;
-        default: return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<PacketType>
-        internalGetValueMap() {
-      return internalValueMap;
-    }
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-        PacketType> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<PacketType>() {
-            public PacketType findValueByNumber(int number) {
-              return PacketType.forNumber(number);
-            }
-          };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-        getValueDescriptor() {
-      return getDescriptor().getValues().get(ordinal());
-    }
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptorForType() {
-      return getDescriptor();
-    }
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-        getDescriptor() {
-      return me.linx.vchat.core.packet.Packet.getDescriptor().getEnumTypes().get(0);
-    }
-
-    private static final PacketType[] VALUES = values();
-
-    public static PacketType valueOf(
-        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private PacketType(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:PacketType)
-  }
-
-  public interface PacketBoxOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:PacketBox)
+  public interface BoxOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:Box)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>.PacketType type = 1;</code>
+     * <code>uint32 type = 1;</code>
      */
-    int getTypeValue();
-    /**
-     * <code>.PacketType type = 1;</code>
-     */
-    me.linx.vchat.core.packet.Packet.PacketType getType();
+    int getType();
 
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+     */
+    boolean hasRequestAESKeyPacket();
+    /**
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+     */
+    me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getRequestAESKeyPacket();
+    /**
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+     */
+    me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder getRequestAESKeyPacketOrBuilder();
+
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    boolean hasResponseAESKeyPacket();
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getResponseAESKeyPacket();
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder getResponseAESKeyPacketOrBuilder();
+
+    /**
+     * <code>.AuthPacket authPacket = 4;</code>
      */
     boolean hasAuthPacket();
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.AuthPacket authPacket = 4;</code>
      */
     me.linx.vchat.core.packet.Packet.AuthPacket getAuthPacket();
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.AuthPacket authPacket = 4;</code>
      */
     me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder getAuthPacketOrBuilder();
 
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     boolean hasTextPacket();
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     me.linx.vchat.core.packet.Packet.TextPacket getTextPacket();
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     me.linx.vchat.core.packet.Packet.TextPacketOrBuilder getTextPacketOrBuilder();
 
-    public me.linx.vchat.core.packet.Packet.PacketBox.PacketCase getPacketCase();
+    public me.linx.vchat.core.packet.Packet.Box.PacketCase getPacketCase();
   }
   /**
-   * Protobuf type {@code PacketBox}
+   * Protobuf type {@code Box}
    */
-  public  static final class PacketBox extends
+  public  static final class Box extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:PacketBox)
-      PacketBoxOrBuilder {
+      // @@protoc_insertion_point(message_implements:Box)
+      BoxOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use PacketBox.newBuilder() to construct.
-    private PacketBox(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use Box.newBuilder() to construct.
+    private Box(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private PacketBox() {
+    private Box() {
       type_ = 0;
     }
 
@@ -174,7 +98,7 @@ public final class Packet {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private PacketBox(
+    private Box(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -194,14 +118,41 @@ public final class Packet {
               done = true;
               break;
             case 8: {
-              int rawValue = input.readEnum();
 
-              type_ = rawValue;
+              type_ = input.readUInt32();
               break;
             }
             case 18: {
-              me.linx.vchat.core.packet.Packet.AuthPacket.Builder subBuilder = null;
+              me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder subBuilder = null;
               if (packetCase_ == 2) {
+                subBuilder = ((me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_).toBuilder();
+              }
+              packet_ =
+                  input.readMessage(me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_);
+                packet_ = subBuilder.buildPartial();
+              }
+              packetCase_ = 2;
+              break;
+            }
+            case 26: {
+              me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder subBuilder = null;
+              if (packetCase_ == 3) {
+                subBuilder = ((me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_).toBuilder();
+              }
+              packet_ =
+                  input.readMessage(me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_);
+                packet_ = subBuilder.buildPartial();
+              }
+              packetCase_ = 3;
+              break;
+            }
+            case 34: {
+              me.linx.vchat.core.packet.Packet.AuthPacket.Builder subBuilder = null;
+              if (packetCase_ == 4) {
                 subBuilder = ((me.linx.vchat.core.packet.Packet.AuthPacket) packet_).toBuilder();
               }
               packet_ =
@@ -210,12 +161,12 @@ public final class Packet {
                 subBuilder.mergeFrom((me.linx.vchat.core.packet.Packet.AuthPacket) packet_);
                 packet_ = subBuilder.buildPartial();
               }
-              packetCase_ = 2;
+              packetCase_ = 4;
               break;
             }
-            case 26: {
+            case 42: {
               me.linx.vchat.core.packet.Packet.TextPacket.Builder subBuilder = null;
-              if (packetCase_ == 3) {
+              if (packetCase_ == 5) {
                 subBuilder = ((me.linx.vchat.core.packet.Packet.TextPacket) packet_).toBuilder();
               }
               packet_ =
@@ -224,7 +175,7 @@ public final class Packet {
                 subBuilder.mergeFrom((me.linx.vchat.core.packet.Packet.TextPacket) packet_);
                 packet_ = subBuilder.buildPartial();
               }
-              packetCase_ = 3;
+              packetCase_ = 5;
               break;
             }
             default: {
@@ -248,23 +199,25 @@ public final class Packet {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return me.linx.vchat.core.packet.Packet.internal_static_PacketBox_descriptor;
+      return me.linx.vchat.core.packet.Packet.internal_static_Box_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return me.linx.vchat.core.packet.Packet.internal_static_PacketBox_fieldAccessorTable
+      return me.linx.vchat.core.packet.Packet.internal_static_Box_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              me.linx.vchat.core.packet.Packet.PacketBox.class, me.linx.vchat.core.packet.Packet.PacketBox.Builder.class);
+              me.linx.vchat.core.packet.Packet.Box.class, me.linx.vchat.core.packet.Packet.Box.Builder.class);
     }
 
     private int packetCase_ = 0;
     private java.lang.Object packet_;
     public enum PacketCase
         implements com.google.protobuf.Internal.EnumLite {
-      AUTHPACKET(2),
-      TEXTPACKET(3),
+      REQUESTAESKEYPACKET(2),
+      RESPONSEAESKEYPACKET(3),
+      AUTHPACKET(4),
+      TEXTPACKET(5),
       PACKET_NOT_SET(0);
       private final int value;
       private PacketCase(int value) {
@@ -280,8 +233,10 @@ public final class Packet {
 
       public static PacketCase forNumber(int value) {
         switch (value) {
-          case 2: return AUTHPACKET;
-          case 3: return TEXTPACKET;
+          case 2: return REQUESTAESKEYPACKET;
+          case 3: return RESPONSEAESKEYPACKET;
+          case 4: return AUTHPACKET;
+          case 5: return TEXTPACKET;
           case 0: return PACKET_NOT_SET;
           default: return null;
         }
@@ -300,67 +255,111 @@ public final class Packet {
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
-     * <code>.PacketType type = 1;</code>
+     * <code>uint32 type = 1;</code>
      */
-    public int getTypeValue() {
+    public int getType() {
       return type_;
     }
-    /**
-     * <code>.PacketType type = 1;</code>
-     */
-    public me.linx.vchat.core.packet.Packet.PacketType getType() {
-      @SuppressWarnings("deprecation")
-      me.linx.vchat.core.packet.Packet.PacketType result = me.linx.vchat.core.packet.Packet.PacketType.valueOf(type_);
-      return result == null ? me.linx.vchat.core.packet.Packet.PacketType.UNRECOGNIZED : result;
-    }
 
-    public static final int AUTHPACKET_FIELD_NUMBER = 2;
+    public static final int REQUESTAESKEYPACKET_FIELD_NUMBER = 2;
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
      */
-    public boolean hasAuthPacket() {
+    public boolean hasRequestAESKeyPacket() {
       return packetCase_ == 2;
     }
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+     */
+    public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getRequestAESKeyPacket() {
+      if (packetCase_ == 2) {
+         return (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_;
+      }
+      return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+    }
+    /**
+     * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+     */
+    public me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder getRequestAESKeyPacketOrBuilder() {
+      if (packetCase_ == 2) {
+         return (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_;
+      }
+      return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+    }
+
+    public static final int RESPONSEAESKEYPACKET_FIELD_NUMBER = 3;
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    public boolean hasResponseAESKeyPacket() {
+      return packetCase_ == 3;
+    }
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getResponseAESKeyPacket() {
+      if (packetCase_ == 3) {
+         return (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_;
+      }
+      return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+    }
+    /**
+     * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+     */
+    public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder getResponseAESKeyPacketOrBuilder() {
+      if (packetCase_ == 3) {
+         return (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_;
+      }
+      return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+    }
+
+    public static final int AUTHPACKET_FIELD_NUMBER = 4;
+    /**
+     * <code>.AuthPacket authPacket = 4;</code>
+     */
+    public boolean hasAuthPacket() {
+      return packetCase_ == 4;
+    }
+    /**
+     * <code>.AuthPacket authPacket = 4;</code>
      */
     public me.linx.vchat.core.packet.Packet.AuthPacket getAuthPacket() {
-      if (packetCase_ == 2) {
+      if (packetCase_ == 4) {
          return (me.linx.vchat.core.packet.Packet.AuthPacket) packet_;
       }
       return me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
     }
     /**
-     * <code>.AuthPacket authPacket = 2;</code>
+     * <code>.AuthPacket authPacket = 4;</code>
      */
     public me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder getAuthPacketOrBuilder() {
-      if (packetCase_ == 2) {
+      if (packetCase_ == 4) {
          return (me.linx.vchat.core.packet.Packet.AuthPacket) packet_;
       }
       return me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
     }
 
-    public static final int TEXTPACKET_FIELD_NUMBER = 3;
+    public static final int TEXTPACKET_FIELD_NUMBER = 5;
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     public boolean hasTextPacket() {
-      return packetCase_ == 3;
+      return packetCase_ == 5;
     }
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     public me.linx.vchat.core.packet.Packet.TextPacket getTextPacket() {
-      if (packetCase_ == 3) {
+      if (packetCase_ == 5) {
          return (me.linx.vchat.core.packet.Packet.TextPacket) packet_;
       }
       return me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
     }
     /**
-     * <code>.TextPacket textPacket = 3;</code>
+     * <code>.TextPacket textPacket = 5;</code>
      */
     public me.linx.vchat.core.packet.Packet.TextPacketOrBuilder getTextPacketOrBuilder() {
-      if (packetCase_ == 3) {
+      if (packetCase_ == 5) {
          return (me.linx.vchat.core.packet.Packet.TextPacket) packet_;
       }
       return me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
@@ -380,14 +379,20 @@ public final class Packet {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (type_ != me.linx.vchat.core.packet.Packet.PacketType.AUTH.getNumber()) {
-        output.writeEnum(1, type_);
+      if (type_ != 0) {
+        output.writeUInt32(1, type_);
       }
       if (packetCase_ == 2) {
-        output.writeMessage(2, (me.linx.vchat.core.packet.Packet.AuthPacket) packet_);
+        output.writeMessage(2, (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_);
       }
       if (packetCase_ == 3) {
-        output.writeMessage(3, (me.linx.vchat.core.packet.Packet.TextPacket) packet_);
+        output.writeMessage(3, (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_);
+      }
+      if (packetCase_ == 4) {
+        output.writeMessage(4, (me.linx.vchat.core.packet.Packet.AuthPacket) packet_);
+      }
+      if (packetCase_ == 5) {
+        output.writeMessage(5, (me.linx.vchat.core.packet.Packet.TextPacket) packet_);
       }
       unknownFields.writeTo(output);
     }
@@ -398,17 +403,25 @@ public final class Packet {
       if (size != -1) return size;
 
       size = 0;
-      if (type_ != me.linx.vchat.core.packet.Packet.PacketType.AUTH.getNumber()) {
+      if (type_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, type_);
+          .computeUInt32Size(1, type_);
       }
       if (packetCase_ == 2) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(2, (me.linx.vchat.core.packet.Packet.AuthPacket) packet_);
+          .computeMessageSize(2, (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_);
       }
       if (packetCase_ == 3) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, (me.linx.vchat.core.packet.Packet.TextPacket) packet_);
+          .computeMessageSize(3, (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_);
+      }
+      if (packetCase_ == 4) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, (me.linx.vchat.core.packet.Packet.AuthPacket) packet_);
+      }
+      if (packetCase_ == 5) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, (me.linx.vchat.core.packet.Packet.TextPacket) packet_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -420,22 +433,31 @@ public final class Packet {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof me.linx.vchat.core.packet.Packet.PacketBox)) {
+      if (!(obj instanceof me.linx.vchat.core.packet.Packet.Box)) {
         return super.equals(obj);
       }
-      me.linx.vchat.core.packet.Packet.PacketBox other = (me.linx.vchat.core.packet.Packet.PacketBox) obj;
+      me.linx.vchat.core.packet.Packet.Box other = (me.linx.vchat.core.packet.Packet.Box) obj;
 
       boolean result = true;
-      result = result && type_ == other.type_;
+      result = result && (getType()
+          == other.getType());
       result = result && getPacketCase().equals(
           other.getPacketCase());
       if (!result) return false;
       switch (packetCase_) {
         case 2:
+          result = result && getRequestAESKeyPacket()
+              .equals(other.getRequestAESKeyPacket());
+          break;
+        case 3:
+          result = result && getResponseAESKeyPacket()
+              .equals(other.getResponseAESKeyPacket());
+          break;
+        case 4:
           result = result && getAuthPacket()
               .equals(other.getAuthPacket());
           break;
-        case 3:
+        case 5:
           result = result && getTextPacket()
               .equals(other.getTextPacket());
           break;
@@ -454,13 +476,21 @@ public final class Packet {
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
-      hash = (53 * hash) + type_;
+      hash = (53 * hash) + getType();
       switch (packetCase_) {
         case 2:
+          hash = (37 * hash) + REQUESTAESKEYPACKET_FIELD_NUMBER;
+          hash = (53 * hash) + getRequestAESKeyPacket().hashCode();
+          break;
+        case 3:
+          hash = (37 * hash) + RESPONSEAESKEYPACKET_FIELD_NUMBER;
+          hash = (53 * hash) + getResponseAESKeyPacket().hashCode();
+          break;
+        case 4:
           hash = (37 * hash) + AUTHPACKET_FIELD_NUMBER;
           hash = (53 * hash) + getAuthPacket().hashCode();
           break;
-        case 3:
+        case 5:
           hash = (37 * hash) + TEXTPACKET_FIELD_NUMBER;
           hash = (53 * hash) + getTextPacket().hashCode();
           break;
@@ -472,69 +502,69 @@ public final class Packet {
       return hash;
     }
 
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(byte[] data)
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(java.io.InputStream input)
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseDelimitedFrom(java.io.InputStream input)
+    public static me.linx.vchat.core.packet.Packet.Box parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseDelimitedFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static me.linx.vchat.core.packet.Packet.PacketBox parseFrom(
+    public static me.linx.vchat.core.packet.Packet.Box parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -547,7 +577,7 @@ public final class Packet {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(me.linx.vchat.core.packet.Packet.PacketBox prototype) {
+    public static Builder newBuilder(me.linx.vchat.core.packet.Packet.Box prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -563,26 +593,26 @@ public final class Packet {
       return builder;
     }
     /**
-     * Protobuf type {@code PacketBox}
+     * Protobuf type {@code Box}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:PacketBox)
-        me.linx.vchat.core.packet.Packet.PacketBoxOrBuilder {
+        // @@protoc_insertion_point(builder_implements:Box)
+        me.linx.vchat.core.packet.Packet.BoxOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return me.linx.vchat.core.packet.Packet.internal_static_PacketBox_descriptor;
+        return me.linx.vchat.core.packet.Packet.internal_static_Box_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return me.linx.vchat.core.packet.Packet.internal_static_PacketBox_fieldAccessorTable
+        return me.linx.vchat.core.packet.Packet.internal_static_Box_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                me.linx.vchat.core.packet.Packet.PacketBox.class, me.linx.vchat.core.packet.Packet.PacketBox.Builder.class);
+                me.linx.vchat.core.packet.Packet.Box.class, me.linx.vchat.core.packet.Packet.Box.Builder.class);
       }
 
-      // Construct using me.linx.vchat.core.packet.Packet.PacketBox.newBuilder()
+      // Construct using me.linx.vchat.core.packet.Packet.Box.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -610,17 +640,17 @@ public final class Packet {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return me.linx.vchat.core.packet.Packet.internal_static_PacketBox_descriptor;
+        return me.linx.vchat.core.packet.Packet.internal_static_Box_descriptor;
       }
 
       @java.lang.Override
-      public me.linx.vchat.core.packet.Packet.PacketBox getDefaultInstanceForType() {
-        return me.linx.vchat.core.packet.Packet.PacketBox.getDefaultInstance();
+      public me.linx.vchat.core.packet.Packet.Box getDefaultInstanceForType() {
+        return me.linx.vchat.core.packet.Packet.Box.getDefaultInstance();
       }
 
       @java.lang.Override
-      public me.linx.vchat.core.packet.Packet.PacketBox build() {
-        me.linx.vchat.core.packet.Packet.PacketBox result = buildPartial();
+      public me.linx.vchat.core.packet.Packet.Box build() {
+        me.linx.vchat.core.packet.Packet.Box result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -628,17 +658,31 @@ public final class Packet {
       }
 
       @java.lang.Override
-      public me.linx.vchat.core.packet.Packet.PacketBox buildPartial() {
-        me.linx.vchat.core.packet.Packet.PacketBox result = new me.linx.vchat.core.packet.Packet.PacketBox(this);
+      public me.linx.vchat.core.packet.Packet.Box buildPartial() {
+        me.linx.vchat.core.packet.Packet.Box result = new me.linx.vchat.core.packet.Packet.Box(this);
         result.type_ = type_;
         if (packetCase_ == 2) {
+          if (requestAESKeyPacketBuilder_ == null) {
+            result.packet_ = packet_;
+          } else {
+            result.packet_ = requestAESKeyPacketBuilder_.build();
+          }
+        }
+        if (packetCase_ == 3) {
+          if (responseAESKeyPacketBuilder_ == null) {
+            result.packet_ = packet_;
+          } else {
+            result.packet_ = responseAESKeyPacketBuilder_.build();
+          }
+        }
+        if (packetCase_ == 4) {
           if (authPacketBuilder_ == null) {
             result.packet_ = packet_;
           } else {
             result.packet_ = authPacketBuilder_.build();
           }
         }
-        if (packetCase_ == 3) {
+        if (packetCase_ == 5) {
           if (textPacketBuilder_ == null) {
             result.packet_ = packet_;
           } else {
@@ -684,20 +728,28 @@ public final class Packet {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof me.linx.vchat.core.packet.Packet.PacketBox) {
-          return mergeFrom((me.linx.vchat.core.packet.Packet.PacketBox)other);
+        if (other instanceof me.linx.vchat.core.packet.Packet.Box) {
+          return mergeFrom((me.linx.vchat.core.packet.Packet.Box)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(me.linx.vchat.core.packet.Packet.PacketBox other) {
-        if (other == me.linx.vchat.core.packet.Packet.PacketBox.getDefaultInstance()) return this;
-        if (other.type_ != 0) {
-          setTypeValue(other.getTypeValue());
+      public Builder mergeFrom(me.linx.vchat.core.packet.Packet.Box other) {
+        if (other == me.linx.vchat.core.packet.Packet.Box.getDefaultInstance()) return this;
+        if (other.getType() != 0) {
+          setType(other.getType());
         }
         switch (other.getPacketCase()) {
+          case REQUESTAESKEYPACKET: {
+            mergeRequestAESKeyPacket(other.getRequestAESKeyPacket());
+            break;
+          }
+          case RESPONSEAESKEYPACKET: {
+            mergeResponseAESKeyPacket(other.getResponseAESKeyPacket());
+            break;
+          }
           case AUTHPACKET: {
             mergeAuthPacket(other.getAuthPacket());
             break;
@@ -725,11 +777,11 @@ public final class Packet {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        me.linx.vchat.core.packet.Packet.PacketBox parsedMessage = null;
+        me.linx.vchat.core.packet.Packet.Box parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (me.linx.vchat.core.packet.Packet.PacketBox) e.getUnfinishedMessage();
+          parsedMessage = (me.linx.vchat.core.packet.Packet.Box) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -754,43 +806,24 @@ public final class Packet {
       }
 
 
-      private int type_ = 0;
+      private int type_ ;
       /**
-       * <code>.PacketType type = 1;</code>
+       * <code>uint32 type = 1;</code>
        */
-      public int getTypeValue() {
+      public int getType() {
         return type_;
       }
       /**
-       * <code>.PacketType type = 1;</code>
+       * <code>uint32 type = 1;</code>
        */
-      public Builder setTypeValue(int value) {
+      public Builder setType(int value) {
+        
         type_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>.PacketType type = 1;</code>
-       */
-      public me.linx.vchat.core.packet.Packet.PacketType getType() {
-        @SuppressWarnings("deprecation")
-        me.linx.vchat.core.packet.Packet.PacketType result = me.linx.vchat.core.packet.Packet.PacketType.valueOf(type_);
-        return result == null ? me.linx.vchat.core.packet.Packet.PacketType.UNRECOGNIZED : result;
-      }
-      /**
-       * <code>.PacketType type = 1;</code>
-       */
-      public Builder setType(me.linx.vchat.core.packet.Packet.PacketType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        
-        type_ = value.getNumber();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>.PacketType type = 1;</code>
+       * <code>uint32 type = 1;</code>
        */
       public Builder clearType() {
         
@@ -800,31 +833,303 @@ public final class Packet {
       }
 
       private com.google.protobuf.SingleFieldBuilderV3<
-          me.linx.vchat.core.packet.Packet.AuthPacket, me.linx.vchat.core.packet.Packet.AuthPacket.Builder, me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder> authPacketBuilder_;
+          me.linx.vchat.core.packet.Packet.RequestAESKeyPacket, me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder> requestAESKeyPacketBuilder_;
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
        */
-      public boolean hasAuthPacket() {
+      public boolean hasRequestAESKeyPacket() {
         return packetCase_ == 2;
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getRequestAESKeyPacket() {
+        if (requestAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 2) {
+            return (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_;
+          }
+          return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+        } else {
+          if (packetCase_ == 2) {
+            return requestAESKeyPacketBuilder_.getMessage();
+          }
+          return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public Builder setRequestAESKeyPacket(me.linx.vchat.core.packet.Packet.RequestAESKeyPacket value) {
+        if (requestAESKeyPacketBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          packet_ = value;
+          onChanged();
+        } else {
+          requestAESKeyPacketBuilder_.setMessage(value);
+        }
+        packetCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public Builder setRequestAESKeyPacket(
+          me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder builderForValue) {
+        if (requestAESKeyPacketBuilder_ == null) {
+          packet_ = builderForValue.build();
+          onChanged();
+        } else {
+          requestAESKeyPacketBuilder_.setMessage(builderForValue.build());
+        }
+        packetCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public Builder mergeRequestAESKeyPacket(me.linx.vchat.core.packet.Packet.RequestAESKeyPacket value) {
+        if (requestAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 2 &&
+              packet_ != me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance()) {
+            packet_ = me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.newBuilder((me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            packet_ = value;
+          }
+          onChanged();
+        } else {
+          if (packetCase_ == 2) {
+            requestAESKeyPacketBuilder_.mergeFrom(value);
+          }
+          requestAESKeyPacketBuilder_.setMessage(value);
+        }
+        packetCase_ = 2;
+        return this;
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public Builder clearRequestAESKeyPacket() {
+        if (requestAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 2) {
+            packetCase_ = 0;
+            packet_ = null;
+            onChanged();
+          }
+        } else {
+          if (packetCase_ == 2) {
+            packetCase_ = 0;
+            packet_ = null;
+          }
+          requestAESKeyPacketBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder getRequestAESKeyPacketBuilder() {
+        return getRequestAESKeyPacketFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder getRequestAESKeyPacketOrBuilder() {
+        if ((packetCase_ == 2) && (requestAESKeyPacketBuilder_ != null)) {
+          return requestAESKeyPacketBuilder_.getMessageOrBuilder();
+        } else {
+          if (packetCase_ == 2) {
+            return (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_;
+          }
+          return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.RequestAESKeyPacket requestAESKeyPacket = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          me.linx.vchat.core.packet.Packet.RequestAESKeyPacket, me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder> 
+          getRequestAESKeyPacketFieldBuilder() {
+        if (requestAESKeyPacketBuilder_ == null) {
+          if (!(packetCase_ == 2)) {
+            packet_ = me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+          }
+          requestAESKeyPacketBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              me.linx.vchat.core.packet.Packet.RequestAESKeyPacket, me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder>(
+                  (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) packet_,
+                  getParentForChildren(),
+                  isClean());
+          packet_ = null;
+        }
+        packetCase_ = 2;
+        onChanged();;
+        return requestAESKeyPacketBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder> responseAESKeyPacketBuilder_;
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public boolean hasResponseAESKeyPacket() {
+        return packetCase_ == 3;
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getResponseAESKeyPacket() {
+        if (responseAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 3) {
+            return (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_;
+          }
+          return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+        } else {
+          if (packetCase_ == 3) {
+            return responseAESKeyPacketBuilder_.getMessage();
+          }
+          return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public Builder setResponseAESKeyPacket(me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket value) {
+        if (responseAESKeyPacketBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          packet_ = value;
+          onChanged();
+        } else {
+          responseAESKeyPacketBuilder_.setMessage(value);
+        }
+        packetCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public Builder setResponseAESKeyPacket(
+          me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder builderForValue) {
+        if (responseAESKeyPacketBuilder_ == null) {
+          packet_ = builderForValue.build();
+          onChanged();
+        } else {
+          responseAESKeyPacketBuilder_.setMessage(builderForValue.build());
+        }
+        packetCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public Builder mergeResponseAESKeyPacket(me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket value) {
+        if (responseAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 3 &&
+              packet_ != me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance()) {
+            packet_ = me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.newBuilder((me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            packet_ = value;
+          }
+          onChanged();
+        } else {
+          if (packetCase_ == 3) {
+            responseAESKeyPacketBuilder_.mergeFrom(value);
+          }
+          responseAESKeyPacketBuilder_.setMessage(value);
+        }
+        packetCase_ = 3;
+        return this;
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public Builder clearResponseAESKeyPacket() {
+        if (responseAESKeyPacketBuilder_ == null) {
+          if (packetCase_ == 3) {
+            packetCase_ = 0;
+            packet_ = null;
+            onChanged();
+          }
+        } else {
+          if (packetCase_ == 3) {
+            packetCase_ = 0;
+            packet_ = null;
+          }
+          responseAESKeyPacketBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder getResponseAESKeyPacketBuilder() {
+        return getResponseAESKeyPacketFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder getResponseAESKeyPacketOrBuilder() {
+        if ((packetCase_ == 3) && (responseAESKeyPacketBuilder_ != null)) {
+          return responseAESKeyPacketBuilder_.getMessageOrBuilder();
+        } else {
+          if (packetCase_ == 3) {
+            return (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_;
+          }
+          return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.ResponseAESKeyPacket responseAESKeyPacket = 3;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder> 
+          getResponseAESKeyPacketFieldBuilder() {
+        if (responseAESKeyPacketBuilder_ == null) {
+          if (!(packetCase_ == 3)) {
+            packet_ = me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+          }
+          responseAESKeyPacketBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder>(
+                  (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) packet_,
+                  getParentForChildren(),
+                  isClean());
+          packet_ = null;
+        }
+        packetCase_ = 3;
+        onChanged();;
+        return responseAESKeyPacketBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          me.linx.vchat.core.packet.Packet.AuthPacket, me.linx.vchat.core.packet.Packet.AuthPacket.Builder, me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder> authPacketBuilder_;
+      /**
+       * <code>.AuthPacket authPacket = 4;</code>
+       */
+      public boolean hasAuthPacket() {
+        return packetCase_ == 4;
+      }
+      /**
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public me.linx.vchat.core.packet.Packet.AuthPacket getAuthPacket() {
         if (authPacketBuilder_ == null) {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             return (me.linx.vchat.core.packet.Packet.AuthPacket) packet_;
           }
           return me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
         } else {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             return authPacketBuilder_.getMessage();
           }
           return me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
         }
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public Builder setAuthPacket(me.linx.vchat.core.packet.Packet.AuthPacket value) {
         if (authPacketBuilder_ == null) {
@@ -836,11 +1141,11 @@ public final class Packet {
         } else {
           authPacketBuilder_.setMessage(value);
         }
-        packetCase_ = 2;
+        packetCase_ = 4;
         return this;
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public Builder setAuthPacket(
           me.linx.vchat.core.packet.Packet.AuthPacket.Builder builderForValue) {
@@ -850,15 +1155,15 @@ public final class Packet {
         } else {
           authPacketBuilder_.setMessage(builderForValue.build());
         }
-        packetCase_ = 2;
+        packetCase_ = 4;
         return this;
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public Builder mergeAuthPacket(me.linx.vchat.core.packet.Packet.AuthPacket value) {
         if (authPacketBuilder_ == null) {
-          if (packetCase_ == 2 &&
+          if (packetCase_ == 4 &&
               packet_ != me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance()) {
             packet_ = me.linx.vchat.core.packet.Packet.AuthPacket.newBuilder((me.linx.vchat.core.packet.Packet.AuthPacket) packet_)
                 .mergeFrom(value).buildPartial();
@@ -867,26 +1172,26 @@ public final class Packet {
           }
           onChanged();
         } else {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             authPacketBuilder_.mergeFrom(value);
           }
           authPacketBuilder_.setMessage(value);
         }
-        packetCase_ = 2;
+        packetCase_ = 4;
         return this;
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public Builder clearAuthPacket() {
         if (authPacketBuilder_ == null) {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             packetCase_ = 0;
             packet_ = null;
             onChanged();
           }
         } else {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             packetCase_ = 0;
             packet_ = null;
           }
@@ -895,32 +1200,32 @@ public final class Packet {
         return this;
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public me.linx.vchat.core.packet.Packet.AuthPacket.Builder getAuthPacketBuilder() {
         return getAuthPacketFieldBuilder().getBuilder();
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       public me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder getAuthPacketOrBuilder() {
-        if ((packetCase_ == 2) && (authPacketBuilder_ != null)) {
+        if ((packetCase_ == 4) && (authPacketBuilder_ != null)) {
           return authPacketBuilder_.getMessageOrBuilder();
         } else {
-          if (packetCase_ == 2) {
+          if (packetCase_ == 4) {
             return (me.linx.vchat.core.packet.Packet.AuthPacket) packet_;
           }
           return me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
         }
       }
       /**
-       * <code>.AuthPacket authPacket = 2;</code>
+       * <code>.AuthPacket authPacket = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           me.linx.vchat.core.packet.Packet.AuthPacket, me.linx.vchat.core.packet.Packet.AuthPacket.Builder, me.linx.vchat.core.packet.Packet.AuthPacketOrBuilder> 
           getAuthPacketFieldBuilder() {
         if (authPacketBuilder_ == null) {
-          if (!(packetCase_ == 2)) {
+          if (!(packetCase_ == 4)) {
             packet_ = me.linx.vchat.core.packet.Packet.AuthPacket.getDefaultInstance();
           }
           authPacketBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -930,7 +1235,7 @@ public final class Packet {
                   isClean());
           packet_ = null;
         }
-        packetCase_ = 2;
+        packetCase_ = 4;
         onChanged();;
         return authPacketBuilder_;
       }
@@ -938,29 +1243,29 @@ public final class Packet {
       private com.google.protobuf.SingleFieldBuilderV3<
           me.linx.vchat.core.packet.Packet.TextPacket, me.linx.vchat.core.packet.Packet.TextPacket.Builder, me.linx.vchat.core.packet.Packet.TextPacketOrBuilder> textPacketBuilder_;
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public boolean hasTextPacket() {
-        return packetCase_ == 3;
+        return packetCase_ == 5;
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public me.linx.vchat.core.packet.Packet.TextPacket getTextPacket() {
         if (textPacketBuilder_ == null) {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             return (me.linx.vchat.core.packet.Packet.TextPacket) packet_;
           }
           return me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
         } else {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             return textPacketBuilder_.getMessage();
           }
           return me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
         }
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public Builder setTextPacket(me.linx.vchat.core.packet.Packet.TextPacket value) {
         if (textPacketBuilder_ == null) {
@@ -972,11 +1277,11 @@ public final class Packet {
         } else {
           textPacketBuilder_.setMessage(value);
         }
-        packetCase_ = 3;
+        packetCase_ = 5;
         return this;
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public Builder setTextPacket(
           me.linx.vchat.core.packet.Packet.TextPacket.Builder builderForValue) {
@@ -986,15 +1291,15 @@ public final class Packet {
         } else {
           textPacketBuilder_.setMessage(builderForValue.build());
         }
-        packetCase_ = 3;
+        packetCase_ = 5;
         return this;
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public Builder mergeTextPacket(me.linx.vchat.core.packet.Packet.TextPacket value) {
         if (textPacketBuilder_ == null) {
-          if (packetCase_ == 3 &&
+          if (packetCase_ == 5 &&
               packet_ != me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance()) {
             packet_ = me.linx.vchat.core.packet.Packet.TextPacket.newBuilder((me.linx.vchat.core.packet.Packet.TextPacket) packet_)
                 .mergeFrom(value).buildPartial();
@@ -1003,26 +1308,26 @@ public final class Packet {
           }
           onChanged();
         } else {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             textPacketBuilder_.mergeFrom(value);
           }
           textPacketBuilder_.setMessage(value);
         }
-        packetCase_ = 3;
+        packetCase_ = 5;
         return this;
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public Builder clearTextPacket() {
         if (textPacketBuilder_ == null) {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             packetCase_ = 0;
             packet_ = null;
             onChanged();
           }
         } else {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             packetCase_ = 0;
             packet_ = null;
           }
@@ -1031,32 +1336,32 @@ public final class Packet {
         return this;
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public me.linx.vchat.core.packet.Packet.TextPacket.Builder getTextPacketBuilder() {
         return getTextPacketFieldBuilder().getBuilder();
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       public me.linx.vchat.core.packet.Packet.TextPacketOrBuilder getTextPacketOrBuilder() {
-        if ((packetCase_ == 3) && (textPacketBuilder_ != null)) {
+        if ((packetCase_ == 5) && (textPacketBuilder_ != null)) {
           return textPacketBuilder_.getMessageOrBuilder();
         } else {
-          if (packetCase_ == 3) {
+          if (packetCase_ == 5) {
             return (me.linx.vchat.core.packet.Packet.TextPacket) packet_;
           }
           return me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
         }
       }
       /**
-       * <code>.TextPacket textPacket = 3;</code>
+       * <code>.TextPacket textPacket = 5;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           me.linx.vchat.core.packet.Packet.TextPacket, me.linx.vchat.core.packet.Packet.TextPacket.Builder, me.linx.vchat.core.packet.Packet.TextPacketOrBuilder> 
           getTextPacketFieldBuilder() {
         if (textPacketBuilder_ == null) {
-          if (!(packetCase_ == 3)) {
+          if (!(packetCase_ == 5)) {
             packet_ = me.linx.vchat.core.packet.Packet.TextPacket.getDefaultInstance();
           }
           textPacketBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -1066,7 +1371,7 @@ public final class Packet {
                   isClean());
           packet_ = null;
         }
-        packetCase_ = 3;
+        packetCase_ = 5;
         onChanged();;
         return textPacketBuilder_;
       }
@@ -1083,41 +1388,999 @@ public final class Packet {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:PacketBox)
+      // @@protoc_insertion_point(builder_scope:Box)
     }
 
-    // @@protoc_insertion_point(class_scope:PacketBox)
-    private static final me.linx.vchat.core.packet.Packet.PacketBox DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:Box)
+    private static final me.linx.vchat.core.packet.Packet.Box DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new me.linx.vchat.core.packet.Packet.PacketBox();
+      DEFAULT_INSTANCE = new me.linx.vchat.core.packet.Packet.Box();
     }
 
-    public static me.linx.vchat.core.packet.Packet.PacketBox getDefaultInstance() {
+    public static me.linx.vchat.core.packet.Packet.Box getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<PacketBox>
-        PARSER = new com.google.protobuf.AbstractParser<PacketBox>() {
+    private static final com.google.protobuf.Parser<Box>
+        PARSER = new com.google.protobuf.AbstractParser<Box>() {
       @java.lang.Override
-      public PacketBox parsePartialFrom(
+      public Box parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new PacketBox(input, extensionRegistry);
+        return new Box(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<PacketBox> parser() {
+    public static com.google.protobuf.Parser<Box> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<PacketBox> getParserForType() {
+    public com.google.protobuf.Parser<Box> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public me.linx.vchat.core.packet.Packet.PacketBox getDefaultInstanceForType() {
+    public me.linx.vchat.core.packet.Packet.Box getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RequestAESKeyPacketOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:RequestAESKeyPacket)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bytes public_key = 1;</code>
+     */
+    com.google.protobuf.ByteString getPublicKey();
+  }
+  /**
+   * Protobuf type {@code RequestAESKeyPacket}
+   */
+  public  static final class RequestAESKeyPacket extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:RequestAESKeyPacket)
+      RequestAESKeyPacketOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use RequestAESKeyPacket.newBuilder() to construct.
+    private RequestAESKeyPacket(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private RequestAESKeyPacket() {
+      publicKey_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private RequestAESKeyPacket(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              publicKey_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return me.linx.vchat.core.packet.Packet.internal_static_RequestAESKeyPacket_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return me.linx.vchat.core.packet.Packet.internal_static_RequestAESKeyPacket_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.class, me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder.class);
+    }
+
+    public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString publicKey_;
+    /**
+     * <code>bytes public_key = 1;</code>
+     */
+    public com.google.protobuf.ByteString getPublicKey() {
+      return publicKey_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!publicKey_.isEmpty()) {
+        output.writeBytes(1, publicKey_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!publicKey_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, publicKey_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof me.linx.vchat.core.packet.Packet.RequestAESKeyPacket)) {
+        return super.equals(obj);
+      }
+      me.linx.vchat.core.packet.Packet.RequestAESKeyPacket other = (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) obj;
+
+      boolean result = true;
+      result = result && getPublicKey()
+          .equals(other.getPublicKey());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getPublicKey().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(me.linx.vchat.core.packet.Packet.RequestAESKeyPacket prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code RequestAESKeyPacket}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:RequestAESKeyPacket)
+        me.linx.vchat.core.packet.Packet.RequestAESKeyPacketOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return me.linx.vchat.core.packet.Packet.internal_static_RequestAESKeyPacket_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return me.linx.vchat.core.packet.Packet.internal_static_RequestAESKeyPacket_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.class, me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.Builder.class);
+      }
+
+      // Construct using me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        publicKey_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return me.linx.vchat.core.packet.Packet.internal_static_RequestAESKeyPacket_descriptor;
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getDefaultInstanceForType() {
+        return me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket build() {
+        me.linx.vchat.core.packet.Packet.RequestAESKeyPacket result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket buildPartial() {
+        me.linx.vchat.core.packet.Packet.RequestAESKeyPacket result = new me.linx.vchat.core.packet.Packet.RequestAESKeyPacket(this);
+        result.publicKey_ = publicKey_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) {
+          return mergeFrom((me.linx.vchat.core.packet.Packet.RequestAESKeyPacket)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(me.linx.vchat.core.packet.Packet.RequestAESKeyPacket other) {
+        if (other == me.linx.vchat.core.packet.Packet.RequestAESKeyPacket.getDefaultInstance()) return this;
+        if (other.getPublicKey() != com.google.protobuf.ByteString.EMPTY) {
+          setPublicKey(other.getPublicKey());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        me.linx.vchat.core.packet.Packet.RequestAESKeyPacket parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (me.linx.vchat.core.packet.Packet.RequestAESKeyPacket) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString publicKey_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes public_key = 1;</code>
+       */
+      public com.google.protobuf.ByteString getPublicKey() {
+        return publicKey_;
+      }
+      /**
+       * <code>bytes public_key = 1;</code>
+       */
+      public Builder setPublicKey(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        publicKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes public_key = 1;</code>
+       */
+      public Builder clearPublicKey() {
+        
+        publicKey_ = getDefaultInstance().getPublicKey();
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:RequestAESKeyPacket)
+    }
+
+    // @@protoc_insertion_point(class_scope:RequestAESKeyPacket)
+    private static final me.linx.vchat.core.packet.Packet.RequestAESKeyPacket DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new me.linx.vchat.core.packet.Packet.RequestAESKeyPacket();
+    }
+
+    public static me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<RequestAESKeyPacket>
+        PARSER = new com.google.protobuf.AbstractParser<RequestAESKeyPacket>() {
+      @java.lang.Override
+      public RequestAESKeyPacket parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new RequestAESKeyPacket(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<RequestAESKeyPacket> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<RequestAESKeyPacket> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public me.linx.vchat.core.packet.Packet.RequestAESKeyPacket getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ResponseAESKeyPacketOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ResponseAESKeyPacket)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>bytes aes_key = 1;</code>
+     */
+    com.google.protobuf.ByteString getAesKey();
+  }
+  /**
+   * Protobuf type {@code ResponseAESKeyPacket}
+   */
+  public  static final class ResponseAESKeyPacket extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:ResponseAESKeyPacket)
+      ResponseAESKeyPacketOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ResponseAESKeyPacket.newBuilder() to construct.
+    private ResponseAESKeyPacket(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ResponseAESKeyPacket() {
+      aesKey_ = com.google.protobuf.ByteString.EMPTY;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private ResponseAESKeyPacket(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+
+              aesKey_ = input.readBytes();
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return me.linx.vchat.core.packet.Packet.internal_static_ResponseAESKeyPacket_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return me.linx.vchat.core.packet.Packet.internal_static_ResponseAESKeyPacket_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.class, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder.class);
+    }
+
+    public static final int AES_KEY_FIELD_NUMBER = 1;
+    private com.google.protobuf.ByteString aesKey_;
+    /**
+     * <code>bytes aes_key = 1;</code>
+     */
+    public com.google.protobuf.ByteString getAesKey() {
+      return aesKey_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!aesKey_.isEmpty()) {
+        output.writeBytes(1, aesKey_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!aesKey_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(1, aesKey_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket)) {
+        return super.equals(obj);
+      }
+      me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket other = (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) obj;
+
+      boolean result = true;
+      result = result && getAesKey()
+          .equals(other.getAesKey());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + AES_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getAesKey().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code ResponseAESKeyPacket}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:ResponseAESKeyPacket)
+        me.linx.vchat.core.packet.Packet.ResponseAESKeyPacketOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return me.linx.vchat.core.packet.Packet.internal_static_ResponseAESKeyPacket_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return me.linx.vchat.core.packet.Packet.internal_static_ResponseAESKeyPacket_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.class, me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.Builder.class);
+      }
+
+      // Construct using me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        aesKey_ = com.google.protobuf.ByteString.EMPTY;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return me.linx.vchat.core.packet.Packet.internal_static_ResponseAESKeyPacket_descriptor;
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getDefaultInstanceForType() {
+        return me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket build() {
+        me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket buildPartial() {
+        me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket result = new me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket(this);
+        result.aesKey_ = aesKey_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) {
+          return mergeFrom((me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket other) {
+        if (other == me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket.getDefaultInstance()) return this;
+        if (other.getAesKey() != com.google.protobuf.ByteString.EMPTY) {
+          setAesKey(other.getAesKey());
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private com.google.protobuf.ByteString aesKey_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>bytes aes_key = 1;</code>
+       */
+      public com.google.protobuf.ByteString getAesKey() {
+        return aesKey_;
+      }
+      /**
+       * <code>bytes aes_key = 1;</code>
+       */
+      public Builder setAesKey(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        aesKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>bytes aes_key = 1;</code>
+       */
+      public Builder clearAesKey() {
+        
+        aesKey_ = getDefaultInstance().getAesKey();
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:ResponseAESKeyPacket)
+    }
+
+    // @@protoc_insertion_point(class_scope:ResponseAESKeyPacket)
+    private static final me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket();
+    }
+
+    public static me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ResponseAESKeyPacket>
+        PARSER = new com.google.protobuf.AbstractParser<ResponseAESKeyPacket>() {
+      @java.lang.Override
+      public ResponseAESKeyPacket parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ResponseAESKeyPacket(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ResponseAESKeyPacket> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ResponseAESKeyPacket> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public me.linx.vchat.core.packet.Packet.ResponseAESKeyPacket getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2650,10 +3913,20 @@ public final class Packet {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_PacketBox_descriptor;
+    internal_static_Box_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_PacketBox_fieldAccessorTable;
+      internal_static_Box_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_RequestAESKeyPacket_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_RequestAESKeyPacket_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_ResponseAESKeyPacket_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_ResponseAESKeyPacket_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_AuthPacket_descriptor;
   private static final 
@@ -2674,16 +3947,19 @@ public final class Packet {
   static {
     java.lang.String[] descriptorData = {
       "\n\014Packet.proto\032\037google/protobuf/timestam" +
-      "p.proto\"v\n\tPacketBox\022\031\n\004type\030\001 \001(\0162\013.Pac" +
-      "ketType\022!\n\nauthPacket\030\002 \001(\0132\013.AuthPacket" +
-      "H\000\022!\n\ntextPacket\030\003 \001(\0132\013.TextPacketH\000B\010\n" +
-      "\006packet\",\n\nAuthPacket\022\017\n\007user_id\030\001 \001(\003\022\r" +
-      "\n\005token\030\002 \001(\t\"j\n\nTextPacket\022\017\n\007from_id\030\001" +
-      " \001(\003\022\r\n\005to_id\030\002 \001(\003\022\013\n\003msg\030\003 \001(\t\022/\n\013crea" +
-      "te_time\030\004 \001(\0132\032.google.protobuf.Timestam" +
-      "p* \n\nPacketType\022\010\n\004AUTH\020\000\022\010\n\004TEXT\020\001B%\n\031m" +
-      "e.linx.vchat.core.packetB\006PacketH\001b\006prot" +
-      "o3"
+      "p.proto\"\317\001\n\003Box\022\014\n\004type\030\001 \001(\r\0223\n\023request" +
+      "AESKeyPacket\030\002 \001(\0132\024.RequestAESKeyPacket" +
+      "H\000\0225\n\024responseAESKeyPacket\030\003 \001(\0132\025.Respo" +
+      "nseAESKeyPacketH\000\022!\n\nauthPacket\030\004 \001(\0132\013." +
+      "AuthPacketH\000\022!\n\ntextPacket\030\005 \001(\0132\013.TextP" +
+      "acketH\000B\010\n\006packet\")\n\023RequestAESKeyPacket" +
+      "\022\022\n\npublic_key\030\001 \001(\014\"\'\n\024ResponseAESKeyPa" +
+      "cket\022\017\n\007aes_key\030\001 \001(\014\",\n\nAuthPacket\022\017\n\007u" +
+      "ser_id\030\001 \001(\003\022\r\n\005token\030\002 \001(\t\"j\n\nTextPacke" +
+      "t\022\017\n\007from_id\030\001 \001(\003\022\r\n\005to_id\030\002 \001(\003\022\013\n\003msg" +
+      "\030\003 \001(\t\022/\n\013create_time\030\004 \001(\0132\032.google.pro" +
+      "tobuf.TimestampB%\n\031me.linx.vchat.core.pa" +
+      "cketB\006PacketH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2698,20 +3974,32 @@ public final class Packet {
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           com.google.protobuf.TimestampProto.getDescriptor(),
         }, assigner);
-    internal_static_PacketBox_descriptor =
+    internal_static_Box_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_PacketBox_fieldAccessorTable = new
+    internal_static_Box_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_PacketBox_descriptor,
-        new java.lang.String[] { "Type", "AuthPacket", "TextPacket", "Packet", });
-    internal_static_AuthPacket_descriptor =
+        internal_static_Box_descriptor,
+        new java.lang.String[] { "Type", "RequestAESKeyPacket", "ResponseAESKeyPacket", "AuthPacket", "TextPacket", "Packet", });
+    internal_static_RequestAESKeyPacket_descriptor =
       getDescriptor().getMessageTypes().get(1);
+    internal_static_RequestAESKeyPacket_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_RequestAESKeyPacket_descriptor,
+        new java.lang.String[] { "PublicKey", });
+    internal_static_ResponseAESKeyPacket_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_ResponseAESKeyPacket_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_ResponseAESKeyPacket_descriptor,
+        new java.lang.String[] { "AesKey", });
+    internal_static_AuthPacket_descriptor =
+      getDescriptor().getMessageTypes().get(3);
     internal_static_AuthPacket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AuthPacket_descriptor,
         new java.lang.String[] { "UserId", "Token", });
     internal_static_TextPacket_descriptor =
-      getDescriptor().getMessageTypes().get(2);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_TextPacket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_TextPacket_descriptor,

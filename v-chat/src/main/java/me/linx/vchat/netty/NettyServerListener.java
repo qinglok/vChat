@@ -8,17 +8,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import me.linx.vchat.core.packet.Packet;
-import me.linx.vchat.netty.handler.SelectorHandler;
+import me.linx.vchat.core.codec.PacketProtobufDecoder;
+import me.linx.vchat.core.codec.PacketProtobufEncoder;
+import me.linx.vchat.netty.handler.ConnectHandler;
 import org.springframework.stereotype.Component;
 
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -50,7 +48,7 @@ public class NettyServerListener {
     }
 
     public void start(int port) throws InterruptedException {
-        new Timer().schedule(new ShowTask(), 0, 1000);
+//        new Timer().schedule(new ShowTask(), 0, 1000);
 
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -65,13 +63,13 @@ public class NettyServerListener {
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
+                        public void initChannel(SocketChannel ch) {
                             ch.pipeline()
                                     .addLast(new ProtobufVarint32FrameDecoder())
-                                    .addLast(new ProtobufDecoder(Packet.PacketBox.getDefaultInstance()))
+                                    .addLast(new PacketProtobufDecoder())
                                     .addLast(new ProtobufVarint32LengthFieldPrepender())
-                                    .addLast(new ProtobufEncoder())
-                                    .addLast(new SelectorHandler());
+                                    .addLast(new PacketProtobufEncoder())
+                                    .addLast(new ConnectHandler());
                         }
                     });
 

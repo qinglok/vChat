@@ -28,18 +28,22 @@ option optimize_for = SPEED;
 // ----------------------------- 不要在生成的Java文件中写代码，修改后需要重新生成，修改麻烦 ---------------------------
 
 
-
-enum PacketType{
-  AUTH = 0;
-  TEXT = 1;
+message Box{
+  uint32 type = 1;
+  oneof packet {
+      RequestAESKeyPacket requestAESKeyPacket = 2;
+      ResponseAESKeyPacket responseAESKeyPacket = 3;
+      AuthPacket authPacket = 4;
+      TextPacket textPacket = 5;
+  }
 }
 
-message PacketBox {
-  PacketType type = 1;
-  oneof packet {
-      AuthPacket authPacket = 2;
-      TextPacket textPacket = 3;
-    }
+message RequestAESKeyPacket {
+  bytes public_key = 1;
+}
+
+message ResponseAESKeyPacket {
+  bytes aes_key = 1;
 }
 
 message AuthPacket {

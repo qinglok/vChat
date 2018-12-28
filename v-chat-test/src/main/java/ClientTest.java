@@ -16,6 +16,7 @@ public class ClientTest {
     static final int port = 8888;
 
     public static void main(String[] a) throws InterruptedException, IOException {
+
         EventLoopGroup group = new NioEventLoopGroup();
         List<Client> clientList = new ArrayList<>();
 
@@ -55,16 +56,16 @@ public class ClientTest {
                     .setFromId(123)
                     .setToId(321)
                     .build();
-            final Packet.PacketBox box = Packet.PacketBox.newBuilder()
-                    .setType(Packet.PacketType.TEXT)
-                    .setTextPacket(packet)
-                    .build();
-
-            do {
-                for (Client client : clientList) {
-                    client.write(box);
-                }
-            } while (true);
+//            final Packet.PacketBox box = Packet.PacketBox.newBuilder()
+//                    .setType(Packet.PacketType.TEXT)
+//                    .setTextPacket(packet)
+//                    .build();
+//
+//            do {
+//                for (Client client : clientList) {
+//                    client.write(box);
+//                }
+//            } while (true);
         }
     }
 }

@@ -1,3 +1,5 @@
+package handler;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import me.linx.vchat.core.packet.Packet;
@@ -6,15 +8,7 @@ public class TextHandler extends SimpleChannelInboundHandler<Packet.TextPacket> 
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Packet.TextPacket packet) {
-//        System.out.println(packet.getMsg());
-//        Packet.TextPacket textPacket = packet.toBuilder()
-//                .setMsg("[you]" + packet.getMsg())
-//                .build();
-//        Packet.PacketBox box = Packet.PacketBox.newBuilder()
-//                .setType(Packet.PacketType.TEXT)
-//                .setTextPacket(packet)
-//                .build();
-//        ctx.writeAndFlush(box);
+        System.out.println(packet.getMsg());
     }
 
 

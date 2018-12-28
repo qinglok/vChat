@@ -47,8 +47,7 @@ public class JwtUtils {
 
             return uid == userId && exp.getTime() > new Date().getTime();
         } catch (Exception e) {
-            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 }

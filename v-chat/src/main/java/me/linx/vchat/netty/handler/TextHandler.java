@@ -1,8 +1,8 @@
 package me.linx.vchat.netty.handler;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import me.linx.vchat.core.constants.PacketConstants;
 import me.linx.vchat.core.packet.Packet;
 import me.linx.vchat.netty.NettyServerListener;
 
@@ -15,8 +15,8 @@ public class TextHandler extends SimpleChannelInboundHandler<Packet.TextPacket> 
         Packet.TextPacket textPacket = packet.toBuilder()
                 .setMsg("[you]" + packet.getMsg())
                 .build();
-        Packet.PacketBox box = Packet.PacketBox.newBuilder()
-                .setType(Packet.PacketType.TEXT)
+        Packet.Box box = Packet.Box.newBuilder()
+                .setType(PacketConstants.TYPE_TEXT)
                 .setTextPacket(textPacket)
                 .build();
         ctx.writeAndFlush(box);
