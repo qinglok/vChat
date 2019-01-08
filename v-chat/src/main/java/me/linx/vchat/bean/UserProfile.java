@@ -18,4 +18,5 @@ public class UserProfile extends Bean {
     public void setPasswordEncode(String passwordEncode) {
         this.passwordEncode = passwordEncode;
     }
+
 }

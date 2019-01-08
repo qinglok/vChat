@@ -9,27 +9,28 @@ public abstract class BaseController {
 
     protected ResultEntity success() {
         ResultEntity result = new ResultEntity();
-        result.setCode(CodeMap.YES);
+        result.setCode(CodeMap.Yes.value);
         return result;
     }
 
     protected ResultEntity success(@NotNull Object data) {
         ResultEntity result = new ResultEntity();
-        result.setCode(CodeMap.YES);
+        result.setCode(CodeMap.Yes.value);
         result.setData(data);
         return result;
     }
 
-    protected ResultEntity failure(@NotNull int code) {
+    protected ResultEntity failure(@NotNull CodeMap codeMap) {
         ResultEntity result = new ResultEntity();
-        result.setCode(code);
+        result.setCode(codeMap.value);
+        result.setMsg(codeMap.msg);
         return result;
     }
 
-    protected ResultEntity failure(@NotNull int code, @NotNull Object data) {
+    protected ResultEntity failure(@NotNull int code, @NotNull String msg) {
         ResultEntity result = new ResultEntity();
         result.setCode(code);
-        result.setData(data);
+        result.setMsg(msg);
         return result;
     }
 

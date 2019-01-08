@@ -3,6 +3,7 @@ package me.linx.vchat.model;
 
 public class ResultEntity {
     private Integer code;
+    private String msg;
     private Object data;
 
     public Integer getCode() {
@@ -11,6 +12,14 @@ public class ResultEntity {
 
     public void setCode(Integer code) {
         this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
     }
 
     public Object getData() {

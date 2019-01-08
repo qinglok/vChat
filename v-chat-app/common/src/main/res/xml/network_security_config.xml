@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--Android P 默认不支持非HTTPS连接， 在manifests中设置此项，启用HTTP连接-->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

@@ -17,7 +17,7 @@ public class AuthHandler extends SimpleChannelInboundHandler<Packet.Box> {
 
         Packet.AuthPacket authPacket = box.getAuthPacket();
 
-        boolean checkOk = JwtUtils.check(authPacket.getToken(), authPacket.getUserId());
+        boolean checkOk = JwtUtils.check(authPacket.getToken(), authPacket.getUserId(), authPacket.getDeviceId());
 
         if (checkOk) {
             //验证成功，移除自己并添加业务处理器

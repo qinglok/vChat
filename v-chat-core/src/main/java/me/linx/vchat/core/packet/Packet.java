@@ -2404,6 +2404,16 @@ public final class Packet {
      */
     com.google.protobuf.ByteString
         getTokenBytes();
+
+    /**
+     * <code>string deviceId = 3;</code>
+     */
+    java.lang.String getDeviceId();
+    /**
+     * <code>string deviceId = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getDeviceIdBytes();
   }
   /**
    * Protobuf type {@code AuthPacket}
@@ -2420,6 +2430,7 @@ public final class Packet {
     private AuthPacket() {
       userId_ = 0L;
       token_ = "";
+      deviceId_ = "";
     }
 
     @java.lang.Override
@@ -2455,6 +2466,12 @@ public final class Packet {
               java.lang.String s = input.readStringRequireUtf8();
 
               token_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              deviceId_ = s;
               break;
             }
             default: {
@@ -2532,6 +2549,40 @@ public final class Packet {
       }
     }
 
+    public static final int DEVICEID_FIELD_NUMBER = 3;
+    private volatile java.lang.Object deviceId_;
+    /**
+     * <code>string deviceId = 3;</code>
+     */
+    public java.lang.String getDeviceId() {
+      java.lang.Object ref = deviceId_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        deviceId_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string deviceId = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getDeviceIdBytes() {
+      java.lang.Object ref = deviceId_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        deviceId_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2552,6 +2603,9 @@ public final class Packet {
       if (!getTokenBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, token_);
       }
+      if (!getDeviceIdBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, deviceId_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -2567,6 +2621,9 @@ public final class Packet {
       }
       if (!getTokenBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, token_);
+      }
+      if (!getDeviceIdBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, deviceId_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -2588,6 +2645,8 @@ public final class Packet {
           == other.getUserId());
       result = result && getToken()
           .equals(other.getToken());
+      result = result && getDeviceId()
+          .equals(other.getDeviceId());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -2604,6 +2663,8 @@ public final class Packet {
           getUserId());
       hash = (37 * hash) + TOKEN_FIELD_NUMBER;
       hash = (53 * hash) + getToken().hashCode();
+      hash = (37 * hash) + DEVICEID_FIELD_NUMBER;
+      hash = (53 * hash) + getDeviceId().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2741,6 +2802,8 @@ public final class Packet {
 
         token_ = "";
 
+        deviceId_ = "";
+
         return this;
       }
 
@@ -2769,6 +2832,7 @@ public final class Packet {
         me.linx.vchat.core.packet.Packet.AuthPacket result = new me.linx.vchat.core.packet.Packet.AuthPacket(this);
         result.userId_ = userId_;
         result.token_ = token_;
+        result.deviceId_ = deviceId_;
         onBuilt();
         return result;
       }
@@ -2822,6 +2886,10 @@ public final class Packet {
         }
         if (!other.getToken().isEmpty()) {
           token_ = other.token_;
+          onChanged();
+        }
+        if (!other.getDeviceId().isEmpty()) {
+          deviceId_ = other.deviceId_;
           onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -2944,6 +3012,75 @@ public final class Packet {
   checkByteStringIsUtf8(value);
         
         token_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object deviceId_ = "";
+      /**
+       * <code>string deviceId = 3;</code>
+       */
+      public java.lang.String getDeviceId() {
+        java.lang.Object ref = deviceId_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          deviceId_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string deviceId = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getDeviceIdBytes() {
+        java.lang.Object ref = deviceId_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          deviceId_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string deviceId = 3;</code>
+       */
+      public Builder setDeviceId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        deviceId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string deviceId = 3;</code>
+       */
+      public Builder clearDeviceId() {
+        
+        deviceId_ = getDefaultInstance().getDeviceId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string deviceId = 3;</code>
+       */
+      public Builder setDeviceIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        deviceId_ = value;
         onChanged();
         return this;
       }
@@ -3954,12 +4091,12 @@ public final class Packet {
       "AuthPacketH\000\022!\n\ntextPacket\030\005 \001(\0132\013.TextP" +
       "acketH\000B\010\n\006packet\")\n\023RequestAESKeyPacket" +
       "\022\022\n\npublic_key\030\001 \001(\014\"\'\n\024ResponseAESKeyPa" +
-      "cket\022\017\n\007aes_key\030\001 \001(\014\",\n\nAuthPacket\022\017\n\007u" +
-      "ser_id\030\001 \001(\003\022\r\n\005token\030\002 \001(\t\"j\n\nTextPacke" +
-      "t\022\017\n\007from_id\030\001 \001(\003\022\r\n\005to_id\030\002 \001(\003\022\013\n\003msg" +
-      "\030\003 \001(\t\022/\n\013create_time\030\004 \001(\0132\032.google.pro" +
-      "tobuf.TimestampB%\n\031me.linx.vchat.core.pa" +
-      "cketB\006PacketH\001b\006proto3"
+      "cket\022\017\n\007aes_key\030\001 \001(\014\">\n\nAuthPacket\022\017\n\007u" +
+      "ser_id\030\001 \001(\003\022\r\n\005token\030\002 \001(\t\022\020\n\010deviceId\030" +
+      "\003 \001(\t\"j\n\nTextPacket\022\017\n\007from_id\030\001 \001(\003\022\r\n\005" +
+      "to_id\030\002 \001(\003\022\013\n\003msg\030\003 \001(\t\022/\n\013create_time\030" +
+      "\004 \001(\0132\032.google.protobuf.TimestampB%\n\031me." +
+      "linx.vchat.core.packetB\006PacketH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3997,7 +4134,7 @@ public final class Packet {
     internal_static_AuthPacket_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_AuthPacket_descriptor,
-        new java.lang.String[] { "UserId", "Token", });
+        new java.lang.String[] { "UserId", "Token", "DeviceId", });
     internal_static_TextPacket_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_TextPacket_fieldAccessorTable = new

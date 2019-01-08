@@ -49,6 +49,7 @@ message ResponseAESKeyPacket {
 message AuthPacket {
   int64 user_id = 1;
   string token = 2;
+  string deviceId = 3;
 }
 
 message TextPacket {
