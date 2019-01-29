@@ -1,2 +1,0 @@
--keep class * extends android.support.v4.app.FragmentManager{ *; }
--keepclasseswithmembernames class android.support.v4.widget.ViewDragHelper{ *; }

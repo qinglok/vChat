@@ -1,8 +1,10 @@
 package me.linx.vchat.app.constant
 
 object AppConfigs {
-    const val netBaseUrl = "http://192.168.0.5:8443/vchat/"
-    const val netConnectTimeOut = 30L
+    val connectTimeout by lazy { 30000L }
+    val readTimeout by lazy { 10000L }
+    val writeTimeout by lazy { 10000L }
 
-    const val DatabaseName = "vChat_DB"
+    val databaseName by lazy { "vchat_db" }
+
 }

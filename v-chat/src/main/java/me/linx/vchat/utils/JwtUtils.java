@@ -16,7 +16,7 @@ public class JwtUtils {
 //    private static final int EXPIRE_DAY = 30;
 
     //Token私钥
-    private static final String TOKEN_SECRET = "linx.me";
+    private static final String TOKEN_SECRET = "linx.me.vchat.123212321";
 
     public synchronized static String sign(@NotNull long userId, @NotNull String deviceId) {
 //        Calendar instance = Calendar.getInstance();
@@ -34,20 +34,22 @@ public class JwtUtils {
                 .sign(algorithm);
     }
 
-    public static boolean check(@NotNull String token, @NotNull long userId, @NotNull String deviceId) {
+    public static Long verify(@NotNull String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(token);
             Map<String, Claim> claims = jwt.getClaims();
 
-            long uid = claims.get("userId").asLong();
-            String dId = claims.get("deviceId").asString();
+            return claims.get("userId").asLong();
+//            String dId = claims.get("deviceId").asString();
 //            Date exp = claims.get("exp").asDate();
 
-            return uid == userId && dId.equals(deviceId);
+//            return uid == userId && dId.equals(deviceId);
+//            return true;
         } catch (Exception e) {
-            return false;
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--共享图片目录-->
+    <external-path name="share_images" path="Android/data/me.linx.vchat.app/files/Pictures" />
+</paths>

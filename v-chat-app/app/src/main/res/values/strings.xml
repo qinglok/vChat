@@ -1,14 +1,24 @@
 <resources>
     <string name="app_name">vChat</string>
-    <string name="v_chat">vChat</string>
-    <string name="people">people</string>
-    <string name="shot">shot</string>
-    <string name="start">start vChat</string>
+    <string name="photo_transition_name">transition_photo</string>
+    <string name="people">People</string>
+    <string name="me">Me</string>
+    <string name="me_cn">我</string>
+    <string name="chat">消息</string>
+    <string name="friends">朋友</string>
+    <string name="start_vchat">START VCHAT</string>
     <string name="email">邮箱</string>
     <string name="password">密码</string>
     <string name="sign_in">登录</string>
     <string name="sign_up">注册</string>
     <string name="new_account">注册新账号</string>
-    <string name="password_re">确认密码</string>
-    <string name="no_net">连接网络失败</string>
+    <string name="no_net">暂时连接不上服务器</string>
+    <string name="sys_error">系统异常，暂时无法操作</string>
+    <string name="file_not_found">找不到文件</string>
+    <string name="nick_name">昵称</string>
+    <string name="head_img">头像</string>
+    <string name="edit">修改</string>
+    <string name="edit_head_img">修改头像</string>
+    <string name="take_photo">拍照</string>
+    <string name="photo_collections">相册</string>
 </resources>

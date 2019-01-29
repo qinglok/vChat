@@ -1,36 +1,34 @@
 package me.linx.vchat.app
 
-import com.blankj.utilcode.util.SPUtils
-import com.raizlabs.android.dbflow.kotlinextensions.list
-import com.raizlabs.android.dbflow.kotlinextensions.select
-import me.linx.vchat.app.common.base.BaseActivity
-import me.linx.vchat.app.common.base.BaseFragment
-import me.linx.vchat.app.constant.AppKeys
-import me.linx.vchat.app.db.entity.User
-import me.linx.vchat.app.db.entity.User_Table
-import me.linx.vchat.app.ec.main.MainFragment
-import me.linx.vchat.app.ec.sign.SignParentFragment
+import android.os.Bundle
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
+import me.linx.vchat.app.ui.start.StartFragment
 
-class AppActivity : BaseActivity() {
+class AppActivity : AppCompatActivity() {
 
-    private var rootFragment: BaseFragment
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    init {
-        rootFragment = if (SPUtils.getInstance().getBoolean(AppKeys.isSignIn, false)) {
-            val userId = SPUtils.getInstance().getLong(AppKeys.currentUserId, 0L)
+        val frameLayout = FrameLayout(this)
+        frameLayout.id = R.id.fragment_container
+        setContentView(frameLayout)
 
-            val result = select.from(User::class.java).where(User_Table.bizId.eq(userId)).list
-
-            if (result.isEmpty()) {
-                SignParentFragment()
-            } else {
-                MainFragment.create(result[0])
-            }
-        } else {
-            SignParentFragment()
+        //避免被强杀重启后重复load
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_container, StartFragment())
+                .commit()
         }
     }
 
-    override fun setRootFragment() = rootFragment
-
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            super.onBackPressed()
+        } else {
+            moveTaskToBack(true)
+//            finish()
+        }
+    }
 }
+

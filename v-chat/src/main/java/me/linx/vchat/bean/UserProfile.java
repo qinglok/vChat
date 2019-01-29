@@ -1,22 +1,31 @@
 package me.linx.vchat.bean;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "user_profile")
 public class UserProfile extends Bean {
 
-    @Column(name = "password_encode",length = 500)
-    @NotNull
-    private String passwordEncode;
+    @Column(name = "nick_name", length = 50)
+    private String nickName;
 
-    public String getPasswordEncode() {
-        return passwordEncode;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "head_img_file_id")
+    private FileWrapper headImg;
+
+    public String getNickName() {
+        return nickName;
     }
 
-    public void setPasswordEncode(String passwordEncode) {
-        this.passwordEncode = passwordEncode;
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
+    public FileWrapper getHeadImg() {
+        return headImg;
+    }
+
+    public void setHeadImg(FileWrapper headImg) {
+        this.headImg = headImg;
+    }
 }

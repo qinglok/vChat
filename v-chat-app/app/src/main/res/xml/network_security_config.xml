@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--Android P 默认不允许明文流量，在这里设置允许，并在manifest添加【android:networkSecurityConfig="此文件"】-->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
