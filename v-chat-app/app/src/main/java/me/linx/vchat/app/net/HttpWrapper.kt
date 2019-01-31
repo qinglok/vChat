@@ -1,14 +1,10 @@
 package me.linx.vchat.app.net
 
-import android.content.res.AssetManager
 import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.Utils
 import me.linx.vchat.app.constant.AppConfigs
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
 
 object HttpWrapper {
 
@@ -19,6 +15,12 @@ object HttpWrapper {
             .writeTimeout(AppConfigs.writeTimeout, TimeUnit.MILLISECONDS)
             .sslSocketFactory()
             .addInterceptor()
+            .build()
+    }
+
+    val okHttpGlideClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .sslSocketFactory()
             .build()
     }
 

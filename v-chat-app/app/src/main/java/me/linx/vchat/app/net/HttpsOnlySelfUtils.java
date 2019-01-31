@@ -38,9 +38,10 @@ public class HttpsOnlySelfUtils {
             TrustManagerFactory trustManagerFactory =
                     TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(keyStore);
+
             sslContext.init(
                     null,
-                    trustManagerFactory.getTrustManagers(), // 使用系统默认的实现
+                    trustManagerFactory.getTrustManagers(),
                     new SecureRandom()
             );
             return sslContext.getSocketFactory();
