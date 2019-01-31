@@ -1,25 +1,22 @@
 package me.linx.vchat.app.data.model
 
 
-import android.content.Intent
-import android.widget.ImageView
-import androidx.core.app.ActivityOptionsCompat
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import androidx.fragment.app.FragmentManager
 import com.blankj.utilcode.util.SPUtils
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.linx.vchat.app.BR
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
+import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.data.model.utils.ObservableViewModel
 import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.net._OK
-import me.linx.vchat.app.ui.main.HeadImageActivity
+import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
+import me.linx.vchat.app.ui.start.StartFragment
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.utils.snackbarFailure
+import me.linx.vchat.app.utils.snackbarSuccess
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.loader.LoaderDialogFragment
 import java.io.File
@@ -30,49 +27,29 @@ class UserViewModel : ObservableViewModel() {
     val obUser by lazy { ObservableUser() }
 
     /**
-     *  根据登录状态跳转Fragment
+     *  根据登录状态获取Fragment
      */
-    fun appStartRoute(fromFragment: BaseFragment) {
-        val fragmentId = fromFragment.id
-        val fragmentManager = fromFragment.fragmentManager
-        val userId = SPUtils.getInstance().getLong(AppKeys.currentUserId, 0L)
-
-        if (userId > 0L) {
-           GlobalScope.launch {
-               startFragment(
-//                   if (userRepository.getByAsync(userId).await() == null) SignInFragment() else MainFragment(),
-                   if (userRepository.getByAsync(userId).await() == null) SignInFragment() else SignInFragment(),
-                   fragmentManager,
-                   fragmentId
-               )
-           }
-        } else {
-            startFragment(SignInFragment(), fragmentManager, fragmentId)
-        }
-    }
-
-    /**
-     *  跳转Fragment
-     */
-    private fun startFragment(fragment: BaseFragment, fragmentManager: FragmentManager?, fragmentId: Int) {
-        fragmentManager?.beginTransaction()
-            ?.replace(fragmentId, fragment)
-            ?.commit()
-    }
-
-    /**
-     * 设置登录用户信息
-     */
-    fun setup() {
-        SPUtils.getInstance().getLong(AppKeys.currentUserId, 0L).also {
-            GlobalScope.launch {
-                userRepository.getByAsync(it).await()?.let {user ->
-                    obUser.apply {
-                        bizId = user.bizId ?: 0L
-                        token = user.token ?: ""
-                        nickName = user.nickName ?: ""
-                        headImg = user.headImg ?: ""
-                        // headImg = user?.headImg ?: "http://192.168.0.5:8080/aaa.jpg"
+    fun appStartRoute(action: (BaseFragment) -> Unit) {
+        SPUtils.getInstance().getBoolean(AppKeys.SP_is_first_in, true).also { isFirstIn ->
+            if (isFirstIn) {
+                // 首次打开APP
+                action(StartFragment())
+            } else {
+                SPUtils.getInstance().getLong(AppKeys.SP_currentUserId, 0L).also { userId ->
+                    if (userId > 0L) {
+                        // 已登录
+                        userRepository.getBy(userId) {
+                            // 数据库异常
+                            if(it == null) {
+                                action(SignInFragment())
+                            }else{
+                                setup(it)
+                                action(MainFragment())
+                            }
+                        }
+                    } else {
+                        // 未登录
+                        action(SignInFragment())
                     }
                 }
             }
@@ -80,21 +57,14 @@ class UserViewModel : ObservableViewModel() {
     }
 
     /**
-     *  查看头像大图
+     * 设置登录用户信息
      */
-    fun showBigImg(img: ImageView, f: BaseFragment) {
-        if (obUser.headImg.isNotEmpty()) {
-            val activity = f.mActivity
-            val intent = Intent(activity, HeadImageActivity::class.java)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                activity,
-                img,
-                f.getString(R.string.photo_transition_name)
-            )
-
-            intent.putExtra(AppKeys.key_user_head_img, obUser.headImg)
-
-            activity.startActivity(intent, options.toBundle())
+    fun setup(user : User) {
+        obUser.apply {
+            bizId = user.bizId ?: 0L
+            token = user.token ?: ""
+            nickName = user.nickName ?: ""
+            headImg = user.headImg ?: ""
         }
     }
 
@@ -113,17 +83,17 @@ class UserViewModel : ObservableViewModel() {
 
         userRepository.postHeadImg(obUser.bizId, file) {
             success = { result ->
-                if (result.code == _OK){
+                if (result.code == _OK) {
                     result.data?.let { path ->
-                        GlobalScope.launch {
-                            userRepository.getByAsync(obUser.bizId).await()?.apply {
+                        userRepository.getBy(obUser.bizId) {
+                            it?.apply {
                                 headImg = path
                                 userRepository.save(this)
                             }
                         }
                         obUser.headImg = path
                     }
-                }else{
+                } else {
                     rootView.snackbarFailure(result.msg)
                 }
             }
@@ -135,6 +105,44 @@ class UserViewModel : ObservableViewModel() {
             }
             error = {
                 rootView.snackbarError(R.string.no_net)
+            }
+        }
+    }
+
+    /**
+     *  修改昵称
+     */
+    fun newNickName(name: String, f: BaseFragment) {
+        if (name.isEmpty()) {
+            f.view.snackbarFailure(f.getString(R.string.please_input_nick_name))
+        } else {
+            val loaderDialogFragment = LoaderDialogFragment()
+            val rootView = f.view
+
+            userRepository.postNickName(obUser.bizId, name) {
+                success = { result ->
+                    if (result.code == _OK) {
+                        userRepository.getBy(obUser.bizId) {
+                            it?.apply {
+                                nickName = name
+                                userRepository.save(this)
+                            }
+                        }
+                        obUser.nickName = name
+                        result.msg?.let { rootView.snackbarSuccess(it) }
+                    } else {
+                        rootView.snackbarFailure(result.msg)
+                    }
+                }
+                start = {
+                    f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
+                }
+                finish = {
+                    loaderDialogFragment.dismiss()
+                }
+                error = {
+                    rootView.snackbarError(R.string.no_net)
+                }
             }
         }
     }

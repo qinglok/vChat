@@ -7,6 +7,7 @@ import me.linx.vchat.bean.User;
 import me.linx.vchat.bean.UserProfile;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.model.JsonResult;
+import me.linx.vchat.model.validation.NickNameModel;
 import me.linx.vchat.model.validation.SignModel;
 import me.linx.vchat.repository.FileWrapperRepository;
 import me.linx.vchat.repository.UserRepository;
@@ -26,7 +27,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final FileWrapperRepository fileWrapperRepository;
 
-
     @Autowired
     public UserService(UserRepository userRepository, FileWrapperRepository fileWrapperRepository) {
         this.userRepository = userRepository;
@@ -45,6 +45,23 @@ public class UserService {
             userRepository.save(user);
         }
         return JsonResult.success(fileName);
+    }
+
+    public JsonResult editNickName(NickNameModel model, Long userId) {
+        // 验证参数
+        ValidationUtils.ValidationResult validationResult = ValidationUtils.validateEntity(model);
+        if (validationResult.hasErrors()) {
+            return JsonResult.failure(CodeMap.ErrorParameter.value, validationResult.errorFormatMsg());
+        }
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.getUserProfile().setNickName(model.getNickName());
+            userRepository.save(user);
+            return JsonResult.success();
+        }
+        return JsonResult.failure(CodeMap.ErrorSys);
     }
 
     /**

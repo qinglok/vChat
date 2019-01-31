@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import androidx.lifecycle.ViewModelProviders
-import com.blankj.utilcode.util.BarUtils
+import com.blankj.utilcode.util.SPUtils
+import com.blankj.utilcode.util.ScreenUtils
 import kotlinx.android.synthetic.main.fragment_start.*
 import kotlinx.android.synthetic.main.fragment_start.view.*
 import me.linx.vchat.app.R
+import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.model.UserViewModel
 import me.linx.vchat.app.widget.base.BaseFragment
 
@@ -21,23 +23,25 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
     }
     private var clicking = false
 
+    override fun setLayout() = R.layout.fragment_start
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val window = mActivity.window
 
         //全屏显示
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        ScreenUtils.setFullScreen(mActivity)
 
+        val window = mActivity.window
         // 刘海屏适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val lp = window.attributes
             lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
             window.attributes = lp
         }
-    }
 
-    override fun setLayout() = R.layout.fragment_start
+        SPUtils.getInstance().put(AppKeys.SP_is_first_in, false)
+    }
 
     override fun initView(view : View, savedInstanceState: Bundle?) {
         view.sun_view.startAnimation(this)
@@ -54,10 +58,14 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
 
                             view.sun_view.end()
 
-                            //启用透明状态栏
-                            BarUtils.setStatusBarAlpha(mActivity, 0)
+                            // 取消全屏显示
+                            ScreenUtils.setNonFullScreen(mActivity)
 
-                            viewModel.appStartRoute(this@StartFragment)
+                            viewModel.appStartRoute{
+                                fragmentManager?.beginTransaction()
+                                    ?.replace(id, it)
+                                    ?.commit()
+                            }
                         }
                     })
                 }.start()

@@ -1,6 +1,6 @@
 package me.linx.vchat.app
 
-import com.facebook.stetho.Stetho
+//import com.facebook.stetho.Stetho
 import android.app.Application
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.CrashUtils
@@ -18,20 +18,20 @@ class App :Application() {
         initLog()
         initCrash()
         initLeakCanary()
-        initStetho()
+//        initStetho()
     }
 
     /**
      * 初始化数据库浏览器(Only Chrome)
      */
-    private fun initStetho() {
-        Stetho.initialize(
-            Stetho.newInitializerBuilder(this)
-                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                .build()
-        )
-    }
+//    private fun initStetho() {
+//        Stetho.initialize(
+//            Stetho.newInitializerBuilder(this)
+//                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                .build()
+//        )
+//    }
 
     /**
      * 初始化内存泄露检查工具

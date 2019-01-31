@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +31,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
         Object bean;
         Method method;
 
-        public Handler(Object bean, Method method) {
+        Handler(Object bean, Method method) {
             this.bean = bean;
             this.method = method;
         }
@@ -50,9 +47,9 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
             for (Object bean : beans.values()) {
                 Method[] methods = bean.getClass().getDeclaredMethods();
                 for (Method method : methods) {
-                    Annotation action = method.getAnnotation(UploadAction.class);
+                    UploadAction action = method.getAnnotation(UploadAction.class);
                     if (action != null) {
-                        String actionName = ((UploadAction) action).action();
+                        String actionName = action.action();
                         if (StringUtils.isNotTrimEmpty(actionName)) {
                             List<Handler> handlerList = map.get(actionName);
                             if (handlerList == null) {
@@ -66,9 +63,6 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                     }
                 }
             }
-            System.err.println("=====ContextRefreshedEvent=====" + event.getSource().getClass().getName());
-        } else {
-            System.out.println("getParent()!=null");
         }
     }
 
@@ -88,7 +82,6 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
             if (arg instanceof HttpServletRequest) {
                 HttpServletRequest request = (HttpServletRequest) arg;
                 Object userId = request.getSession().getAttribute("currentUserId");
-                System.out.println("--->>> " + (userId == null ? "" : userId));
 
                 //获取action
                 String action = request.getHeader("action");
@@ -121,6 +114,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                 // 一切正常的情况下，继续执行被拦截的方法
                 result = point.proceed();
         } catch (Throwable e) {
+            e.printStackTrace();
 //            result = new JsonResult(CodeMap.ErrorSys);
         }
 

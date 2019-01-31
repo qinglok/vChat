@@ -42,6 +42,7 @@ abstract class BaseFragment : Fragment() {
         rootView.hideSoftInput()
     }
 
+    @Suppress("unused")
     fun getParent() = parentFragment as? BaseFragment
 
     @Suppress("unused")

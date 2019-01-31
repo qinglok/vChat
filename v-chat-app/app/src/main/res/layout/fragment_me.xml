@@ -50,6 +50,7 @@
                     android:layout_height="wrap_content"
             />
 
+            <!--suppress AndroidUnknownAttribute -->
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_head_img"
                     app:layout_constraintTop_toTopOf="parent"

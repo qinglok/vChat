@@ -39,7 +39,7 @@ public class FileWrapperService {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return JsonResult.failure(CodeMap.ErrorSys);
+            return JsonResult.failure(CodeMap.ErrorFileUploadFailure);
         }
 
         // 原版文件名
@@ -69,7 +69,7 @@ public class FileWrapperService {
             return JsonResult.success(fileName);
         } catch (IOException e) {
             e.printStackTrace();
-            return JsonResult.failure(CodeMap.ErrorSys);
+            return JsonResult.failure(CodeMap.ErrorFileUploadFailure);
         }
     }
 }

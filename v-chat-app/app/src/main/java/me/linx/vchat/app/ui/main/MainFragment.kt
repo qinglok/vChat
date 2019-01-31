@@ -5,20 +5,13 @@ import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import me.linx.vchat.app.R
-import me.linx.vchat.app.data.model.UserViewModel
 import me.linx.vchat.app.widget.base.BaseFragment
 
 class MainFragment : BaseFragment() {
     private var menuItem: MenuItem? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        ViewModelProviders.of(mActivity).get(UserViewModel::class.java).setup()
-    }
 
     override fun setLayout() = R.layout.fragment_main
 

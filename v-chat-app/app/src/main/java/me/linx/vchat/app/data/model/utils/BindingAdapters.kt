@@ -26,7 +26,7 @@ object BindingAdapters {
     @JvmStatic
     fun Toolbar.setNavigationIcon(showIcon: Boolean) {
         if (showIcon) {
-            setNavigationIcon(R.drawable.ic_arrow_left_black_24dp)
+            setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         }
     }
 

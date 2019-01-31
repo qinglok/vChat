@@ -1,6 +1,7 @@
 package me.linx.vchat.aop;
 
 import me.linx.vchat.constants.CodeMap;
+import me.linx.vchat.controller.biz.BaseBizController;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.utils.JwtUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,6 +26,12 @@ public class TokenVerifyAop {
         //获取被拦截的方法名
 //        String methodName = method.getName();
 
+        try{
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //返回的结果
         Object result = null;
         //返回方法参数
@@ -36,11 +43,14 @@ public class TokenVerifyAop {
                 String token = request.getHeader("token");
 
                 Long userId = JwtUtils.verify(token);
-                System.out.println("--->>> " + (userId == null ? "" : userId));
                 if (userId == null) {
                     result = getFailureResult();
                 }else {
-                    request.getSession().setAttribute("currentUserId", userId);
+                    Object target = point.getTarget();
+                    if (target instanceof BaseBizController){
+                        BaseBizController controller = (BaseBizController) target;
+                        controller.setCurrentUserId(userId);
+                    }
                 }
             }
         }

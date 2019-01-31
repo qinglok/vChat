@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package me.linx.vchat.app.utils
 
 import android.view.View

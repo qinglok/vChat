@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/app")
 public class AppController {
-
 
     private final UserService userService;
 
@@ -23,12 +21,15 @@ public class AppController {
         this.userService = userService;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping("/")
+    public String index() {
+        return "/index";
+    }
+
+    @RequestMapping(value = "app/login", method = RequestMethod.POST)
     @ResponseBody
     public JsonResult login(@ModelAttribute SignModel signModel, String deviceId) {
         try {
-            Thread.sleep(500);
-
             return userService.handleLogin(signModel, deviceId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,12 +37,10 @@ public class AppController {
         }
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "app/register", method = RequestMethod.POST)
     @ResponseBody
     public JsonResult register(@ModelAttribute SignModel signModel, String deviceId) {
         try {
-            Thread.sleep(500);
-
             return userService.handleRegister(signModel, deviceId);
         } catch (Exception e) {
             e.printStackTrace();

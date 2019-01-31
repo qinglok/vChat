@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.EditText
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
@@ -22,9 +24,11 @@ import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
 import kotlinx.android.synthetic.main.toolbar_default.view.*
 import me.linx.vchat.app.R
+import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.model.UserViewModel
 import me.linx.vchat.app.databinding.FragmentMeBinding
 import me.linx.vchat.app.utils.fitStatusBar
+import me.linx.vchat.app.utils.showOrHideSoftInput
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.widget.base.BaseFragment
 import java.io.File
@@ -59,19 +63,54 @@ class MeFragment : BaseFragment(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.iv_head_img -> {
-                getParent()?.let { parent ->
-                    viewModel.showBigImg(iv_head_img, parent)
-                }
+                showBigImg()
             }
             R.id.gl_head_img -> {
                 showOptionsDialog()
             }
             R.id.gl_nick_name -> {
-
+                showNewNameDialog()
             }
         }
     }
 
+    private fun showNewNameDialog() {
+        var editText : EditText? = null
+        editText = MaterialAlertDialogBuilder(context).apply {
+            setView(R.layout.view_edit_nick_name)
+            setTitle(R.string.edit_nick_name)
+            setPositiveButton(R.string.save
+            ) { dialog, which ->
+                viewModel.newNickName(editText?.text.toString(), this@MeFragment)
+            }
+            setNegativeButton(R.string.cancel, null)
+        }.show().findViewById<EditText>(R.id.et_name).apply {
+            this?.setText(viewModel.obUser.nickName)
+            this?.showOrHideSoftInput()
+        }
+    }
+
+    /**
+     *  查看头像大图
+     */
+    private fun showBigImg() {
+        if (viewModel.obUser.headImg.isNotEmpty()) {
+            val intent = Intent(mActivity, HeadImageActivity::class.java)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                mActivity,
+                iv_head_img,
+                getString(R.string.photo_transition_name)
+            )
+
+            intent.putExtra(AppKeys.KEY_user_head_img, viewModel.obUser.headImg)
+
+            startActivity(intent, options.toBundle())
+        }
+    }
+
+    /**
+     *  Dialog选择修改头像方式
+     */
     private fun showOptionsDialog() = arrayOf<CharSequence>("相册", "拍照").also {
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.edit_head_img)
@@ -88,127 +127,127 @@ class MeFragment : BaseFragment(), View.OnClickListener {
     }
 
 
-/**
- *  创建临时文件
- */
-@SuppressLint("SimpleDateFormat")
-@Throws(IOException::class)
-private fun createImageFile(): File {
-    // Create an image file name
-    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    val cachePath = PathUtils.getExternalAppPicturesPath()
-    val storageDir = File(cachePath)
-    return File.createTempFile(
-        "JPEG_${timeStamp}_", /* prefix */
-        ".jpg", /* suffix */
-        storageDir /* directory */
-    ).apply {
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = absolutePath
-    }
-}
-
-/**
- *  从相册选择图片
- */
-private fun takeFromPhotoCollection() {
-    Intent(ACTION_GET_CONTENT).apply {
-        type = "image/*"
-        putExtra(EXTRA_ALLOW_MULTIPLE, false) // 单选
-        putExtra(EXTRA_LOCAL_ONLY, true) // 只限本地
-    }.let { intent ->
-        intent.resolveActivity(mActivity.packageManager)?.let {
-            startActivityForResult(intent, requestTakePhotoFromCollection)
+    /**
+     *  创建临时文件
+     */
+    @SuppressLint("SimpleDateFormat")
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val cachePath = PathUtils.getExternalAppPicturesPath()
+        val storageDir = File(cachePath)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            mCurrentPhotoPath = absolutePath
         }
     }
-}
 
-/**
- *  拍照
- */
-private fun dispatchTakePictureIntent() {
-    Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { intent ->
-        // Ensure that there's a camera activity to handle the intent
-        intent.resolveActivity(mActivity.packageManager)?.let {
-            // Create the File where the photo should go
-            val photoFile: File? = try {
-                createImageFile()
-            } catch (ex: IOException) {
-                view.snackbarError(R.string.sys_error)
-                null
-            }
-            // Continue only if the File was successfully created
-            photoFile?.let { file ->
-                val photoURI: Uri = FileProvider.getUriForFile(
-                    Utils.getApp(),
-                    AppUtils.getAppPackageName() + ".provider",
-                    file
-                )
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                startActivityForResult(intent, requestTakePhotoFromCamera)
+    /**
+     *  从相册选择图片
+     */
+    private fun takeFromPhotoCollection() {
+        Intent(ACTION_GET_CONTENT).apply {
+            type = "image/*"
+            putExtra(EXTRA_ALLOW_MULTIPLE, false) // 单选
+            putExtra(EXTRA_LOCAL_ONLY, true) // 只限本地
+        }.let { intent ->
+            intent.resolveActivity(mActivity.packageManager)?.let {
+                startActivityForResult(intent, requestTakePhotoFromCollection)
             }
         }
     }
-}
 
-override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
-
-    // 裁剪失败
-    if (resultCode == UCrop.RESULT_ERROR) {
-        val cropError = UCrop.getError(data!!)
-        LogUtils.e(cropError)
-        view.snackbarError(R.string.sys_error)
-    }
-
-    if (resultCode != RESULT_OK) return
-
-    when (requestCode) {
-        // 从拍照返回
-        requestTakePhotoFromCamera -> {
-            toCrop(Uri.fromFile(File(mCurrentPhotoPath)))
-
-        }
-        // 从相册返回
-        requestTakePhotoFromCollection -> {
-            data?.data?.let { sourceUri ->
-                toCrop(sourceUri)
+    /**
+     *  拍照
+     */
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { intent ->
+            // Ensure that there's a camera activity to handle the intent
+            intent.resolveActivity(mActivity.packageManager)?.let {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    view.snackbarError(R.string.sys_error)
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.let { file ->
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        Utils.getApp(),
+                        AppUtils.getAppPackageName() + ".provider",
+                        file
+                    )
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(intent, requestTakePhotoFromCamera)
+                }
             }
         }
-        // 裁剪完毕
-        UCrop.REQUEST_CROP -> {
-            viewModel.newHeadImg(mCurrentPhotoPath, this)
-        }
-    }
-}
-
-/**
- *  裁剪图片
- */
-private fun toCrop(sourceUri: Uri) {
-    val tempFile = try {
-        createImageFile()
-    } catch (ex: IOException) {
-        view.snackbarError(R.string.sys_error)
-        null
     }
 
-    // 裁剪后的输出目标
-    Uri.fromFile(tempFile).let { destinationUri ->
-        // UCrop Activity设置
-        UCrop.Options().apply {
-            setToolbarColor(Color.WHITE)
-            setStatusBarColor(Color.TRANSPARENT)
-            setToolbarWidgetColor(Color.BLACK)
-            setHideBottomControls(true)
-        }.let {
-            // 跳转到UCrop Activity
-            UCrop.of(sourceUri, destinationUri)
-                .withOptions(it)
-                .withAspectRatio(1f, 1f)
-                .start(mActivity, this)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // 裁剪失败
+        if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            LogUtils.e(cropError)
+            view.snackbarError(R.string.sys_error)
+        }
+
+        if (resultCode != RESULT_OK) return
+
+        when (requestCode) {
+            // 从拍照返回
+            requestTakePhotoFromCamera -> {
+                toCrop(Uri.fromFile(File(mCurrentPhotoPath)))
+
+            }
+            // 从相册返回
+            requestTakePhotoFromCollection -> {
+                data?.data?.let { sourceUri ->
+                    toCrop(sourceUri)
+                }
+            }
+            // 裁剪完毕
+            UCrop.REQUEST_CROP -> {
+                viewModel.newHeadImg(mCurrentPhotoPath, this)
+            }
         }
     }
-}
+
+    /**
+     *  裁剪图片
+     */
+    private fun toCrop(sourceUri: Uri) {
+        val tempFile = try {
+            createImageFile()
+        } catch (ex: IOException) {
+            view.snackbarError(R.string.sys_error)
+            null
+        }
+
+        // 裁剪后的输出目标
+        Uri.fromFile(tempFile).let { destinationUri ->
+            // UCrop Activity设置
+            UCrop.Options().apply {
+                setToolbarColor(Color.WHITE)
+                setStatusBarColor(Color.TRANSPARENT)
+                setToolbarWidgetColor(Color.BLACK)
+                setHideBottomControls(true)
+            }.let {
+                // 跳转到UCrop Activity
+                UCrop.of(sourceUri, destinationUri)
+                    .withOptions(it)
+                    .withAspectRatio(1f, 1f)
+                    .start(mActivity, this)
+            }
+        }
+    }
 
 }

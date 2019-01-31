@@ -28,8 +28,18 @@ fun View.fitStatusBar() {
  */
 fun View.showSoftInput() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    requestFocus()
-    postDelayed({ imm.showSoftInput(this, InputMethodManager.SHOW_FORCED) }, 200)
+    postDelayed({
+        requestFocus()
+        imm.showSoftInput(this, InputMethodManager.SHOW_FORCED)
+    }, 200)
+}
+
+fun View.showOrHideSoftInput() {
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    postDelayed({
+        requestFocus()
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
+    }, 200)
 }
 
 /**

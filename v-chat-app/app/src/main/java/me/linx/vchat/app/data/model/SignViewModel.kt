@@ -7,6 +7,7 @@ import android.view.View
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.SPUtils
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
@@ -70,7 +71,7 @@ class SignViewModel : ViewModel() {
         userRepository.sign(api, obEmail.get(), obPassword.get()) {
             success = { result ->
                 if (result.code == _OK) {
-                    saveData(result.data)
+                    saveData(result.data, f)
                     startFragment(f, MainFragment())
                 } else {
                     rootView.snackbarFailure(result.msg)
@@ -89,11 +90,12 @@ class SignViewModel : ViewModel() {
         }
     }
 
-    private fun saveData(user: User?) =
+    private fun saveData(user: User?, f : BaseFragment) =
         user?.apply {
-            SPUtils.getInstance().put(AppKeys.currentUserId, bizId ?: 0L)
+            SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
             email = obEmail.get()
             userRepository.save(this)
+            ViewModelProviders.of(f.mActivity).get(UserViewModel::class.java).setup(this)
         }
 
     private fun startFragment(from: BaseFragment, to: BaseFragment) =

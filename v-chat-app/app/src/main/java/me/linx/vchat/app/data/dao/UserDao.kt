@@ -1,17 +1,18 @@
 package me.linx.vchat.app.data.dao
 
 import androidx.room.*
+import io.reactivex.Single
 import me.linx.vchat.app.data.entity.User
 
 @Dao
 interface UserDao {
 
     @Query("SELECT * FROM user WHERE bizId = :userId")
-    suspend fun findByBizId(userId: Long): User?
+    fun findByBizId(userId: Long): Single<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(user: User)
+    fun insert(user: User) : Long
 
     @Delete
-    suspend fun delete(user: User)
+    fun delete(user: User)
 }
