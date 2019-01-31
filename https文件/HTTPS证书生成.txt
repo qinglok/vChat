@@ -1,0 +1,3 @@
+keytool -export -alias vchat -file vchat.cer -keystore vchat_private.jks -storepass 123212321
+
+keytool -genkey -alias vchat -keyalg RSA -keystore vchat_private.jks -validity 3650 -storepass 123212321 -ext san=ip:192.168.0.5
