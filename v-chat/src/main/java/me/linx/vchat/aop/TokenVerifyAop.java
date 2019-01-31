@@ -26,6 +26,7 @@ public class TokenVerifyAop {
         //获取被拦截的方法名
 //        String methodName = method.getName();
 
+        // 局域网内访问速度太快...看不到效果
         try{
             Thread.sleep(500);
         } catch (InterruptedException e) {
