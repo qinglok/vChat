@@ -1,10 +1,8 @@
 package me.linx.vchat.app.data.model
 
 
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
+import android.os.Bundle
 import com.blankj.utilcode.util.SPUtils
-import me.linx.vchat.app.BR
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.entity.User
@@ -14,6 +12,7 @@ import me.linx.vchat.app.net._OK
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.ui.start.StartFragment
+import me.linx.vchat.app.utils.launch
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.utils.snackbarFailure
 import me.linx.vchat.app.utils.snackbarSuccess
@@ -24,7 +23,7 @@ import java.io.File
 
 class UserViewModel : ObservableViewModel() {
     private val userRepository by lazy { UserRepository() }
-    val obUser by lazy { ObservableUser() }
+    var obUser = User()
 
     /**
      *  根据登录状态获取Fragment
@@ -38,13 +37,14 @@ class UserViewModel : ObservableViewModel() {
                 SPUtils.getInstance().getLong(AppKeys.SP_currentUserId, 0L).also { userId ->
                     if (userId > 0L) {
                         // 已登录
-                        userRepository.getBy(userId) {
+                        userRepository.getByAsync(userId).launch {
                             // 数据库异常
-                            if(it == null) {
+                            if (it == null) {
                                 action(SignInFragment())
-                            }else{
+                            } else {
                                 setup(it)
-                                action(MainFragment())
+//                                action(MainFragment())
+                                action(SignInFragment())
                             }
                         }
                     } else {
@@ -59,13 +59,8 @@ class UserViewModel : ObservableViewModel() {
     /**
      * 设置登录用户信息
      */
-    fun setup(user : User) {
-        obUser.apply {
-            bizId = user.bizId ?: 0L
-            token = user.token ?: ""
-            nickName = user.nickName ?: ""
-            headImg = user.headImg ?: ""
-        }
+    fun setup(user: User) {
+        obUser = user
     }
 
     /**
@@ -81,17 +76,17 @@ class UserViewModel : ObservableViewModel() {
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
 
-        userRepository.postHeadImg(obUser.bizId, file) {
+        userRepository.postHeadImg(obUser.bizId ?: 0L, file) {
             success = { result ->
                 if (result.code == _OK) {
                     result.data?.let { path ->
-                        userRepository.getBy(obUser.bizId) {
+                        userRepository.getByAsync(obUser.bizId ?: 0L).launch {
                             it?.apply {
                                 headImg = path
-                                userRepository.save(this)
+                                userRepository.saveAsync(this).launch()
                             }
+                            obUser.headImg = path
                         }
-                        obUser.headImg = path
                     }
                 } else {
                     rootView.snackbarFailure(result.msg)
@@ -119,13 +114,13 @@ class UserViewModel : ObservableViewModel() {
             val loaderDialogFragment = LoaderDialogFragment()
             val rootView = f.view
 
-            userRepository.postNickName(obUser.bizId, name) {
+            userRepository.postNickName(obUser.bizId ?: 0L, name) {
                 success = { result ->
                     if (result.code == _OK) {
-                        userRepository.getBy(obUser.bizId) {
+                        userRepository.getByAsync(obUser.bizId ?: 0L).launch {
                             it?.apply {
                                 nickName = name
-                                userRepository.save(this)
+                                userRepository.saveAsync(this).launch()
                             }
                         }
                         obUser.nickName = name
@@ -148,35 +143,21 @@ class UserViewModel : ObservableViewModel() {
     }
 
     /**
-     *  双向绑定User Model
+     *  被系统销毁时保存User
      */
-    class ObservableUser : BaseObservable() {
-        @get:Bindable
-        var bizId: Long = 0L
-            set(value) {
-                field = value
-                notifyPropertyChanged(BR.token)
-            }
-
-        @get:Bindable
-        var token: String = ""
-            set(value) {
-                field = value
-                notifyPropertyChanged(BR.token)
-            }
-
-        @get:Bindable
-        var nickName: String = ""
-            set(value) {
-                field = value
-                notifyPropertyChanged(BR.nickName)
-            }
-
-        @get:Bindable
-        var headImg: String = ""
-            set(value) {
-                field = value
-                notifyPropertyChanged(BR.headImg)
-            }
+    fun saveInstanceState(outState: Bundle) {
+        outState.putParcelable("user", obUser)
     }
+
+    /**
+     *  恢复时读取User
+     */
+    fun restoreInstanceState(savedInstanceState: Bundle?) {
+        savedInstanceState?.let {
+            savedInstanceState.getParcelable<User>("user")?.let {
+                obUser = it
+            }
+        }
+    }
+
 }

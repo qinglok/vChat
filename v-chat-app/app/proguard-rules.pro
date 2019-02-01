@@ -4,6 +4,7 @@
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 -dontwarn okhttp3.internal.platform.ConscryptPlatform
 
+
 # Gson ------------------------------------------------------------------
 -keepattributes *Annotation*
 -dontwarn sun.misc.**
@@ -14,10 +15,12 @@
 -keep class me.linx.vchat.app.data.entity.** { *; }
 -keep class me.linx.vchat.app.net.JsonResult { *; }
 
+
 # utilcode ---------------------------------------------------------------
 -keep class com.blankj.utilcode.** { *; }
 -keepclassmembers class com.blankj.utilcode.** { *; }
 -dontwarn com.blankj.utilcode.**
+
 
 # Glide --------------------------------------------------------------------
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -29,3 +32,13 @@
 # for DexGuard only
 #-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 
+
+# Kotlin 协程 --------------------------------------------------------------------
+# ServiceLoader support
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+
+# Most of volatile fields are updated with AFU and should not be mangled
+-keepclassmembernames class kotlinx.** {
+    volatile <fields>;
+}

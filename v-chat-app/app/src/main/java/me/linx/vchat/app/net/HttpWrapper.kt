@@ -2,6 +2,7 @@ package me.linx.vchat.app.net
 
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
+import me.linx.vchat.app.App
 import me.linx.vchat.app.constant.AppConfigs
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit

@@ -75,12 +75,13 @@ class MeFragment : BaseFragment(), View.OnClickListener {
     }
 
     private fun showNewNameDialog() {
-        var editText : EditText? = null
+        var editText: EditText? = null
         editText = MaterialAlertDialogBuilder(context).apply {
             setView(R.layout.view_edit_nick_name)
             setTitle(R.string.edit_nick_name)
-            setPositiveButton(R.string.save
-            ) { dialog, which ->
+            setPositiveButton(
+                R.string.save
+            ) { _, _ ->
                 viewModel.newNickName(editText?.text.toString(), this@MeFragment)
             }
             setNegativeButton(R.string.cancel, null)
@@ -94,17 +95,19 @@ class MeFragment : BaseFragment(), View.OnClickListener {
      *  查看头像大图
      */
     private fun showBigImg() {
-        if (viewModel.obUser.headImg.isNotEmpty()) {
-            val intent = Intent(mActivity, HeadImageActivity::class.java)
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                mActivity,
-                iv_head_img,
-                getString(R.string.photo_transition_name)
-            )
+        viewModel.obUser.headImg?.let {
+            if (it.isNotEmpty()) {
+                val intent = Intent(mActivity, HeadImageActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    mActivity,
+                    iv_head_img,
+                    getString(R.string.photo_transition_name)
+                )
 
-            intent.putExtra(AppKeys.KEY_user_head_img, viewModel.obUser.headImg)
+                intent.putExtra(AppKeys.KEY_user_head_img, viewModel.obUser.headImg)
 
-            startActivity(intent, options.toBundle())
+                startActivity(intent, options.toBundle())
+            }
         }
     }
 
@@ -195,8 +198,7 @@ class MeFragment : BaseFragment(), View.OnClickListener {
 
         // 裁剪失败
         if (resultCode == UCrop.RESULT_ERROR) {
-            val cropError = UCrop.getError(data!!)
-            LogUtils.e(cropError)
+//            val cropError = UCrop.getError(data!!)
             view.snackbarError(R.string.sys_error)
         }
 
@@ -206,7 +208,7 @@ class MeFragment : BaseFragment(), View.OnClickListener {
             // 从拍照返回
             requestTakePhotoFromCamera -> {
                 toCrop(Uri.fromFile(File(mCurrentPhotoPath)))
-
+                LogUtils.d(data.toString())
             }
             // 从相册返回
             requestTakePhotoFromCollection -> {
@@ -249,5 +251,16 @@ class MeFragment : BaseFragment(), View.OnClickListener {
             }
         }
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("mCurrentPhotoPath", mCurrentPhotoPath)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        mCurrentPhotoPath = savedInstanceState?.getString("mCurrentPhotoPath")
+    }
+
 
 }

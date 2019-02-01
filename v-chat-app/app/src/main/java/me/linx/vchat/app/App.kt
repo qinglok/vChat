@@ -1,6 +1,5 @@
 package me.linx.vchat.app
 
-//import com.facebook.stetho.Stetho
 import android.app.Application
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.CrashUtils
@@ -9,8 +8,7 @@ import com.blankj.utilcode.util.Utils
 import com.squareup.leakcanary.LeakCanary
 
 @Suppress("unused")
-class App :Application() {
-    private var isDebug: Boolean? = null
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -25,12 +23,12 @@ class App :Application() {
      * 初始化数据库浏览器(Only Chrome)
      */
 //    private fun initStetho() {
-//        Stetho.initialize(
-//            Stetho.newInitializerBuilder(this)
-//                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-//                .build()
-//        )
+//            com.facebook.stetho.Stetho.initialize(
+//                com.facebook.stetho.Stetho.newInitializerBuilder(this)
+//                    .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
+//                    .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
+//                    .build()
+//            )
 //    }
 
     /**
@@ -47,14 +45,15 @@ class App :Application() {
 
     // init it in ur application
     private fun initLog() {
+        val isDebug = AppUtils.isAppDebug()
         val config = LogUtils.getConfig()
-            .setLogSwitch(isDebug())// 设置 log 总开关，包括输出到控制台和文件，默认开
-            .setConsoleSwitch(isDebug())// 设置是否输出到控制台开关，默认开
+            .setLogSwitch(isDebug)// 设置 log 总开关，包括输出到控制台和文件，默认开
+            .setConsoleSwitch(isDebug)// 设置是否输出到控制台开关，默认开
+            .setLog2FileSwitch(false)// 打印 log 时是否存到文件的开关，默认关
             .setGlobalTag(null)// 设置 log 全局标签，默认为空
             // 当全局标签不为空时，我们输出的 log 全部为该 tag，
             // 为空时，如果传入的 tag 为空那就显示类名，否则显示 tag
             .setLogHeadSwitch(true)// 设置 log 头信息开关，默认为开
-            .setLog2FileSwitch(false)// 打印 log 时是否存到文件的开关，默认关
             .setDir("")// 当自定义路径为空时，写入应用的/cache/log/目录中
             .setFilePrefix("")// 当文件前缀为空时，默认为"util"，即写入文件为"util-yyyy-MM-dd.txt"
             .setBorderSwitch(true)// 输出日志是否带边框开关，默认开
@@ -63,7 +62,7 @@ class App :Application() {
             .setFileFilter(LogUtils.V)// log 文件过滤器，和 logcat 过滤器同理，默认 Verbose
             .setStackDeep(1)// log 栈深度，默认为 1
             .setStackOffset(0)// 设置栈偏移，比如二次封装的话就需要设置，默认为 0
-            .setSaveDays(3)// 设置日志可保留天数，默认为 -1 表示无限时长
+//            .setSaveDays(3)// 设置日志可保留天数，默认为 -1 表示无限时长
             // 新增 ArrayList 格式化器，默认已支持 Array, Throwable, Bundle, Intent 的格式化输出
             .addFormatter(object : LogUtils.IFormatter<ArrayList<*>>() {
                 override fun format(list: ArrayList<*>?): String {
@@ -82,10 +81,5 @@ class App :Application() {
         } catch (e: SecurityException) {
             LogUtils.e(e)
         }
-    }
-
-    private fun isDebug(): Boolean {
-        if (isDebug == null) isDebug = AppUtils.isAppDebug()
-        return isDebug!!
     }
 }

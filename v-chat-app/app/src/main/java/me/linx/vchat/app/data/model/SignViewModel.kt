@@ -17,6 +17,7 @@ import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.net._OK
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.utils.hideSoftInput
+import me.linx.vchat.app.utils.launch
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.utils.snackbarFailure
 import me.linx.vchat.app.widget.base.BaseFragment
@@ -94,8 +95,9 @@ class SignViewModel : ViewModel() {
         user?.apply {
             SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
             email = obEmail.get()
-            userRepository.save(this)
-            ViewModelProviders.of(f.mActivity).get(UserViewModel::class.java).setup(this)
+            userRepository.saveAsync(this).launch {
+                ViewModelProviders.of(f.mActivity).get(UserViewModel::class.java).setup(this)
+            }
         }
 
     private fun startFragment(from: BaseFragment, to: BaseFragment) =

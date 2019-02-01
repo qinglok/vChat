@@ -2,6 +2,7 @@ package me.linx.vchat.app
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -31,6 +32,16 @@ class AppActivity : AppCompatActivity() {
                     .commit()
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.saveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        viewModel.restoreInstanceState(savedInstanceState)
     }
 
     override fun onBackPressed() {
