@@ -29,7 +29,7 @@ public class JwtUtils {
         return JWT.create()
                 .withHeader(header)
                 .withClaim("userId", userId)
-                .withClaim("deviceId", deviceId)
+//                .withClaim("deviceId", deviceId)
 //                .withExpiresAt(instance.getTime())
                 .sign(algorithm);
     }

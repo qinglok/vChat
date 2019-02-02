@@ -43,6 +43,7 @@ open class ObservableViewModel : ViewModel(), Observable {
             callbacks.notifyCallbacks(this, 0, null)
     }
 
+    @Suppress("unused")
     fun notifyPropertyChanged(fieldId: Int) {
         callbacks.notifyCallbacks(this, fieldId, null)
     }

@@ -34,4 +34,22 @@ public class UserController extends BaseBizController{
         }
     }
 
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult logout(HttpServletRequest request,@ModelAttribute NickNameModel model) {
+        try {
+            return JsonResult.failure(CodeMap.ErrorTokenFailed);
+//            return userService.editNickName(model, getCurrentUserId());
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return JsonResult.failure(CodeMap.ErrorSys);
+        }
+    }
+
+    @RequestMapping(value = "/loginTimeoutTest", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResult loginTimeoutTest(@ModelAttribute NickNameModel model) {
+        return JsonResult.failure(CodeMap.ErrorTokenFailed);
+    }
+
 }

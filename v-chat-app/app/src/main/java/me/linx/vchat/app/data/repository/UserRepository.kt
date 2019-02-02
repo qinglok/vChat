@@ -13,8 +13,12 @@ import me.linx.vchat.app.net.post
 import me.linx.vchat.app.utils.launch
 import java.io.File
 
-class UserRepository {
+class UserRepository private constructor(){
     private val userDao by lazy { AppDatabase.db.userDao() }
+
+    companion object {
+        val instance by lazy { UserRepository()  }
+    }
 
     fun saveAsync(user: User) =
         GlobalScope.async { userDao.insert(user) }

@@ -2,12 +2,12 @@ package me.linx.vchat.app.net
 
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
-import me.linx.vchat.app.App
 import me.linx.vchat.app.constant.AppConfigs
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 object HttpWrapper {
+    val httpTasks by lazy { hashMapOf<Int, ArrayList<HttpTask>>() }
 
     val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -33,6 +33,19 @@ object HttpWrapper {
 
     private fun OkHttpClient.Builder.addInterceptor() = apply {
         if (AppUtils.isAppDebug()) addInterceptor(HttpLogInterceptor())
+    }
+
+    fun addHttpTask(code: Int, task: HttpTask) {
+        httpTasks[code].apply {
+            if (this == null) {
+                arrayListOf<HttpTask>().apply {
+                    add(task)
+                    httpTasks[code] = this
+                }
+            } else {
+                add(task)
+            }
+        }
     }
 
 }

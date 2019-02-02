@@ -63,7 +63,7 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
 
                             viewModel.appStartRoute{
                                 fragmentManager?.beginTransaction()
-                                    ?.replace(id, it)
+                                    ?.replace(id, it, it::class.java.name)
                                     ?.commit()
                             }
                         }

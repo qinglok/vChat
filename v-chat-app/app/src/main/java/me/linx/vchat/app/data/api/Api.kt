@@ -14,4 +14,8 @@ object Api{
     val editNickName by lazy { "user/editNickName" }
     // 修改头像
     val editHeadImg by lazy { "biz/upload" }
+    // 退出登录
+    val logout by lazy { "user/logout" }
+    // 登录超时测试
+    val loginTimeoutTest by lazy { "user/loginTimeoutTest" }
 }

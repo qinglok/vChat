@@ -1,11 +1,17 @@
 package me.linx.vchat.app
 
 import android.app.Application
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.CrashUtils
-import com.blankj.utilcode.util.LogUtils
-import com.blankj.utilcode.util.Utils
+import androidx.fragment.app.FragmentManager
+import com.blankj.utilcode.util.*
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.squareup.leakcanary.LeakCanary
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import me.linx.vchat.app.constant.CodeMap
+import me.linx.vchat.app.net.HttpTask
+import me.linx.vchat.app.net.HttpWrapper
+import me.linx.vchat.app.ui.sign.SignInFragment
 
 @Suppress("unused")
 class App : Application() {
@@ -16,7 +22,35 @@ class App : Application() {
         initLog()
         initCrash()
         initLeakCanary()
-//        initStetho()
+        initHttpTask()
+        //        initStetho()
+    }
+
+    /**
+     *  添加登录超时处理
+     */
+    private fun initHttpTask() {
+        HttpWrapper.addHttpTask(CodeMap.ErrorTokenFailed, object : HttpTask {
+            override fun handle() {
+                ActivityUtils.getTopActivity()?.let { activity ->
+                    if (activity is AppActivity){
+                        GlobalScope.launch (Dispatchers.Main){
+                            MaterialAlertDialogBuilder(activity)
+                                .setTitle(R.string.login_timeout)
+                                .setMessage(R.string.login_first)
+                                .setOnDismissListener {
+                                    activity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                                    activity.supportFragmentManager.beginTransaction()
+                                        .replace(R.id.fragment_container, SignInFragment(), SignInFragment::class.java.name)
+                                        .commit()
+                                }
+                                .setPositiveButton(R.string.ok, null)
+                                .show()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     /**

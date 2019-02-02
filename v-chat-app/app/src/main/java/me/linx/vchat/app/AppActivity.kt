@@ -2,7 +2,6 @@ package me.linx.vchat.app
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
@@ -28,7 +27,7 @@ class AppActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             viewModel.appStartRoute {
                 supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, it)
+                    .add(R.id.fragment_container, it, it::class.java.name)
                     .commit()
             }
         }

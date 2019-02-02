@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.SPUtils
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
+import me.linx.vchat.app.constant.CodeMap
 import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.data.repository.UserRepository
-import me.linx.vchat.app.net._OK
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.utils.hideSoftInput
 import me.linx.vchat.app.utils.launch
@@ -24,7 +24,6 @@ import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.loader.LoaderDialogFragment
 
 class SignViewModel : ViewModel() {
-    private val userRepository by lazy { UserRepository() }
     private var posting = false
 
     // 记录事件事件，防止频繁触发
@@ -68,10 +67,11 @@ class SignViewModel : ViewModel() {
 
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
+        val userRepository = UserRepository.instance
 
         userRepository.sign(api, obEmail.get(), obPassword.get()) {
             success = { result ->
-                if (result.code == _OK) {
+                if (result.code == CodeMap.Yes) {
                     saveData(result.data, f)
                     startFragment(f, MainFragment())
                 } else {
@@ -95,7 +95,7 @@ class SignViewModel : ViewModel() {
         user?.apply {
             SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
             email = obEmail.get()
-            userRepository.saveAsync(this).launch {
+            UserRepository.instance.saveAsync(this).launch {
                 ViewModelProviders.of(f.mActivity).get(UserViewModel::class.java).setup(this)
             }
         }
@@ -113,7 +113,7 @@ class SignViewModel : ViewModel() {
                         }
 
                         fm.beginTransaction()
-                            .replace(from.id, to)
+                            .replace(from.id, to, to::class.java.name)
                             .commit()
                     }
                 }

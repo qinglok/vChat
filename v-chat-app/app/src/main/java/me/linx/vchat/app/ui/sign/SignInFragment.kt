@@ -15,7 +15,7 @@ import me.linx.vchat.app.widget.base.BaseFragment
 
 class SignInFragment : BaseFragment(), View.OnClickListener {
     private val viewModel by lazy {
-        ViewModelProviders.of(mActivity).get(SignViewModel::class.java)
+        ViewModelProviders.of(this).get(SignViewModel::class.java)
     }
 
     override fun setLayout() = R.layout.fragment_sign_in
@@ -43,7 +43,7 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
                         R.anim.alpha_in,
                         R.anim.scale_alpha_out
                     )
-                    ?.replace(id, SignUpFragment())
+                    ?.replace(id, SignUpFragment(), SignUpFragment::class.java.name)
                     ?.addToBackStack(SignUpFragment::class.java.name)
                     ?.commit()
             }

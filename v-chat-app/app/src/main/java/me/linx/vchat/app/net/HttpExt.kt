@@ -12,9 +12,6 @@ import java.io.File
 import java.io.IOException
 import java.net.URLConnection.getFileNameMap
 
-@Suppress("ObjectPropertyName")
-const val _OK = 0
-
 fun String.http(withOutBaseUrl: Boolean = false) = RequestWrapper(this, withOutBaseUrl)
 
 inline fun <reified T> RequestWrapper.get(init: HttpCallback<T>.() -> Unit) = buildGetRequest().call(init)
@@ -40,7 +37,17 @@ inline fun <reified T> Request.call(init: HttpCallback<T>.() -> Unit): Unit =
 
                 if (throwable == null && response != null) {
                     if (response.isSuccessful) {
-                        Gson().fromJson<T>(response.body()?.charStream(), object : TypeToken<T>() {}.type)
+                        val t = Gson().fromJson<T>(response.body()?.charStream(), object : TypeToken<T>() {}.type)
+
+                        if (t is JsonResult<*> && HttpWrapper.httpTasks.containsKey(t.code)){
+                            HttpWrapper.httpTasks[t.code]?.forEach { task ->
+                                task.handle()
+                            }
+                            null
+                        }else{
+                            t
+                        }
+
                     } else {
                         throwable = IOException("request to ${url()} is fail; http code: ${response.code()}!")
                         null

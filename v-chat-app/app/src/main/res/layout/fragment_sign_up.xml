@@ -14,8 +14,7 @@
                 layout="@layout/toolbar_default"
                 android:id="@+id/app_bar"
                 bind:layout_constraintTop_toTopOf="parent"
-                bind:title="@{@string/sign_up}"
-                bind:showIcon="@{true}"/>
+                bind:title="@{@string/sign_up}"/>
 
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_email"

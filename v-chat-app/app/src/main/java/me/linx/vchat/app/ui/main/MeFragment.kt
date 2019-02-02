@@ -8,8 +8,12 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
@@ -37,7 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class MeFragment : BaseFragment(), View.OnClickListener {
+class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClickListener {
     private val viewModel by lazy {
         ViewModelProviders.of(mActivity).get(UserViewModel::class.java)
     }
@@ -48,16 +52,48 @@ class MeFragment : BaseFragment(), View.OnClickListener {
 
     override fun setLayout() = R.layout.fragment_me
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun initView(view: View, savedInstanceState: Bundle?) {
         DataBindingUtil.bind<FragmentMeBinding>(view)?.viewModel = viewModel
 
         view.toolbar.fitStatusBar()
+        mActivity.setSupportActionBar(view.toolbar)
 
         view.iv_head_img.transitionName = getString(R.string.photo_transition_name)
 
         view.iv_head_img.setOnClickListener(this)
         view.gl_head_img.setOnClickListener(this)
         view.gl_nick_name.setOnClickListener(this)
+
+        view.toolbar.setOnMenuItemClickListener(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_me_options, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean {
+        item?.itemId?.let {
+            when (it) {
+                R.id.logout -> {
+                    viewModel.logout()
+                    return true
+                }
+                R.id.login_timeout_test -> {
+                    viewModel.loginTimeoutTest()
+                }
+
+                else -> {
+                    return false
+                }
+            }
+        }
+        return false
     }
 
     override fun onClick(v: View?) {
@@ -261,6 +297,5 @@ class MeFragment : BaseFragment(), View.OnClickListener {
         super.onViewStateRestored(savedInstanceState)
         mCurrentPhotoPath = savedInstanceState?.getString("mCurrentPhotoPath")
     }
-
 
 }

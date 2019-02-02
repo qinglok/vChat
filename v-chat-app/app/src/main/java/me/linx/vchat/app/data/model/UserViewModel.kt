@@ -5,10 +5,14 @@ import android.os.Bundle
 import com.blankj.utilcode.util.SPUtils
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
+import me.linx.vchat.app.constant.CodeMap
+import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.data.model.utils.ObservableViewModel
 import me.linx.vchat.app.data.repository.UserRepository
-import me.linx.vchat.app.net._OK
+import me.linx.vchat.app.net.JsonResult
+import me.linx.vchat.app.net.http
+import me.linx.vchat.app.net.post
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.ui.start.StartFragment
@@ -22,7 +26,6 @@ import java.io.File
 
 
 class UserViewModel : ObservableViewModel() {
-    private val userRepository by lazy { UserRepository() }
     var obUser = User()
 
     /**
@@ -37,14 +40,14 @@ class UserViewModel : ObservableViewModel() {
                 SPUtils.getInstance().getLong(AppKeys.SP_currentUserId, 0L).also { userId ->
                     if (userId > 0L) {
                         // 已登录
-                        userRepository.getByAsync(userId).launch {
+                        UserRepository.instance.getByAsync(userId).launch {
                             // 数据库异常
                             if (it == null) {
                                 action(SignInFragment())
                             } else {
                                 setup(it)
-//                                action(MainFragment())
-                                action(SignInFragment())
+                                action(MainFragment())
+//                                action(SignInFragment())
                             }
                         }
                     } else {
@@ -75,10 +78,11 @@ class UserViewModel : ObservableViewModel() {
 
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
+        val userRepository = UserRepository.instance
 
         userRepository.postHeadImg(obUser.bizId ?: 0L, file) {
             success = { result ->
-                if (result.code == _OK) {
+                if (result.code == CodeMap.Yes) {
                     result.data?.let { path ->
                         userRepository.getByAsync(obUser.bizId ?: 0L).launch {
                             it?.apply {
@@ -113,10 +117,11 @@ class UserViewModel : ObservableViewModel() {
         } else {
             val loaderDialogFragment = LoaderDialogFragment()
             val rootView = f.view
+            val userRepository = UserRepository.instance
 
             userRepository.postNickName(obUser.bizId ?: 0L, name) {
                 success = { result ->
-                    if (result.code == _OK) {
+                    if (result.code == CodeMap.Yes) {
                         userRepository.getByAsync(obUser.bizId ?: 0L).launch {
                             it?.apply {
                                 nickName = name
@@ -158,6 +163,20 @@ class UserViewModel : ObservableViewModel() {
                 obUser = it
             }
         }
+    }
+
+    /**
+     *  退出登录
+     */
+    fun logout() {
+
+    }
+
+    /**
+     *  登录超时测试
+     */
+    fun loginTimeoutTest() {
+        Api.loginTimeoutTest.http().post<JsonResult<Unit>> {  }
     }
 
 }

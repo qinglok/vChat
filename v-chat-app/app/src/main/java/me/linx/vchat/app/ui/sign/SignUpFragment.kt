@@ -17,7 +17,9 @@ import me.linx.vchat.app.widget.base.BaseFragment
 
 class SignUpFragment : BaseFragment() {
     private val viewModel by lazy {
-        ViewModelProviders.of(mActivity).get(SignViewModel::class.java)
+        fragmentManager?.findFragmentByTag(SignInFragment::class.java.name).let {
+            ViewModelProviders.of(it ?: this).get(SignViewModel::class.java)
+        }
     }
 
     override fun setLayout() = R.layout.fragment_sign_up
@@ -26,6 +28,8 @@ class SignUpFragment : BaseFragment() {
         DataBindingUtil.bind<FragmentSignUpBinding>(view)?.viewModel = viewModel
 
         view.toolbar.fitStatusBar()
+        mActivity.setSupportActionBar(view.toolbar)
+        mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         view.toolbar.setNavigationOnClickListener {
             view.hideSoftInput()
