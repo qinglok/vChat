@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Aspect
 @Order(2)
@@ -43,25 +40,50 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
     public void onApplicationEvent(ContextRefreshedEvent event) {
         // 根容器为Spring容器
         if (event.getApplicationContext().getParent() == null) {
+            // 所有Service
             Map<String, Object> beans = event.getApplicationContext().getBeansWithAnnotation(Service.class);
+
             for (Object bean : beans.values()) {
-                Method[] methods = bean.getClass().getDeclaredMethods();
-                for (Method method : methods) {
-                    UploadAction action = method.getAnnotation(UploadAction.class);
-                    if (action != null) {
-                        String actionName = action.action();
-                        if (StringUtils.isNotTrimEmpty(actionName)) {
-                            List<Handler> handlerList = map.get(actionName);
-                            if (handlerList == null) {
-                                handlerList = new ArrayList<>();
-                                handlerList.add(new Handler(bean, method));
-                                map.put(actionName, handlerList);
-                            } else {
-                                handlerList.add(new Handler(bean, method));
+                String fullName = bean.getClass().getName();
+                String name = fullName.substring(0, fullName.indexOf("Service") + "Service".length());
+                try {
+                    //Spring代理类无法获取方法上的注解，这里通过反射从真实类中获取
+                    Class<?> aClass = Objects.requireNonNull(ClassLoader.getSystemClassLoader()).loadClass(name);
+
+                    // 所有方法
+                    Method[] methods = aClass.getDeclaredMethods();
+                    for (Method method : methods) {
+                        UploadAction uploadAction = method.getDeclaredAnnotation(UploadAction.class);
+
+                        if (uploadAction != null) {
+                            String actionName = uploadAction.action();
+                            if (StringUtils.isNotTrimEmpty(actionName)) {
+                                List<Handler> handlerList = map.get(actionName);
+
+                                Method realMethod = null;
+                                for (Method m : bean.getClass().getDeclaredMethods()) {
+                                    if (m.getName().equals(method.getName())){
+                                        realMethod = m;
+                                        break;
+                                    }
+                                }
+
+                                if (handlerList == null) {
+                                    handlerList = new ArrayList<>();
+
+                                    handlerList.add(new Handler(bean, realMethod));
+                                    map.put(actionName, handlerList);
+                                } else {
+                                    handlerList.add(new Handler(bean, realMethod));
+                                }
                             }
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+
             }
         }
     }
@@ -98,7 +120,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                                 for (Handler handler : handlerList) {
                                     Object bean = handler.bean;
                                     Method method = handler.method;
-
+                                    method.setAccessible(true); //不需要安全检查
                                     result = method.invoke(bean, fileName, userId);
                                 }
                             }
@@ -115,7 +137,6 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                 result = point.proceed();
         } catch (Throwable e) {
             e.printStackTrace();
-//            result = new JsonResult(CodeMap.ErrorSys);
         }
 
         return result;

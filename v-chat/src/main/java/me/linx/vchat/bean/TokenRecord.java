@@ -2,6 +2,7 @@ package me.linx.vchat.bean;
 
 import javax.persistence.*;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "token_record")
 public class TokenRecord extends Bean{

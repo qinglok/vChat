@@ -25,7 +25,7 @@ public class UserController extends BaseBizController{
 
     @RequestMapping(value = "/editNickName", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult editNickName(HttpServletRequest request,@ModelAttribute NickNameModel model) {
+    public JsonResult editNickName(@SuppressWarnings("unused") HttpServletRequest request, @ModelAttribute NickNameModel model) {
         try {
             return userService.editNickName(model, getCurrentUserId());
         } catch (IllegalStateException e) {
@@ -34,9 +34,20 @@ public class UserController extends BaseBizController{
         }
     }
 
+    @RequestMapping(value = "/getUserProfile", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResult getUserProfile(@SuppressWarnings("unused") HttpServletRequest request, Long updateTime) {
+        try {
+            return userService.getUserProfile(getCurrentUserId(), updateTime);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return JsonResult.failure(CodeMap.ErrorSys);
+        }
+    }
+
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult logout(HttpServletRequest request) {
+    public JsonResult logout(@SuppressWarnings("unused") HttpServletRequest request) {
         try {
             return userService.handleLogout(getCurrentUserId());
         } catch (IllegalStateException e) {

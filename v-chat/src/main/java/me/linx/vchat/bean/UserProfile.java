@@ -2,6 +2,7 @@ package me.linx.vchat.bean;
 
 import javax.persistence.*;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "user_profile")
 public class UserProfile extends Bean {
@@ -15,7 +16,7 @@ public class UserProfile extends Bean {
     @Column(name = "secret_answer", length = 100, columnDefinition = "varchar(100) DEFAULT '' COMMENT  '密保答案'")
     private String secretAnswer ;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "head_img_file_id")
     private FileWrapper headImg;
 

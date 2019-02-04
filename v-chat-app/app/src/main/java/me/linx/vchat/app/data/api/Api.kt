@@ -20,5 +20,7 @@ object Api{
     val logout by lazy { "user/logout" }
     // 登录超时测试
     val loginTimeoutTest by lazy { "user/loginTimeoutTest" }
+    // 获取用户最新信息
+    val getUserProfile by lazy { "user/getUserProfile" }
 
 }

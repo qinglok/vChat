@@ -2,6 +2,7 @@ package me.linx.vchat.model.validation;
 
 import javax.validation.constraints.*;
 
+@SuppressWarnings("unused")
 public class LoginModel {
     @NotNull(message = "邮箱不能为空")
     @NotEmpty(message = "邮箱不能为空")

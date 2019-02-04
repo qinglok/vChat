@@ -6,11 +6,12 @@ import androidx.annotation.NonNull
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import me.linx.vchat.app.BR
 
-@Entity
-class User() : BaseObservable(),Parcelable {
+@Entity(indices = arrayOf(Index(value = arrayOf("bizId"), unique = true)))
+class User() : BaseObservable(), Parcelable {
     @PrimaryKey(autoGenerate = true)
     @NonNull
     var id: Long = 0
@@ -53,14 +54,14 @@ class User() : BaseObservable(),Parcelable {
     var createTime: Long? = null
     var updateTime: Long? = null
 
-    constructor(parcel: Parcel) : this(){
-        id =  parcel.readLong()
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readLong()
         bizId = parcel.readValue(Long::class.java.classLoader) as? Long
-        email= parcel.readString()
-        token= parcel.readString()
+        email = parcel.readString()
+        token = parcel.readString()
         nickName = parcel.readString()
-        headImg= parcel.readString()
-        createTime =  parcel.readValue(Long::class.java.classLoader) as? Long
+        headImg = parcel.readString()
+        createTime = parcel.readValue(Long::class.java.classLoader) as? Long
         updateTime = parcel.readValue(Long::class.java.classLoader) as? Long
     }
 

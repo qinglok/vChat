@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@SuppressWarnings("unused")
 public class NickNameModel {
     @NotNull(message = "昵称不能为空")
     @NotEmpty(message = "昵称不能为空")

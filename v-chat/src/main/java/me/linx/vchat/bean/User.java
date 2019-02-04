@@ -7,6 +7,7 @@ import java.util.Set;
 /**
  * linx 2018/9/24 21:04
  */
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "user")
 public class User extends Bean {

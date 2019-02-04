@@ -5,6 +5,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@SuppressWarnings("unused")
 public class RegisterModel {
     @NotNull(message = "邮箱不能为空")
     @NotEmpty(message = "邮箱不能为空")

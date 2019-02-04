@@ -6,12 +6,10 @@ import me.linx.vchat.app.data.entity.User
 @Dao
 interface UserDao {
 
-    @Query("SELECT * FROM user WHERE bizId = :userId")
-    fun findByBizId(userId: Long): User?
+    @Query("SELECT * FROM user WHERE bizId = :bizId")
+    fun findByBizId(bizId: Long): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(user: User) : Long?
 
-    @Delete
-    fun delete(user: User)
 }

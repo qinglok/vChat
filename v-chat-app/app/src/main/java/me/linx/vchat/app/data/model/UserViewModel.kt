@@ -81,7 +81,7 @@ class UserViewModel : ObservableViewModel() {
         val rootView = f.view
         val userRepository = UserRepository.instance
 
-        userRepository.postHeadImg(obUser.bizId ?: 0L, file) {
+        userRepository.postHeadImg(obUser, file) {
             success = { result ->
                 if (result.code == CodeMap.Yes) {
                     result.data?.let { path ->
@@ -120,7 +120,7 @@ class UserViewModel : ObservableViewModel() {
             val rootView = f.view
             val userRepository = UserRepository.instance
 
-            userRepository.postNickName(obUser.bizId ?: 0L, name) {
+            userRepository.postNickName(obUser, name) {
                 success = { result ->
                     if (result.code == CodeMap.Yes) {
                         userRepository.getByAsync(obUser.bizId ?: 0L).launch {
@@ -173,7 +173,7 @@ class UserViewModel : ObservableViewModel() {
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
 
-        UserRepository.instance.logout(obUser.bizId?:0L){
+        UserRepository.instance.logout(obUser) {
             success = { result ->
                 if (result.code == CodeMap.Yes) {
                     SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
@@ -202,7 +202,40 @@ class UserViewModel : ObservableViewModel() {
      *  登录超时测试
      */
     fun loginTimeoutTest() {
-        Api.loginTimeoutTest.http().post<JsonResult<Unit>> {  }
+        Api.loginTimeoutTest.http().post<JsonResult<Unit>> { }
+    }
+
+    private var lastEventTime: Long = 0L
+    private val minEventTime = 1000L * 3
+
+    /**
+     *  更新用户信息
+     */
+    fun updateUserInfo() {
+        if (checkEventTime()) {
+            UserRepository.instance.getUserProfile(obUser){
+                success = { result ->
+                    if (result.code == CodeMap.Yes) {
+                        result.data?.let { info ->
+                            obUser.nickName = info.nickName
+                            obUser.headImg = info.headImg
+                            obUser.updateTime = info.updateTime
+                            UserRepository.instance.saveAsync(obUser).launch()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun checkEventTime(): Boolean {
+        return System.currentTimeMillis().let {
+            (it - lastEventTime > minEventTime).also { isPass ->
+                if (isPass) {
+                    lastEventTime = it
+                }
+            }
+        }
     }
 
 }

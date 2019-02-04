@@ -5,6 +5,7 @@ import me.linx.vchat.constants.CodeMap;
 
 import javax.validation.constraints.NotNull;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class JsonResult {
     private Integer code;
     private String msg;

@@ -4,6 +4,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@SuppressWarnings("unused")
 public class LoginAndVerifySecretModel extends LoginModel{
 
     @NotNull(message = "密保答案不能为空")

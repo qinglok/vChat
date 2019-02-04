@@ -6,10 +6,7 @@ import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.api.UploadAction
 import me.linx.vchat.app.data.db.AppDatabase
 import me.linx.vchat.app.data.entity.User
-import me.linx.vchat.app.net.HttpCallback
-import me.linx.vchat.app.net.JsonResult
-import me.linx.vchat.app.net.http
-import me.linx.vchat.app.net.post
+import me.linx.vchat.app.net.*
 import me.linx.vchat.app.utils.launch
 import java.io.File
 import java.util.*
@@ -40,6 +37,21 @@ class UserRepository private constructor() {
             )
             .post(init)
 
+    fun loginAndVerifySecret(
+        email: String?,
+        password: String?,
+        answer: String?,
+        init: HttpCallback<JsonResult<User>>.() -> Unit
+    ) =
+        Api.loginAndVerifySecret.http()
+            .params(
+                "email" to email,
+                "password" to password,
+                "answer" to answer,
+                "deviceId" to DeviceUtils.getAndroidID() + UUID.randomUUID().toString() + System.currentTimeMillis().toString()
+            )
+            .post(init)
+
     fun register(
         email: String?,
         password: String?,
@@ -57,49 +69,36 @@ class UserRepository private constructor() {
             )
             .post(init)
 
-    fun postNickName(userId: Long, name: String?, init: HttpCallback<JsonResult<String>>.() -> Unit) =
-        getByAsync(userId).launch {
+    fun postNickName(user :User, name: String?, init: HttpCallback<JsonResult<String>>.() -> Unit) =
             Api.editNickName.http()
-                .headers("token" to it?.token)
+                .headers("token" to user.token)
                 .params("nickName" to name)
                 .post(init)
-        }
 
-    fun postHeadImg(userId: Long, file: File, init: HttpCallback<JsonResult<String>>.() -> Unit) =
-        getByAsync(userId).launch {
+    fun postHeadImg(user :User, file: File, init: HttpCallback<JsonResult<String>>.() -> Unit) =
             Api.editHeadImg.http()
                 .headers(
-                    "token" to it?.token,
+                    "token" to user.token,
                     "action" to UploadAction.editHeadImage
                 )
                 .params("file" to file)
                 .post(init)
-        }
 
-
-    fun logout(userId: Long, init: HttpCallback<JsonResult<Unit>>.() -> Unit) {
-        getByAsync(userId).launch {
+    fun logout(user :User, init: HttpCallback<JsonResult<Unit>>.() -> Unit) {
             Api.logout.http()
                 .headers(
-                    "token" to it?.token
+                    "token" to user.token
                 )
                 .post(init)
-        }
     }
 
-    fun loginAndVerifySecret(
-        email: String?,
-        password: String?,
-        answer: String?,
-        init: HttpCallback<JsonResult<User>>.() -> Unit
-    ) =
-        Api.loginAndVerifySecret.http()
-            .params(
-                "email" to email,
-                "password" to password,
-                "answer" to answer,
-                "deviceId" to DeviceUtils.getAndroidID() + UUID.randomUUID().toString() + System.currentTimeMillis().toString()
+    fun getUserProfile(user :User, init: HttpCallback<JsonResult<User>>.() -> Unit) {
+        Api.getUserProfile.http()
+            .headers(
+                "token" to user.token
             )
-            .post(init)
+            .params("updateTime" to user.updateTime)
+            .get(init)
+    }
 
 }

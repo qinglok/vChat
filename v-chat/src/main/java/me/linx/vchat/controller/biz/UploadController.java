@@ -29,7 +29,7 @@ public class UploadController extends BaseBizController{
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult upload(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+    public JsonResult upload(@SuppressWarnings("unused") HttpServletRequest request, @RequestParam("file") MultipartFile file) {
         try {
             return fileWrapperService.handleFile(file);
         } catch (IllegalStateException e) {

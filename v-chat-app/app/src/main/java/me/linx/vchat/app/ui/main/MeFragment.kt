@@ -69,6 +69,13 @@ class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClick
         }
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(isVisibleToUser && !isDetached && isAdded){
+            viewModel.updateUserInfo()
+        }
+    }
+
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         item?.itemId?.let {
             when (it) {

@@ -22,7 +22,7 @@ class App : Application() {
         Utils.init(this)
         initLog()
         initCrash()
-//        initLeakCanary()
+        initLeakCanary()
         initHttpTask()
         initStetho()
     }

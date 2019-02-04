@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "9e17d61f450856e41f5e94172e32ba44",
+    "identityHash": "0a872245c4f8ffdf97a6e8b209ccdc4d",
     "entities": [
       {
         "tableName": "User",
@@ -63,14 +63,23 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_User_bizId",
+            "unique": true,
+            "columnNames": [
+              "bizId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_User_bizId` ON `${TABLE_NAME}` (`bizId`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"9e17d61f450856e41f5e94172e32ba44\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0a872245c4f8ffdf97a6e8b209ccdc4d\")"
     ]
   }
 }

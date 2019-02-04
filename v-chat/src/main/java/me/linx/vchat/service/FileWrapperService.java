@@ -4,6 +4,7 @@ import me.linx.vchat.bean.FileWrapper;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.repository.FileWrapperRepository;
+import me.linx.vchat.utils.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,9 @@ public class FileWrapperService {
 
         // 原版文件名
         String originalFilename = file.getOriginalFilename();
+        if (StringUtils.isTrimEmpty(originalFilename)){
+            originalFilename = "";
+        }
         // 保存路径
         String path = uploadDir;
         // 后缀名
@@ -56,6 +60,7 @@ public class FileWrapperService {
         File dest = new File(path, fileName);
         // 检测是否存在目录
         if (!dest.getParentFile().exists()) {
+            //noinspection ResultOfMethodCallIgnored
             dest.getParentFile().mkdirs();// 新建文件夹
         }
         try {

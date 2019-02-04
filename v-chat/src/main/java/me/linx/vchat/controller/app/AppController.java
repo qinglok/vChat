@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-
 @Controller
 public class AppController {
 
@@ -32,9 +30,9 @@ public class AppController {
 
     @RequestMapping(value = "app/login", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult login(@ModelAttribute LoginModel loginModel, String deviceId, HttpServletRequest request) {
+    public JsonResult login(@ModelAttribute LoginModel loginModel, String deviceId) {
         try {
-            return userService.handleLogin(loginModel, deviceId, request);
+            return userService.handleLogin(loginModel, deviceId);
         } catch (Exception e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);
@@ -43,7 +41,7 @@ public class AppController {
 
     @RequestMapping(value = "app/loginAndVerifySecret", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult loginAndVerifySecret(HttpServletRequest request,@ModelAttribute LoginAndVerifySecretModel model) {
+    public JsonResult loginAndVerifySecret(@ModelAttribute LoginAndVerifySecretModel model) {
         try {
             return userService.loginAndVerifySecret(model);
         } catch (IllegalStateException e) {
@@ -54,9 +52,9 @@ public class AppController {
 
     @RequestMapping(value = "app/register", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult register(@ModelAttribute RegisterModel registerModel, String deviceId, HttpServletRequest request) {
+    public JsonResult register(@ModelAttribute RegisterModel registerModel, String deviceId) {
         try {
-            return userService.handleRegister(registerModel, deviceId, request);
+            return userService.handleRegister(registerModel, deviceId);
         } catch (Exception e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);

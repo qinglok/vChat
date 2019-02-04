@@ -51,9 +51,8 @@ class SignViewModel : ViewModel() {
 
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
-        val userRepository = UserRepository.instance
 
-        userRepository.register(obEmail.get(), obPassword.get(), secretQuestion, secretAnswer) {
+        UserRepository.instance.register(obEmail.get(), obPassword.get(), secretQuestion, secretAnswer) {
             success = { result ->
                 if (result.code == CodeMap.Yes) {
                     saveData(result.data, f)
@@ -135,7 +134,7 @@ class SignViewModel : ViewModel() {
             }.show()
 
             with(dialog) {
-                findViewById<TextView>(R.id.tv_secret_question)?.setText(msg)
+                findViewById<TextView>(R.id.tv_secret_question)?.text = msg
                 etSecretAnswer = findViewById(R.id.et_secret_answer)
             }
         }
