@@ -1,5 +1,7 @@
 package me.linx.vchat.app.data.model.utils
 
+import android.opengl.Visibility
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import me.linx.vchat.app.data.api.Api
@@ -13,10 +15,13 @@ object BindingAdapters {
     @JvmStatic
     fun ImageView.loadRoundImage(url: String?, radius: Int) {
         if (!url.isNullOrEmpty()) {
+            visibility = View.VISIBLE
             GlideApp.with(context)
                 .load(Api.baseFileDir + url)
                 .transform(GlideRoundTransform(radius))
                 .into(this)
+        }else{
+            visibility = View.INVISIBLE
         }
     }
 

@@ -8,6 +8,7 @@ import com.squareup.leakcanary.LeakCanary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.constant.CodeMap
 import me.linx.vchat.app.net.HttpTask
 import me.linx.vchat.app.net.HttpWrapper
@@ -21,9 +22,9 @@ class App : Application() {
         Utils.init(this)
         initLog()
         initCrash()
-        initLeakCanary()
+//        initLeakCanary()
         initHttpTask()
-        //        initStetho()
+        initStetho()
     }
 
     /**
@@ -32,16 +33,25 @@ class App : Application() {
     private fun initHttpTask() {
         HttpWrapper.addHttpTask(CodeMap.ErrorTokenFailed, object : HttpTask {
             override fun handle() {
+                SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
+
                 ActivityUtils.getTopActivity()?.let { activity ->
-                    if (activity is AppActivity){
-                        GlobalScope.launch (Dispatchers.Main){
+                    if (activity is AppActivity) {
+                        GlobalScope.launch(Dispatchers.Main) {
                             MaterialAlertDialogBuilder(activity)
                                 .setTitle(R.string.login_timeout)
                                 .setMessage(R.string.login_first)
                                 .setOnDismissListener {
-                                    activity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                                    activity.supportFragmentManager.popBackStack(
+                                        null,
+                                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                                    )
                                     activity.supportFragmentManager.beginTransaction()
-                                        .replace(R.id.fragment_container, SignInFragment(), SignInFragment::class.java.name)
+                                        .replace(
+                                            R.id.fragment_container,
+                                            SignInFragment(),
+                                            SignInFragment::class.java.name
+                                        )
                                         .commit()
                                 }
                                 .setPositiveButton(R.string.ok, null)
@@ -56,14 +66,14 @@ class App : Application() {
     /**
      * 初始化数据库浏览器(Only Chrome)
      */
-//    private fun initStetho() {
-//            com.facebook.stetho.Stetho.initialize(
-//                com.facebook.stetho.Stetho.newInitializerBuilder(this)
-//                    .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
-//                    .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
-//                    .build()
-//            )
-//    }
+    private fun initStetho() {
+        com.facebook.stetho.Stetho.initialize(
+            com.facebook.stetho.Stetho.newInitializerBuilder(this)
+                .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
+                .build()
+        )
+    }
 
     /**
      * 初始化内存泄露检查工具

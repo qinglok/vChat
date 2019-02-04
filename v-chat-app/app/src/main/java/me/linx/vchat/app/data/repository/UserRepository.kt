@@ -12,28 +12,48 @@ import me.linx.vchat.app.net.http
 import me.linx.vchat.app.net.post
 import me.linx.vchat.app.utils.launch
 import java.io.File
+import java.util.*
 
-class UserRepository private constructor(){
+class UserRepository private constructor() {
     private val userDao by lazy { AppDatabase.db.userDao() }
 
     companion object {
-        val instance by lazy { UserRepository()  }
+        val instance by lazy { UserRepository() }
     }
 
     fun saveAsync(user: User) =
-        GlobalScope.async { userDao.insert(user) }
+        GlobalScope.async {
+            userDao.insert(user)
+        }
 
     fun getByAsync(userId: Long) =
         GlobalScope.async {
             userDao.findByBizId(userId)
         }
 
-    fun sign(api: String, email: String?, password: String?, init: HttpCallback<JsonResult<User>>.() -> Unit) =
-        api.http()
+    fun login(email: String?, password: String?, init: HttpCallback<JsonResult<User>>.() -> Unit) =
+        Api.login.http()
             .params(
                 "email" to email,
                 "password" to password,
-                "deviceId" to DeviceUtils.getAndroidID()
+                "deviceId" to DeviceUtils.getAndroidID() + UUID.randomUUID().toString() + System.currentTimeMillis().toString()
+            )
+            .post(init)
+
+    fun register(
+        email: String?,
+        password: String?,
+        secretQuestion: String?,
+        secretAnswer: String?,
+        init: HttpCallback<JsonResult<User>>.() -> Unit
+    ) =
+        Api.register.http()
+            .params(
+                "email" to email,
+                "password" to password,
+                "secretQuestion" to secretQuestion,
+                "secretAnswer" to secretAnswer,
+                "deviceId" to DeviceUtils.getAndroidID() + UUID.randomUUID().toString() + System.currentTimeMillis().toString()
             )
             .post(init)
 
@@ -55,5 +75,31 @@ class UserRepository private constructor(){
                 .params("file" to file)
                 .post(init)
         }
+
+
+    fun logout(userId: Long, init: HttpCallback<JsonResult<Unit>>.() -> Unit) {
+        getByAsync(userId).launch {
+            Api.logout.http()
+                .headers(
+                    "token" to it?.token
+                )
+                .post(init)
+        }
+    }
+
+    fun loginAndVerifySecret(
+        email: String?,
+        password: String?,
+        answer: String?,
+        init: HttpCallback<JsonResult<User>>.() -> Unit
+    ) =
+        Api.loginAndVerifySecret.http()
+            .params(
+                "email" to email,
+                "password" to password,
+                "answer" to answer,
+                "deviceId" to DeviceUtils.getAndroidID() + UUID.randomUUID().toString() + System.currentTimeMillis().toString()
+            )
+            .post(init)
 
 }

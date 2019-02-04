@@ -12,15 +12,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <include
-                android:id="@+id/app_bar"
-                app:layout_constraintTop_toTopOf="parent"
-                layout="@layout/toolbar_default"
-                bind:title="@{@string/me_cn}"/>
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/gl_head_img"
-                app:layout_constraintTop_toBottomOf="@+id/app_bar"
+                app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="16dp"

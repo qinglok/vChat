@@ -10,12 +10,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <include
-                android:id="@+id/app_bar"
-                layout="@layout/toolbar_default"
-                bind:layout_constraintBottom_toBottomOf="parent"
-                bind:title="@{@string/sign_in}"/>
-
         <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_email"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -24,7 +18,7 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/app_bar"
+                bind:layout_constraintTop_toTopOf="parent"
                 android:hint="@string/email">
 
             <com.google.android.material.textfield.TextInputEditText

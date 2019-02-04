@@ -1,11 +1,9 @@
 package me.linx.vchat.app
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.blankj.utilcode.util.BarUtils
 import me.linx.vchat.app.data.model.UserViewModel
 
 class AppActivity : AppCompatActivity() {
@@ -15,9 +13,6 @@ class AppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //启用透明状态栏
-        BarUtils.setStatusBarColor(this, Color.argb(0, 0, 0, 0))
 
         val frameLayout = FrameLayout(this)
         frameLayout.id = R.id.fragment_container

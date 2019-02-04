@@ -23,11 +23,8 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
     }
     private var clicking = false
 
-    override fun setLayout() = R.layout.fragment_start
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         //全屏显示
         ScreenUtils.setFullScreen(mActivity)
@@ -43,32 +40,35 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
         SPUtils.getInstance().put(AppKeys.SP_is_first_in, false)
     }
 
-    override fun initView(view : View, savedInstanceState: Bundle?) {
-        view.sun_view.startAnimation(this)
+    override fun setLayout() = R.layout.fragment_start
 
-        view.btn_start.setOnClickListener {
-            if (!clicking) {
-                clicking = true
+    override fun initView(view: View, savedInstanceState: Bundle?) {
+        view.apply {
+            sun_view.startAnimation(this@StartFragment)
+            btn_start.setOnClickListener {
+                if (!clicking) {
+                    clicking = true
 
-               ObjectAnimator.ofFloat(view, "alpha", 1f, 0f).apply {
-                    duration = 200
-                    addListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
+                    ObjectAnimator.ofFloat(this, "alpha", 1f, 0f).apply {
+                        duration = 200
+                        addListener(object : AnimatorListenerAdapter() {
+                            override fun onAnimationEnd(animation: Animator?) {
+                                super.onAnimationEnd(animation)
 
-                            view.sun_view.end()
+                                sun_view.end()
 
-                            // 取消全屏显示
-                            ScreenUtils.setNonFullScreen(mActivity)
+                                // 取消全屏显示
+                                ScreenUtils.setNonFullScreen(mActivity)
 
-                            viewModel.appStartRoute{
-                                fragmentManager?.beginTransaction()
-                                    ?.replace(id, it, it::class.java.name)
-                                    ?.commit()
+                                viewModel.appStartRoute {
+                                    fragmentManager?.beginTransaction()
+                                        ?.replace(this@StartFragment.id, it, it::class.java.name)
+                                        ?.commit()
+                                }
                             }
-                        }
-                    })
-                }.start()
+                        })
+                    }.start()
+                }
             }
         }
     }

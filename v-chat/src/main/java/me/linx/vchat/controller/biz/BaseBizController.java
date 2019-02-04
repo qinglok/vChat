@@ -19,7 +19,7 @@ public abstract class BaseBizController {
         session.setAttribute("currentUserId", id);
     }
 
-    Long getCurrentUserId() {
+    public Long getCurrentUserId() {
         Object currentUserId = session.getAttribute("currentUserId");
         return session.getAttribute("currentUserId") == null ? 0L : Long.parseLong(currentUserId.toString());
     }

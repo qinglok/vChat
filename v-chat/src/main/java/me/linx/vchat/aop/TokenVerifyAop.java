@@ -3,10 +3,12 @@ package me.linx.vchat.aop;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.controller.biz.BaseBizController;
 import me.linx.vchat.model.JsonResult;
+import me.linx.vchat.service.TokenRecordService;
 import me.linx.vchat.utils.JwtUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 @Order(1)
 @Component
 public class TokenVerifyAop {
+    private final TokenRecordService tokenRecordService;
+
+    @Autowired
+    public TokenVerifyAop(TokenRecordService tokenRecordService) {
+        this.tokenRecordService = tokenRecordService;
+    }
 
     @Around("me.linx.vchat.aop.Pointcuts.bizPointcut()")
     public Object interceptor(ProceedingJoinPoint point) {
@@ -43,15 +51,26 @@ public class TokenVerifyAop {
                 HttpServletRequest request = (HttpServletRequest) arg;
                 String token = request.getHeader("token");
 
-                Long userId = JwtUtils.verify(token);
-                if (userId == null) {
-                    result = getFailureResult();
-                }else {
-                    Object target = point.getTarget();
-                    if (target instanceof BaseBizController){
-                        BaseBizController controller = (BaseBizController) target;
-                        controller.setCurrentUserId(userId);
+                try{
+                    boolean isValidToken = tokenRecordService.verifyToken(token);
+                    if (!isValidToken){
+                        result = getFailureResult();
+                    }else {
+                        Long userId = JwtUtils.verify(token);
+
+                        if (userId == null) {
+                            result = getFailureResult();
+                        }else {
+                            Object target = point.getTarget();
+                            if (target instanceof BaseBizController){
+                                BaseBizController controller = (BaseBizController) target;
+                                controller.setCurrentUserId(userId);
+                            }
+                        }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    result = getFailureResult();
                 }
             }
         }

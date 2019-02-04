@@ -2,6 +2,7 @@ package me.linx.vchat.app.data.model
 
 
 import android.os.Bundle
+import androidx.fragment.app.FragmentManager
 import com.blankj.utilcode.util.SPUtils
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
@@ -72,7 +73,7 @@ class UserViewModel : ObservableViewModel() {
     fun newHeadImg(photoPath: String?, f: BaseFragment) {
         val file = File(photoPath)
         if (!file.exists()) {
-            f.view.snackbarError(R.string.file_not_found)
+            f.view?.snackbarError(R.string.file_not_found)
             return
         }
 
@@ -93,7 +94,7 @@ class UserViewModel : ObservableViewModel() {
                         }
                     }
                 } else {
-                    rootView.snackbarFailure(result.msg)
+                    rootView?.snackbarFailure(result.msg)
                 }
             }
             start = {
@@ -103,7 +104,7 @@ class UserViewModel : ObservableViewModel() {
                 loaderDialogFragment.dismiss()
             }
             error = {
-                rootView.snackbarError(R.string.no_net)
+                rootView?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -113,7 +114,7 @@ class UserViewModel : ObservableViewModel() {
      */
     fun newNickName(name: String, f: BaseFragment) {
         if (name.isEmpty()) {
-            f.view.snackbarFailure(f.getString(R.string.please_input_nick_name))
+            f.view?.snackbarFailure(f.getString(R.string.please_input_nick_name))
         } else {
             val loaderDialogFragment = LoaderDialogFragment()
             val rootView = f.view
@@ -129,9 +130,9 @@ class UserViewModel : ObservableViewModel() {
                             }
                         }
                         obUser.nickName = name
-                        result.msg?.let { rootView.snackbarSuccess(it) }
+                        result.msg?.let { rootView?.snackbarSuccess(it) }
                     } else {
-                        rootView.snackbarFailure(result.msg)
+                        rootView?.snackbarFailure(result.msg)
                     }
                 }
                 start = {
@@ -141,7 +142,7 @@ class UserViewModel : ObservableViewModel() {
                     loaderDialogFragment.dismiss()
                 }
                 error = {
-                    rootView.snackbarError(R.string.no_net)
+                    rootView?.snackbarError(R.string.no_net)
                 }
             }
         }
@@ -168,8 +169,33 @@ class UserViewModel : ObservableViewModel() {
     /**
      *  退出登录
      */
-    fun logout() {
+    fun logout(f: BaseFragment) {
+        val loaderDialogFragment = LoaderDialogFragment()
+        val rootView = f.view
 
+        UserRepository.instance.logout(obUser.bizId?:0L){
+            success = { result ->
+                if (result.code == CodeMap.Yes) {
+                    SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
+
+                    f.fragmentManager?.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    f.fragmentManager?.beginTransaction()
+                        ?.replace(R.id.fragment_container, SignInFragment(), SignInFragment::class.java.name)
+                        ?.commit()
+                } else {
+                    rootView?.snackbarFailure(result.msg)
+                }
+            }
+            start = {
+                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
+            }
+            finish = {
+                loaderDialogFragment.dismiss()
+            }
+            error = {
+                rootView?.snackbarError(R.string.no_net)
+            }
+        }
     }
 
     /**

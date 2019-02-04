@@ -8,10 +8,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.EditText
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityOptionsCompat
@@ -26,15 +23,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.fragment_me.*
 import kotlinx.android.synthetic.main.fragment_me.view.*
-import kotlinx.android.synthetic.main.toolbar_default.view.*
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.model.UserViewModel
 import me.linx.vchat.app.databinding.FragmentMeBinding
-import me.linx.vchat.app.utils.fitStatusBar
 import me.linx.vchat.app.utils.showOrHideSoftInput
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.widget.base.BaseFragment
+import me.linx.vchat.app.widget.base.ToolBarConfig
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -52,36 +48,34 @@ class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClick
 
     override fun setLayout() = R.layout.fragment_me
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun initView(view: View, savedInstanceState: Bundle?) {
-        DataBindingUtil.bind<FragmentMeBinding>(view)?.viewModel = viewModel
+        view.apply {
+            DataBindingUtil.bind<FragmentMeBinding>(this)?.viewModel = viewModel
 
-        view.toolbar.fitStatusBar()
-        mActivity.setSupportActionBar(view.toolbar)
+            iv_head_img.transitionName = getString(R.string.photo_transition_name)
 
-        view.iv_head_img.transitionName = getString(R.string.photo_transition_name)
-
-        view.iv_head_img.setOnClickListener(this)
-        view.gl_head_img.setOnClickListener(this)
-        view.gl_nick_name.setOnClickListener(this)
-
-        view.toolbar.setOnMenuItemClickListener(this)
+            iv_head_img.setOnClickListener(this@MeFragment)
+            gl_head_img.setOnClickListener(this@MeFragment)
+            gl_nick_name.setOnClickListener(this@MeFragment)
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_me_options, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun initToolBar(toolBarConfig: ToolBarConfig) {
+        toolBarConfig.apply {
+            showDefaultToolBar = true
+            titleRes = R.string.me_cn
+            menuRes = R.menu.menu_me_options
+            onMenuItemClick = this@MeFragment
+        }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         item?.itemId?.let {
             when (it) {
                 R.id.logout -> {
-                    viewModel.logout()
+                    getParent()?.let { parent ->
+                        viewModel.logout(parent)
+                    }
                     return true
                 }
                 R.id.login_timeout_test -> {
@@ -212,7 +206,7 @@ class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClick
                 val photoFile: File? = try {
                     createImageFile()
                 } catch (ex: IOException) {
-                    view.snackbarError(R.string.sys_error)
+                    view?.snackbarError(R.string.sys_error)
                     null
                 }
                 // Continue only if the File was successfully created
@@ -235,7 +229,7 @@ class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClick
         // 裁剪失败
         if (resultCode == UCrop.RESULT_ERROR) {
 //            val cropError = UCrop.getError(data!!)
-            view.snackbarError(R.string.sys_error)
+            view?.snackbarError(R.string.sys_error)
         }
 
         if (resultCode != RESULT_OK) return
@@ -266,7 +260,7 @@ class MeFragment : BaseFragment(), View.OnClickListener, Toolbar.OnMenuItemClick
         val tempFile = try {
             createImageFile()
         } catch (ex: IOException) {
-            view.snackbarError(R.string.sys_error)
+            view?.snackbarError(R.string.sys_error)
             null
         }
 

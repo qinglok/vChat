@@ -6,10 +6,9 @@ import me.linx.vchat.app.R
 import me.linx.vchat.app.widget.base.BaseFragment
 
 class PeopleFragment : BaseFragment() {
-
     override fun setLayout() = R.layout.fragment_people
 
-    override fun initView(view : View, savedInstanceState: Bundle?) {
-
+    override fun initView(view: View, savedInstanceState: Bundle?) {
     }
+
 }

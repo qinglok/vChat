@@ -6,70 +6,100 @@
         <variable name="viewModel" type="me.linx.vchat.app.data.model.SignViewModel"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-        <include
-                layout="@layout/toolbar_default"
-                android:id="@+id/app_bar"
-                bind:layout_constraintTop_toTopOf="parent"
-                bind:title="@{@string/sign_up}"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_email"
-                android:layout_marginTop="32dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <androidx.appcompat.widget.LinearLayoutCompat
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                bind:layout_constraintTop_toBottomOf="@+id/app_bar"
-                android:hint="@string/email">
+                android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email"
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_email"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:text="@={viewModel.obEmail}"
-            />
+                    android:hint="@string/email">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:text="@={viewModel.obEmail}"
+                />
 
-        <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_password"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/til_email"
-                android:hint="@string/password">
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_password"
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_password"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textVisiblePassword"
-                    android:text="@={viewModel.obPassword}"
-            />
-        </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/password">
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_sign_up"
-                android:layout_gravity="center_horizontal"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                bind:layout_constraintTop_toBottomOf="@+id/til_password"
-                android:padding="16dp"
-                android:text="@string/sign_up"/>
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textVisiblePassword"
+                        android:text="@={viewModel.obPassword}"
+                />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_secret_question"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/secret_question">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_secret_question"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_secret_answer"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="@string/secret_answer">
+
+                <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_secret_answer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_sign_up"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:padding="16dp"
+                    android:text="@string/sign_up"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

@@ -36,10 +36,9 @@ public class UserController extends BaseBizController{
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult logout(HttpServletRequest request,@ModelAttribute NickNameModel model) {
+    public JsonResult logout(HttpServletRequest request) {
         try {
-            return JsonResult.failure(CodeMap.ErrorTokenFailed);
-//            return userService.editNickName(model, getCurrentUserId());
+            return userService.handleLogout(getCurrentUserId());
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);

@@ -8,6 +8,8 @@ object Api{
 
     // 登录
     val login by lazy { "app/login" }
+    // 登录，并验证密保
+    val loginAndVerifySecret by lazy { "app/loginAndVerifySecret" }
     // 注册
     val register by lazy { "app/register" }
     // 修改昵称
@@ -18,4 +20,5 @@ object Api{
     val logout by lazy { "user/logout" }
     // 登录超时测试
     val loginTimeoutTest by lazy { "user/loginTimeoutTest" }
+
 }

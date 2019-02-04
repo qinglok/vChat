@@ -7,20 +7,21 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import javax.validation.constraints.NotNull;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JwtUtils {
     //Token到期天数
-//    private static final int EXPIRE_DAY = 30;
+    private static final int EXPIRE_DAY = 365;
 
     //Token私钥
     private static final String TOKEN_SECRET = "linx.me.vchat.123212321";
 
     public synchronized static String sign(@NotNull long userId, @NotNull String deviceId) {
-//        Calendar instance = Calendar.getInstance();
-//        instance.add(Calendar.DAY_OF_YEAR, EXPIRE_DAY);
+        Calendar instance = Calendar.getInstance();
+        instance.add(Calendar.DAY_OF_YEAR, EXPIRE_DAY);
 
         Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
         Map<String, Object> header = new HashMap<>(2);
@@ -29,8 +30,8 @@ public class JwtUtils {
         return JWT.create()
                 .withHeader(header)
                 .withClaim("userId", userId)
-//                .withClaim("deviceId", deviceId)
-//                .withExpiresAt(instance.getTime())
+                .withClaim("deviceId", deviceId)
+                .withExpiresAt(instance.getTime())
                 .sign(algorithm);
     }
 

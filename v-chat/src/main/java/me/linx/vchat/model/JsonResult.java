@@ -46,6 +46,10 @@ public class JsonResult {
         this.data = data;
     }
 
+    public JsonResult(CodeMap codeMap, Object data) {
+        this(codeMap.value, codeMap.msg, data);
+    }
+
     public Integer getCode() {
         return code;
     }
@@ -84,5 +88,9 @@ public class JsonResult {
 
     public static JsonResult failure(@NotNull int code, @NotNull String msg) {
         return new JsonResult(code, msg);
+    }
+
+    public static JsonResult failure(@NotNull CodeMap codeMap, Object data) {
+        return new JsonResult(codeMap, data);
     }
 }

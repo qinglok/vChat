@@ -1,6 +1,6 @@
 package me.linx.vchat.app.net
 
-class HttpCallback<T>(
+data class HttpCallback<T>(
     var start: () -> Unit = {},
     var finish: () -> Unit = {},
     var success: (T) -> Unit = {},

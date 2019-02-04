@@ -16,51 +16,55 @@ class MainFragment : BaseFragment() {
     override fun setLayout() = R.layout.fragment_main
 
     override fun initView(view: View, savedInstanceState: Bundle?) {
-        val fragments = arrayOf(
+        arrayOf(
             MessageFragment(),
             PeopleFragment(),
             MeFragment()
-        )
+        ).also {
+            view.apply {
+                viewPager.apply {
+                    offscreenPageLimit = 2
+                    adapter = object : FragmentPagerAdapter(childFragmentManager) {
+                        override fun getItem(position: Int): Fragment {
+                            return it[position]
+                        }
 
-        val viewPager = view.viewPager
+                        override fun getCount(): Int {
+                            return it.size
+                        }
+                    }
 
-        viewPager.offscreenPageLimit = 2
-        viewPager.adapter = object : FragmentPagerAdapter(childFragmentManager) {
-            override fun getItem(position: Int): Fragment {
-                return fragments[position]
-            }
+                    addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                        }
 
-            override fun getCount(): Int {
-                return fragments.size
-            }
-        }
+                        override fun onPageSelected(position: Int) {
+                            if (menuItem != null) {
+                                menuItem!!.isChecked = false
+                            } else {
+                                view.bottom_navigation.menu.getItem(0).isChecked = false
+                            }
+                            menuItem = view.bottom_navigation.menu.getItem(position)
+                            menuItem!!.isChecked = true
+                        }
 
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-                if (menuItem != null) {
-                    menuItem!!.isChecked = false
-                } else {
-                    view.bottom_navigation.menu.getItem(0).isChecked = false
+                        override fun onPageScrollStateChanged(state: Int) {
+                        }
+                    })
                 }
-                menuItem = view.bottom_navigation.menu.getItem(position)
-                menuItem!!.isChecked = true
-            }
 
-            override fun onPageScrollStateChanged(state: Int) {
+                bottom_navigation.setOnNavigationItemSelectedListener {
+                    when (it.itemId) {
+                        R.id.item_message -> viewPager.currentItem = 0
+                        R.id.item_people -> viewPager.currentItem = 1
+                        R.id.item_shot -> viewPager.currentItem = 2
+                    }
+                    false
+                }
             }
-        })
-
-        view.bottom_navigation.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.item_message -> viewPager.currentItem = 0
-                R.id.item_people -> viewPager.currentItem = 1
-                R.id.item_shot -> viewPager.currentItem = 2
-            }
-            false
         }
+
+
     }
 
 

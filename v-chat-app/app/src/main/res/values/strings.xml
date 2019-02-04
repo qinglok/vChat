@@ -18,6 +18,11 @@
     <string name="password">密码</string>
     <string name="new_account">注册新账号</string>
 
+    <string name="secret_question">密保问题</string>
+    <string name="secret_answer">密保答案</string>
+
+    <string name="verify_secret">验证密保信息</string>
+
     <string name="no_net">暂时连接不上服务器</string>
     <string name="sys_error">系统异常，暂时无法操作</string>
     <string name="file_not_found">找不到文件</string>
@@ -36,4 +41,6 @@
     <string name="login_timeout">登录超时</string>
     <string name="login_first">请登录后操作</string>
     <string name="login_timeout_test">登录超时测试</string>
+
+
 </resources>
