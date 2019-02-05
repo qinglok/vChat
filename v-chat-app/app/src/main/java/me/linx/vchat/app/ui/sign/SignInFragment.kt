@@ -18,8 +18,8 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
 
     override fun setLayout() = R.layout.fragment_sign_in
 
-    override fun initView(view: View, savedInstanceState: Bundle?) {
-        view.apply {
+    override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?) {
+        currentView.apply {
             DataBindingUtil.bind<FragmentSignInBinding>(this)?.viewModel = viewModel
 
             btn_to_sign_up.setOnClickListener(this@SignInFragment)
@@ -28,9 +28,7 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
             // 邮箱一栏获取焦点并打开软键盘
 //            et_email.showSoftInput()
         }
-    }
 
-    override fun initToolBar(toolBarConfig: ToolBarConfig) {
         toolBarConfig.apply {
             showDefaultToolBar = true
             titleRes = R.string.sign_in

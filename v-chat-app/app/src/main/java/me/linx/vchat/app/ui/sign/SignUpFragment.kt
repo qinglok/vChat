@@ -1,7 +1,6 @@
 package me.linx.vchat.app.ui.sign
 
 import android.os.Bundle
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_sign_up.view.*
@@ -20,8 +19,8 @@ class SignUpFragment : BaseFragment() {
 
     override fun setLayout() = R.layout.fragment_sign_up
 
-    override fun initView(view: View, savedInstanceState: Bundle?) {
-        view.apply {
+    override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?) {
+        currentView.apply {
             DataBindingUtil.bind<FragmentSignUpBinding>(this)?.viewModel = viewModel
 
             btn_sign_up.setOnClickListener { v ->
@@ -33,20 +32,18 @@ class SignUpFragment : BaseFragment() {
                 viewModel.obPassword.set(it.getString("password", ""))
             }
 
+            toolBarConfig.apply {
+                showDefaultToolBar = true
+                titleRes = R.string.sign_up
+                enableBackOff = true
+                onBackOffClick = {
+                    view?.hideSoftInput()
+                    fragmentManager?.popBackStack()
+                }
+            }
+
             // 邮箱一栏获取焦点并打开软键盘
 //            et_email.showSoftInput()
-        }
-    }
-
-    override fun initToolBar(toolBarConfig: ToolBarConfig) {
-        toolBarConfig.apply {
-            showDefaultToolBar = true
-            titleRes = R.string.sign_up
-            enableBackOff = true
-            onBackOffClick = {
-                view?.hideSoftInput()
-                fragmentManager?.popBackStack()
-            }
         }
     }
 

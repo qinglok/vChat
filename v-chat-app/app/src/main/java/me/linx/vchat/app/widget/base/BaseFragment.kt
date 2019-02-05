@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_base.view.*
 import me.linx.vchat.app.R
+import me.linx.vchat.app.utils.fitStatusBar
 import me.linx.vchat.app.utils.hideSoftInput
 
 /**
@@ -17,18 +18,7 @@ import me.linx.vchat.app.utils.hideSoftInput
 abstract class BaseFragment : Fragment() {
     lateinit var mActivity: AppCompatActivity
     lateinit var currentView : View
-    private lateinit var toolBarConfig: ToolBarConfig
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        with(ToolBarConfig().apply {
-            initToolBar(this)
-        }) {
-            toolBarConfig = this
-            setHasOptionsMenu(menuRes != 0)
-        }
-    }
+    private val toolBarConfig = ToolBarConfig()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,21 +26,23 @@ abstract class BaseFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_base, container, false).apply {
-            initActionBar(toolbar)
+        return inflater.inflate(R.layout.fragment_base, container, false).also { baseView ->
             layoutInflater.inflate(setLayout(), container, false).apply {
-                initView(this, savedInstanceState)
-            }.let {
-                fragment_container.addView(it)
-                currentView = it
+                currentView = this
+                initView(toolBarConfig, savedInstanceState)
+                initActionBar(baseView.toolbar, toolBarConfig)
+                baseView.fragment_container.addView(this)
             }
         }
     }
 
-    private fun initActionBar(toolbar: Toolbar) {
+    private fun initActionBar(toolbar: Toolbar, toolBarConfig: ToolBarConfig) {
         with(toolBarConfig) {
+            setHasOptionsMenu(toolBarConfig.menuRes != 0)
+
             if (showDefaultToolBar) {
                 toolbar.visibility = View.VISIBLE
+                toolbar.fitStatusBar()
                 mActivity.setSupportActionBar(toolbar)
                 mActivity.supportActionBar?.setTitle(titleRes)
                 mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(enableBackOff)
@@ -66,9 +58,6 @@ abstract class BaseFragment : Fragment() {
                 toolbar.visibility = View.GONE
             }
         }
-    }
-
-    open fun initToolBar(toolBarConfig: ToolBarConfig) {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -87,7 +76,7 @@ abstract class BaseFragment : Fragment() {
     /**
      *  初始化View
      */
-    abstract fun initView(view: View, savedInstanceState: Bundle?)
+    abstract fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?)
 
     override fun onPause() {
         super.onPause()

@@ -7,7 +7,6 @@ import me.linx.vchat.app.data.api.UploadAction
 import me.linx.vchat.app.data.db.AppDatabase
 import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.net.*
-import me.linx.vchat.app.utils.launch
 import java.io.File
 import java.util.*
 
@@ -18,9 +17,11 @@ class UserRepository private constructor() {
         val instance by lazy { UserRepository() }
     }
 
-    fun saveAsync(user: User) =
+    fun saveAsync(user: User?) =
         GlobalScope.async {
-            userDao.insert(user)
+            user?.let {
+                userDao.insert(it)
+            }
         }
 
     fun getByAsync(userId: Long) =
@@ -92,12 +93,12 @@ class UserRepository private constructor() {
                 .post(init)
     }
 
-    fun getUserProfile(user :User, init: HttpCallback<JsonResult<User>>.() -> Unit) {
+    fun getUserProfile(user :User?, init: HttpCallback<JsonResult<User>>.() -> Unit) {
         Api.getUserProfile.http()
             .headers(
-                "token" to user.token
+                "token" to user?.token
             )
-            .params("updateTime" to user.updateTime)
+            .params("updateTime" to user?.updateTime)
             .get(init)
     }
 

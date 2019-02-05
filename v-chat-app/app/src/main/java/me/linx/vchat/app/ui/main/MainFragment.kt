@@ -2,26 +2,26 @@ package me.linx.vchat.app.ui.main
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import me.linx.vchat.app.R
 import me.linx.vchat.app.widget.base.BaseFragment
+import me.linx.vchat.app.widget.base.ToolBarConfig
 
 class MainFragment : BaseFragment() {
     private var menuItem: MenuItem? = null
 
     override fun setLayout() = R.layout.fragment_main
 
-    override fun initView(view: View, savedInstanceState: Bundle?) {
+    override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?) {
         arrayOf(
             MessageFragment(),
             PeopleFragment(),
             MeFragment()
         ).also {
-            view.apply {
+            currentView.apply {
                 viewPager.apply {
                     offscreenPageLimit = 2
                     adapter = object : FragmentPagerAdapter(childFragmentManager) {
@@ -42,9 +42,9 @@ class MainFragment : BaseFragment() {
                             if (menuItem != null) {
                                 menuItem!!.isChecked = false
                             } else {
-                                view.bottom_navigation.menu.getItem(0).isChecked = false
+                                currentView.bottom_navigation.menu.getItem(0).isChecked = false
                             }
-                            menuItem = view.bottom_navigation.menu.getItem(position)
+                            menuItem = currentView.bottom_navigation.menu.getItem(position)
                             menuItem!!.isChecked = true
                         }
 

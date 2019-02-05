@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.SPUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.constant.CodeMap
@@ -122,7 +123,7 @@ class SignViewModel : ViewModel() {
      *  已经在其他设备登录，验证密保
      */
     private fun showVerifySecretDialog(msg: String?, f: BaseFragment) {
-               msg?.let {
+        msg?.let {
             var etSecretAnswer: EditText? = null
             val dialog = MaterialAlertDialogBuilder(f.context).apply {
                 setView(R.layout.view_verify_secret)
@@ -143,7 +144,7 @@ class SignViewModel : ViewModel() {
     /**
      *  登录并验证密保
      */
-    private fun loginAndVerifySecret(answer : String, f : BaseFragment){
+    private fun loginAndVerifySecret(answer: String, f: BaseFragment) {
         if (posting) {
             return
         }
@@ -158,7 +159,7 @@ class SignViewModel : ViewModel() {
         val loaderDialogFragment = LoaderDialogFragment()
         val rootView = f.view
 
-        UserRepository.instance.loginAndVerifySecret(obEmail.get(), obPassword.get(), answer){
+        UserRepository.instance.loginAndVerifySecret(obEmail.get(), obPassword.get(), answer) {
             success = { result ->
                 when (result.code) {
                     CodeMap.Yes -> {
@@ -197,8 +198,8 @@ class SignViewModel : ViewModel() {
         user?.apply {
             SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
             email = obEmail.get()
-            UserRepository.instance.saveAsync(this).launch {
-                ViewModelProviders.of(f.mActivity).get(UserViewModel::class.java).setup(this)
+            UserRepository.instance.saveAsync(this).launch(Dispatchers.Main) {
+                ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).setup(this)
             }
         }
 
