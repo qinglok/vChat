@@ -27,7 +27,9 @@ object HttpWrapper {
 
     private fun OkHttpClient.Builder.sslSocketFactory() = apply {
         Utils.getApp().assets.open("vchat.cer").let {
-            sslSocketFactory(HttpsOnlySelfUtils.getSSLSocketFactory(it), HttpsOnlySelfUtils.getX509TrustManager())
+            with(HttpsUtils.getSslSocketFactory(it)){
+                sslSocketFactory(sSLSocketFactory, trustManager)
+            }
         }
     }
 

@@ -5,7 +5,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_sign_up.view.*
 import me.linx.vchat.app.R
-import me.linx.vchat.app.data.model.SignViewModel
+import me.linx.vchat.app.data.model.FragmentSignViewModel
 import me.linx.vchat.app.databinding.FragmentSignUpBinding
 import me.linx.vchat.app.utils.hideSoftInput
 import me.linx.vchat.app.widget.base.BaseFragment
@@ -14,7 +14,7 @@ import me.linx.vchat.app.widget.base.ToolBarConfig
 
 class SignUpFragment : BaseFragment() {
     private val viewModel by lazy {
-        ViewModelProviders.of(this).get(SignViewModel::class.java)
+        ViewModelProviders.of(this).get(FragmentSignViewModel::class.java)
     }
 
     override fun setLayout() = R.layout.fragment_sign_up

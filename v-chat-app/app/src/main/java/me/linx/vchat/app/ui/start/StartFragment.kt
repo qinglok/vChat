@@ -40,9 +40,9 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
                                 // 取消全屏显示
                                 ScreenUtils.setNonFullScreen(mActivity)
 
-                                ViewModelProviders.of(mActivity).get(AppViewModel::class.java).appStartRoute {
+                                ViewModelProviders.of(mActivity).get(AppViewModel::class.java).appStartRoute { f ->
                                     fragmentManager?.beginTransaction()
-                                        ?.replace(this@StartFragment.id, it, it::class.java.name)
+                                        ?.replace(this@StartFragment.id, f, f::class.java.name)
                                         ?.commit()
                                 }
                             }

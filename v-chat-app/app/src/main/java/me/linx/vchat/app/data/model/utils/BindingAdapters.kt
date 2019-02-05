@@ -1,6 +1,5 @@
 package me.linx.vchat.app.data.model.utils
 
-import android.opengl.Visibility
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter

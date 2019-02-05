@@ -3,7 +3,7 @@
         xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <variable name="viewModel" type="me.linx.vchat.app.data.model.SignViewModel"/>
+        <variable name="viewModel" type="me.linx.vchat.app.data.model.FragmentSignViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

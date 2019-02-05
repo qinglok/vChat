@@ -26,7 +26,7 @@ import me.linx.vchat.app.utils.snackbarFailure
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.loader.LoaderDialogFragment
 
-class SignViewModel : ViewModel() {
+class FragmentSignViewModel : ViewModel() {
     private var posting = false
 
     // 记录事件事件，防止频繁触发

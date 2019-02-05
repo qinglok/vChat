@@ -26,6 +26,7 @@ fun View.fitStatusBar() {
 /**
  * 显示软键盘
  */
+@Suppress("unused")
 fun View.showSoftInput() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     postDelayed({
@@ -34,6 +35,9 @@ fun View.showSoftInput() {
     }, 200)
 }
 
+/**
+ * 切换软键盘
+ */
 fun View.showOrHideSoftInput() {
     val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     postDelayed({

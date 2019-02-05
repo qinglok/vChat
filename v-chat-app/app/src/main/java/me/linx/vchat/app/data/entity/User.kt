@@ -10,7 +10,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import me.linx.vchat.app.BR
 
-@Entity(indices = arrayOf(Index(value = arrayOf("bizId"), unique = true)))
+@Entity(indices = [Index(value = arrayOf("bizId"), unique = true)])
 class User() : BaseObservable(), Parcelable {
     @PrimaryKey(autoGenerate = true)
     @NonNull

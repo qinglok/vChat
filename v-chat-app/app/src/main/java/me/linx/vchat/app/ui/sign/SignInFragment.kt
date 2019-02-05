@@ -6,14 +6,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_sign_in.view.*
 import me.linx.vchat.app.R
-import me.linx.vchat.app.data.model.SignViewModel
+import me.linx.vchat.app.data.model.FragmentSignViewModel
 import me.linx.vchat.app.databinding.FragmentSignInBinding
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
 
 class SignInFragment : BaseFragment(), View.OnClickListener {
     private val viewModel by lazy {
-        ViewModelProviders.of(this).get(SignViewModel::class.java)
+        ViewModelProviders.of(this).get(FragmentSignViewModel::class.java)
     }
 
     override fun setLayout() = R.layout.fragment_sign_in

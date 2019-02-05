@@ -76,9 +76,10 @@ dependencies {
     // Json 处理
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    // Google Jetpacka
+    // Google Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0" // ViewModel + LiveData
-
+    // Google WorkManager
+    implementation "android.arch.work:work-runtime:1.0.0-beta04"
     // Google Room
     implementation "androidx.room:room-runtime:2.1.0-alpha04"
     kapt "androidx.room:room-compiler:2.1.0-alpha04"

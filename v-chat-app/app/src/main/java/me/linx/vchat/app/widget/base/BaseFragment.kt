@@ -85,6 +85,7 @@ abstract class BaseFragment : Fragment() {
 
     fun getParent() = parentFragment as? BaseFragment
 
+    @Suppress("unused")
     fun getPre(): BaseFragment? {
         val fragments = mActivity.supportFragmentManager.fragments
         val index = fragments.indexOf(this)
