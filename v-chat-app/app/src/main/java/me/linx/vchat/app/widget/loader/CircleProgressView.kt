@@ -74,15 +74,14 @@ class CircleProgressView : View {
     }
 
     fun startAnimation() {
-        init()
-
-        animatorSwitch = ValueAnimator.ofFloat(0f, 1f)
-        animatorSwitch.repeatCount = ValueAnimator.INFINITE
-        animatorSwitch.addUpdateListener { invalidate() }
-        animatorSwitch.start()
-
-        startArcLineAnimation()
-
+        post {
+            init()
+            animatorSwitch = ValueAnimator.ofFloat(0f, 1f)
+            animatorSwitch.repeatCount = ValueAnimator.INFINITE
+            animatorSwitch.addUpdateListener { invalidate() }
+            animatorSwitch.start()
+            startArcLineAnimation()
+        }
     }
 
     private fun startArcLineAnimation() {
@@ -136,8 +135,4 @@ class CircleProgressView : View {
         })
     }
 
-    fun stopAnimation() {
-        animatorSwitch.end()
-        isDrawArcLine = false
-    }
 }

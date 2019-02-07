@@ -67,12 +67,12 @@ class App : Application() {
      * 初始化数据库浏览器(Only Chrome)
      */
     private fun initStetho() {
-//        com.facebook.stetho.Stetho.initialize(
-//            com.facebook.stetho.Stetho.newInitializerBuilder(this)
-//                .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
-//                .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
-//                .build()
-//        )
+        com.facebook.stetho.Stetho.initialize(
+            com.facebook.stetho.Stetho.newInitializerBuilder(this)
+                .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
+                .build()
+        )
     }
 
     /**

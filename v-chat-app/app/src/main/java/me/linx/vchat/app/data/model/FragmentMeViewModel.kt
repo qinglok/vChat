@@ -37,7 +37,6 @@ import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.utils.*
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
-import me.linx.vchat.app.widget.loader.LoaderDialogFragment
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -45,6 +44,11 @@ import java.util.*
 
 class FragmentMeViewModel : ViewModel() {
     lateinit var obUser: User
+
+    private val requestTakePhotoFromCollection = 1
+    private val requestTakePhotoFromCamera = 2
+    // 临时文件的绝对路径
+    private var mCurrentPhotoPath: String? = null
 
     init {
         ActivityUtils.getTopActivity().also { activity ->
@@ -174,11 +178,6 @@ class FragmentMeViewModel : ViewModel() {
         }
     }
 
-    private val requestTakePhotoFromCollection = 1
-    private val requestTakePhotoFromCamera = 2
-    // 临时文件的绝对路径
-    private var mCurrentPhotoPath: String? = null
-
     /**
      *  从相册选择图片
      */
@@ -306,31 +305,24 @@ class FragmentMeViewModel : ViewModel() {
             return
         }
 
-        val loaderDialogFragment = LoaderDialogFragment()
-        val rootView = f.view
         val userRepository = UserRepository.instance
 
         userRepository.postHeadImg(obUser, file) {
-            success = { result ->
+            withLoader = true
+            onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     result.data?.let { path ->
                         obUser.apply {
                             headImg = path
-                            userRepository.saveAsync(this).launch()
+                            userRepository.saveAsync(this).then()
                         }
                     }
                 } else {
-                    rootView?.snackbarFailure(result.msg)
+                    f.view?.snackbarFailure(result.msg)
                 }
             }
-            start = {
-                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-            }
-            finish = {
-                loaderDialogFragment.dismiss()
-            }
-            error = {
-                rootView?.snackbarError(R.string.no_net)
+            onError = {
+                f.view?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -342,29 +334,22 @@ class FragmentMeViewModel : ViewModel() {
         if (name.isEmpty()) {
             f.view?.snackbarFailure(f.getString(R.string.please_input_nick_name))
         } else {
-            val loaderDialogFragment = LoaderDialogFragment()
-            val rootView = f.view
             val userRepository = UserRepository.instance
 
             userRepository.postNickName(obUser, name) {
-                success = { result ->
+                withLoader = true
+                onSuccess = { result ->
                     if (result.code == CodeMap.Yes) {
                         obUser.apply {
                             nickName = name
-                            userRepository.saveAsync(this).launch()
+                            userRepository.saveAsync(this).then()
                         }
                     } else {
-                        rootView?.snackbarFailure(result.msg)
+                        f.view?.snackbarFailure(result.msg)
                     }
                 }
-                start = {
-                    f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-                }
-                finish = {
-                    loaderDialogFragment.dismiss()
-                }
-                error = {
-                    rootView?.snackbarError(R.string.no_net)
+                onError = {
+                    f.view?.snackbarError(R.string.no_net)
                 }
             }
         }
@@ -374,11 +359,9 @@ class FragmentMeViewModel : ViewModel() {
      *  退出登录
      */
     private fun logout(f: BaseFragment) {
-        val loaderDialogFragment = LoaderDialogFragment()
-        val rootView = f.view
-
         UserRepository.instance.logout(obUser) {
-            success = { result ->
+            withLoader = true
+            onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
 
@@ -387,17 +370,11 @@ class FragmentMeViewModel : ViewModel() {
                         ?.replace(R.id.fragment_container, SignInFragment(), SignInFragment::class.java.name)
                         ?.commit()
                 } else {
-                    rootView?.snackbarFailure(result.msg)
+                    f.view?.snackbarFailure(result.msg)
                 }
             }
-            start = {
-                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-            }
-            finish = {
-                loaderDialogFragment.dismiss()
-            }
-            error = {
-                rootView?.snackbarError(R.string.no_net)
+            onError = {
+                f.view?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -407,21 +384,24 @@ class FragmentMeViewModel : ViewModel() {
      */
     private fun updateUserInfo(srl : SwipeRefreshLayout) {
         UserRepository.instance.getUserProfile(obUser) {
-            success = { result ->
+            onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     result.data?.let { info ->
                         obUser.nickName = info.nickName
                         obUser.headImg = info.headImg
                         obUser.updateTime = info.updateTime
-                        UserRepository.instance.saveAsync(obUser).launch()
+                        UserRepository.instance.saveAsync(obUser).then()
                     }
                 }
             }
-            start = {
+            onStart = {
                 srl.isRefreshing = true
             }
-            finish = {
+            onFinish = {
                 srl.isRefreshing = false
+            }
+            onError = {
+                srl.snackbarError(R.string.no_net)
             }
         }
     }

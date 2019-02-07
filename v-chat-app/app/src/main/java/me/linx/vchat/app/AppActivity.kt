@@ -51,5 +51,6 @@ class AppActivity : AppCompatActivity() {
             finish()
         }
     }
+
 }
 

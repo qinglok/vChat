@@ -25,6 +25,7 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
     override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?){
         currentView.apply {
             sun_view.startAnimation(this@StartFragment)
+
             btn_start.setOnClickListener {
                 if (!clicking) {
                     clicking = true
@@ -34,8 +35,6 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
                         addListener(object : AnimatorListenerAdapter() {
                             override fun onAnimationEnd(animation: Animator?) {
                                 super.onAnimationEnd(animation)
-
-                                sun_view.end()
 
                                 // 取消全屏显示
                                 ScreenUtils.setNonFullScreen(mActivity)

@@ -575,10 +575,6 @@ class SunAnimationView : View {
         valueAnimator.start()
     }
 
-    fun end() {
-        animatorSwitch.end()
-    }
-
     interface AnimationListener {
         fun onAnimationComplete()
     }

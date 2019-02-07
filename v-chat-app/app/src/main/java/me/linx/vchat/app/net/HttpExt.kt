@@ -3,7 +3,7 @@ package me.linx.vchat.app.net
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
-import me.linx.vchat.app.utils.launch
+import me.linx.vchat.app.utils.then
 import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -12,63 +12,88 @@ import java.io.File
 import java.io.IOException
 import java.net.URLConnection.getFileNameMap
 
-fun String.http(withOutBaseUrl: Boolean = false) = RequestWrapper(this, withOutBaseUrl)
+fun String.http(tag: Any = this, withOutBaseUrl: Boolean = false) = RequestWrapper(tag, this, withOutBaseUrl)
 
-inline fun <reified T> RequestWrapper.get(init: HttpCallback<T>.() -> Unit) = buildGetRequest().call(init)
+inline fun <reified T> RequestWrapper.get(init: HttpHandler<T>.() -> Unit) = call(buildGetRequest(), init)
 
-inline fun <reified T> RequestWrapper.post(init: HttpCallback<T>.() -> Unit) = buildPostRequest().call(init)
+inline fun <reified T> RequestWrapper.post(init: HttpHandler<T>.() -> Unit) = call(buildPostRequest(), init)
 
-inline fun <reified T> Request.call(init: HttpCallback<T>.() -> Unit): Unit =
-    HttpCallback<T>()
-        .also {
-            init.invoke(it)
-            it.start()
-        }.let { callback ->
-            var throwable: Throwable? = null
+inline fun <reified T> RequestWrapper.call(request: Request, init: HttpHandler<T>.() -> Unit) {
+    with(HttpHandler<T>()) {
+        init.invoke(this)
 
-            val asyncData: Deferred<T?> = GlobalScope.async {
-                var response: Response? = null
+        onStart()
 
-                try {
-                    response = HttpWrapper.okHttpClient.newCall(this@call).execute()
-                } catch (t: Throwable) {
-                    throwable = t
+        if (withLoader) {
+            showLoader()
+        }
+
+        var throwable: Throwable? = null
+
+        val asyncData: Deferred<T?> = GlobalScope.async {
+            var response: Response? = null
+
+            try {
+                HttpWrapper.okHttpClient.newCall(request).also {
+                    setupCall(it)
+                    HttpWrapper.requestCache[tag] = it
+                    response = it.execute()
                 }
-
-                if (throwable == null && response != null) {
-                    if (response.isSuccessful) {
-                        val t = Gson().fromJson<T>(response.body()?.charStream(), object : TypeToken<T>() {}.type)
-
-                        if (t is JsonResult<*> && HttpWrapper.httpTasks.containsKey(t.code)){
-                            HttpWrapper.httpTasks[t.code]?.forEach { task ->
-                                task.handle()
-                            }
-                            null
-                        }else{
-                            t
-                        }
-
-                    } else {
-                        throwable = IOException("request to ${url()} is fail; http code: ${response.code()}!")
-                        null
-                    }
-                } else {
-                    null
-                }
+            } catch (t: Throwable) {
+                throwable = t
             }
 
-            asyncData.launch(Dispatchers.Main) {
-                callback.finish()
+            if (throwable == null && response != null) {
+                if (response!!.isSuccessful) {
+                    val t: T? = try {
+                        Gson().fromJson<T>(response!!.body()?.charStream(), object : TypeToken<T>() {}.type)
+                    } catch (e: Throwable) {
+                        throwable = e
+                        null
+                    }
 
+                    if (t != null && t is JsonResult<*> && HttpWrapper.httpTasks.containsKey(t.code)) {
+                        HttpWrapper.httpTasks[t.code]?.forEach { task ->
+                            task.handle()
+                        }
+                        HttpWrapper.requestCache.remove(tag)
+                        null
+                    } else {
+                        HttpWrapper.requestCache.remove(tag)
+                        t
+                    }
+                } else {
+                    throwable = IOException("request to ${request.url()} is fail; http code: ${response!!.code()}!")
+                    HttpWrapper.requestCache.remove(tag)
+                    null
+                }
+            } else {
+                HttpWrapper.requestCache.remove(tag)
+                null
+            }
+        }
+
+        asyncData.then(Dispatchers.Main) {
+            if (withLoader) {
+                hideLoader()
+            }
+
+            onFinish()
+
+            if (isCancel) {
+                onCancel()
+            } else {
                 it?.let { t ->
-                    callback.success(t)
+                    onSuccess(t)
                 }
 
                 throwable?.let { t ->
-                    callback.error(t)
+                    onError(t)
                 }
             }
         }
+    }
+}
 
 fun File.createRequestBody(): RequestBody = RequestBody.create(MediaType.parse(mediaType()), this)
 

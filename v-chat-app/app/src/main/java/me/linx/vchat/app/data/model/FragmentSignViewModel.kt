@@ -20,11 +20,10 @@ import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.utils.hideSoftInput
-import me.linx.vchat.app.utils.launch
+import me.linx.vchat.app.utils.then
 import me.linx.vchat.app.utils.snackbarError
 import me.linx.vchat.app.utils.snackbarFailure
 import me.linx.vchat.app.widget.base.BaseFragment
-import me.linx.vchat.app.widget.loader.LoaderDialogFragment
 
 class FragmentSignViewModel : ViewModel() {
     private var posting = false
@@ -50,27 +49,21 @@ class FragmentSignViewModel : ViewModel() {
         posting = true
         v.hideSoftInput()
 
-        val loaderDialogFragment = LoaderDialogFragment()
-        val rootView = f.view
-
         UserRepository.instance.register(obEmail.get(), obPassword.get(), secretQuestion, secretAnswer) {
-            success = { result ->
+            withLoader = true
+            onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     saveData(result.data, f)
                     startFragment(f, MainFragment())
                 } else {
-                    rootView?.snackbarFailure(result.msg)
+                    f.view?.snackbarFailure(result.msg)
                 }
             }
-            start = {
-                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-            }
-            finish = {
-                loaderDialogFragment.dismiss()
+            onFinish = {
                 posting = false
             }
-            error = {
-                rootView?.snackbarError(R.string.no_net)
+            onError = {
+                f.view?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -88,11 +81,9 @@ class FragmentSignViewModel : ViewModel() {
         posting = true
         v.hideSoftInput()
 
-        val loaderDialogFragment = LoaderDialogFragment()
-        val rootView = f.view
-
         UserRepository.instance.login(obEmail.get(), obPassword.get()) {
-            success = { result ->
+            withLoader = true
+            onSuccess = { result ->
                 when (result.code) {
                     CodeMap.Yes -> {
                         saveData(result.data, f)
@@ -102,19 +93,15 @@ class FragmentSignViewModel : ViewModel() {
                         showVerifySecretDialog(result.msg, f)
                     }
                     else -> {
-                        rootView?.snackbarFailure(result.msg)
+                        f.view?.snackbarFailure(result.msg)
                     }
                 }
             }
-            start = {
-                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-            }
-            finish = {
-                loaderDialogFragment.dismiss()
+            onFinish = {
                 posting = false
             }
-            error = {
-                rootView?.snackbarError(R.string.no_net)
+            onError = {
+                f.view?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -156,30 +143,24 @@ class FragmentSignViewModel : ViewModel() {
 
         posting = true
 
-        val loaderDialogFragment = LoaderDialogFragment()
-        val rootView = f.view
-
         UserRepository.instance.loginAndVerifySecret(obEmail.get(), obPassword.get(), answer) {
-            success = { result ->
+            withLoader = true
+            onSuccess = { result ->
                 when (result.code) {
                     CodeMap.Yes -> {
                         saveData(result.data, f)
                         startFragment(f, MainFragment())
                     }
                     else -> {
-                        rootView?.snackbarFailure(result.msg)
+                        f.view?.snackbarFailure(result.msg)
                     }
                 }
             }
-            start = {
-                f.fragmentManager?.let { fm -> loaderDialogFragment.show(fm, null) }
-            }
-            finish = {
-                loaderDialogFragment.dismiss()
+            onFinish = {
                 posting = false
             }
-            error = {
-                rootView?.snackbarError(R.string.no_net)
+            onError = {
+                f.view?.snackbarError(R.string.no_net)
             }
         }
     }
@@ -198,7 +179,7 @@ class FragmentSignViewModel : ViewModel() {
         user?.apply {
             SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
             email = obEmail.get()
-            UserRepository.instance.saveAsync(this).launch(Dispatchers.Main) {
+            UserRepository.instance.saveAsync(this).then(Dispatchers.Main) {
                 ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).setup(this)
             }
         }

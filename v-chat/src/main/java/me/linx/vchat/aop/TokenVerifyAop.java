@@ -36,7 +36,7 @@ public class TokenVerifyAop {
 
         // 局域网内访问速度太快...看不到效果
         try{
-            Thread.sleep(500);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

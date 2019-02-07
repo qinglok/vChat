@@ -8,10 +8,10 @@ import okhttp3.Request
 import java.io.File
 
 
-class RequestWrapper(url: String, withOutBaseUrl : Boolean = false) {
+class RequestWrapper(val tag : Any, url: String, withOutBaseUrl : Boolean) {
     private val headers = arrayListOf<Pair<String, String>>()
     private val params = arrayListOf<Pair<String, Any>>()
-    private val addr = if (withOutBaseUrl)
+    private val fullUrl = if (withOutBaseUrl)
         url
     else{
         Api.baseUrl + url
@@ -53,12 +53,14 @@ class RequestWrapper(url: String, withOutBaseUrl : Boolean = false) {
 
     fun buildGetRequest(): Request =
         Request.Builder()
+            .tag(tag)
             .buildHeader()
             .buildGetUrl()
             .build()
 
     fun buildPostRequest(): Request =
         Request.Builder()
+            .tag(tag)
             .buildHeader()
             .buildPostUrl()
             .buildBody()
@@ -71,7 +73,7 @@ class RequestWrapper(url: String, withOutBaseUrl : Boolean = false) {
     }
 
     private fun Request.Builder.buildGetUrl() = apply {
-        HttpUrl.parse(addr)?.newBuilder()?.apply {
+        HttpUrl.parse(fullUrl)?.newBuilder()?.apply {
             params.forEach {
                 addQueryParameter(it.first, it.second.toString())
             }
@@ -82,7 +84,7 @@ class RequestWrapper(url: String, withOutBaseUrl : Boolean = false) {
 
 
     private fun Request.Builder.buildPostUrl() =  apply {
-        HttpUrl.parse(addr)?.let {
+        HttpUrl.parse(fullUrl)?.let {
             url(it)
         }
     }

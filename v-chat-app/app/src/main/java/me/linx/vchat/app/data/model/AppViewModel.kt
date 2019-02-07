@@ -12,7 +12,7 @@ import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.ui.start.StartFragment
-import me.linx.vchat.app.utils.launch
+import me.linx.vchat.app.utils.then
 import me.linx.vchat.app.widget.base.BaseFragment
 
 
@@ -33,7 +33,7 @@ class AppViewModel : ObservableViewModel() {
                 SPUtils.getInstance().getLong(AppKeys.SP_currentUserId, 0L).also { userId ->
                     if (userId > 0L) {
                         // 已登录
-                        UserRepository.instance.getByAsync(userId).launch(Dispatchers.Main) {
+                        UserRepository.instance.getByAsync(userId).then(Dispatchers.Main) {
                             // 数据库异常
                             if (it == null) {
                                 action(SignInFragment())
@@ -76,6 +76,5 @@ class AppViewModel : ObservableViewModel() {
             }
         }
     }
-
 
 }

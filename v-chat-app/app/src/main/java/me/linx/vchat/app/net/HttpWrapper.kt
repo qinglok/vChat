@@ -2,12 +2,16 @@ package me.linx.vchat.app.net
 
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.Utils
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import me.linx.vchat.app.constant.AppConfigs
+import okhttp3.Call
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
 object HttpWrapper {
     val httpTasks by lazy { hashMapOf<Int, ArrayList<HttpTask>>() }
+    val requestCache by lazy { hashMapOf<Any, Call>() }
 
     val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
@@ -46,6 +50,26 @@ object HttpWrapper {
                 }
             } else {
                 add(task)
+            }
+        }
+    }
+
+    fun cancel(tag: Any){
+        GlobalScope.launch {
+            requestCache[tag]?.cancel()
+            requestCache.remove(tag)
+        }
+    }
+
+    fun cancelAll(){
+        GlobalScope.launch{
+            requestCache.keys.iterator().also {
+                while (it.hasNext()){
+                    it.next().also { key ->
+                        requestCache[key]?.cancel()
+                        requestCache.remove(key)
+                    }
+                }
             }
         }
     }
