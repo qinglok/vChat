@@ -53,8 +53,8 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
                         R.anim.abc_fade_in,
                         R.anim.abc_shrink_fade_out_from_bottom
                     )
-                    ?.replace(id, signUpFragment, SignUpFragment::class.java.name)
-                    ?.addToBackStack(SignUpFragment::class.java.name)
+                    ?.replace(id, signUpFragment, signUpFragment.javaClass.name)
+                    ?.addToBackStack(signUpFragment.javaClass.name)
                     ?.commit()
             }
             R.id.btn_sign_in -> viewModel.login(v, this)

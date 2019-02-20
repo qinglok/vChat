@@ -6,15 +6,12 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.KeyboardUtils
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.linx.vchat.app.BR
 import me.linx.vchat.app.R
@@ -45,6 +42,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
             obUser = it
         }
 
+        // 工具栏
         toolBarConfig.apply {
             showDefaultToolBar = true
             title = targetUser.nickname
@@ -55,6 +53,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
             }
         }
 
+        // 消息列表适配器
         adapter = object : DataBindingBaseQuickAdapter<Message>(R.layout.item_message) {
             override fun bind(helper: DataBindingBaseViewHolder?, item: Message): HashMap<Int, Any> {
                 return hashMapOf(
@@ -65,51 +64,47 @@ class FragmentMessageDetailViewModel : ViewModel() {
             }
         }
 
+        // 数据绑定
         DataBindingUtil.bind<FragmentMessageDetailBinding>(f.currentView)?.apply {
             this.rv.layoutManager = LinearLayoutManager(f.mActivity)
             adapter.bindToRecyclerView(rv)
 
-            KeyboardUtils.registerSoftInputChangedListener(f.mActivity) {
-                if (it > 0) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
-                    }
-                }
-                f.currentView.setPadding(0,0,0,it)
-            }
-
+            // 发送按钮点击事件
             this.btnSend.setOnClickListener {
                 val content = etContent.text.toString()
                 etContent.setText("")
-//                etContent.hideSoftInput()
-//                adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
 
-                Message().apply {
-                    fromId = obUser.bizId
-                    fromName = obUser.nickname
-                    fromAvatar = obUser.avatar
-                    toId = targetUser.bizId
-                    toName = targetUser.nickname
-                    toAvatar = targetUser.avatar
-                    this.content = content
-                    read = true
-                    sent = false
-                    updateTime = System.currentTimeMillis()
-                }.also { msg ->
+                GlobalScope.launch {
+                    // 构建消息实体
+                    Message().apply {
+                        fromId = obUser.bizId
+                        fromName = obUser.nickname
+                        fromAvatar = obUser.avatar
+                        toId = targetUser.bizId
+                        toName = targetUser.nickname
+                        toAvatar = targetUser.avatar
+                        this.content = content
+                        read = true
+                        sent = false
+                        updateTime = System.currentTimeMillis()
+                    }.also { msg ->
+                        // 保存到数据库
+                        MessageRepository.instance.saveAsync(msg).then { newId ->
+                            newId?.also {
+                                msg.id = newId
 
-                    MessageRepository.instance.saveAsync(msg).then { newId ->
-                        newId?.also {
-                            msg.id = newId
+                                // 更新UI
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    adapter.addData(msg)
+                                    adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
+                                }
 
-                            GlobalScope.launch(Dispatchers.Main) {
-                                adapter.addData(msg)
-                                adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
-                            }
-
-                            IMService.instance?.send(msg) { isSuccess ->
-                                if (isSuccess) {
-                                    msg.sent = true
-                                    MessageRepository.instance.saveAsync(msg).launch()
+                                // 发送
+                                IMService.instance?.send(msg) { isSuccess ->
+                                    if (isSuccess) {
+                                        msg.sent = true
+                                        MessageRepository.instance.saveAsync(msg).launch()
+                                    }
                                 }
                             }
                         }
@@ -118,6 +113,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
             }
         }
 
+        // 加载历史消息
         MessageRepository.instance.getByFromAndToAsync(targetUser.bizId ?: 0L, obUser.bizId ?: 0L)
             .then(Dispatchers.Main) { list ->
                 list?.let {
@@ -129,6 +125,28 @@ class FragmentMessageDetailViewModel : ViewModel() {
                 // 清除对应通知栏
                 NotifyManager.clearByIdentifier(targetUser.bizId?.toInt() ?: 0)
             }
+
+        // 注册生命周期事件
+        f.lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            fun registerSoftInputChange() {
+                KeyboardUtils.registerSoftInputChangedListener(f.mActivity) {
+                    // 弹出键盘时列表滚动到最后一条
+                    if (it > 0) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
+                        }
+                    }
+                    // 适应键盘高度避免视图被遮挡
+                    f.currentView.setPadding(0, 0, 0, it)
+                }
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun unregisterSoftInputChanged() {
+                KeyboardUtils.unregisterSoftInputChangedListener(f.mActivity)
+            }
+        })
     }
 
     /**

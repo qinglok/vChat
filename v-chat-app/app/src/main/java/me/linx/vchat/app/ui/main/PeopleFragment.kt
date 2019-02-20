@@ -3,7 +3,6 @@ package me.linx.vchat.app.ui.main
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import kotlinx.android.synthetic.main.fragment_people.view.*
@@ -44,29 +43,27 @@ class PeopleFragment : BaseFragment() {
         }
 
         adapter.setOnItemClickListener { _, _, position ->
-                val targetFragment = MessageDetailFragment()
-                Bundle().apply {
-                    putParcelable(AppKeys.KEY_target_user, adapter.data[position])
-                }.also {
-                    targetFragment.arguments = it
+            val targetFragment = MessageDetailFragment()
+            Bundle().apply {
+                putParcelable(AppKeys.KEY_target_user, adapter.data[position])
+            }.also {
+                targetFragment.arguments = it
 
-                    mActivity.supportFragmentManager.beginTransaction()
-                        .setCustomAnimations(
+                getParent()?.also { parent ->
+                    parent.fragmentManager
+                        ?.beginTransaction()
+                        ?.setCustomAnimations(
                             R.anim.abc_grow_fade_in_from_bottom,
                             R.anim.abc_fade_out,
                             R.anim.abc_fade_in,
                             R.anim.abc_shrink_fade_out_from_bottom
                         )
-                        .add(
-                            R.id.fragment_container,
-                            targetFragment,
-                            targetFragment::class.java.name
-                        )
-                        .hide(getParent()!!)
-                        .addToBackStack(targetFragment::class.java.name)
-                        .commit()
-
+                        ?.add(parent.id, targetFragment, targetFragment.javaClass.name)
+                        ?.hide(parent)
+                        ?.addToBackStack(targetFragment.javaClass.name)
+                        ?.commit()
                 }
+            }
         }
 
         currentView.apply {
@@ -80,7 +77,7 @@ class PeopleFragment : BaseFragment() {
         }
     }
 
-    private fun updateUserInfo(srl: SwipeRefreshLayout, adapter : BaseQuickAdapter<User, DataBindingBaseViewHolder>) {
+    private fun updateUserInfo(srl: SwipeRefreshLayout, adapter: BaseQuickAdapter<User, DataBindingBaseViewHolder>) {
         SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L).also {
             UserRepository.instance.getByAsync(it).then { user ->
                 user?.let {
