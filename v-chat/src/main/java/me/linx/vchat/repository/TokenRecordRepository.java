@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 @Repository
 public interface TokenRecordRepository extends CrudRepository<TokenRecord, Long> {
 
+    TokenRecord findByUser_IdAndTokenAndDevice(@NotNull Long userId, @NotNull String token, @NotNull String device);
+
     int countByToken(@NotNull String token);
 
     int countByUser(@NotNull User user);

@@ -1,10 +1,10 @@
 package me.linx.vchat.aop;
 
+import me.linx.vchat.bean.TokenRecord;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.controller.biz.BaseBizController;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.service.TokenRecordService;
-import me.linx.vchat.utils.JwtUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 @Order(1)
 @Component
 public class TokenVerifyAop {
-    private final TokenRecordService tokenRecordService;
+    private TokenRecordService tokenRecordService;
 
     @Autowired
-    public TokenVerifyAop(TokenRecordService tokenRecordService) {
+    public void setTokenRecordService(TokenRecordService tokenRecordService) {
         this.tokenRecordService = tokenRecordService;
     }
 
@@ -52,19 +52,19 @@ public class TokenVerifyAop {
                 String token = request.getHeader("token");
 
                 try{
-                    boolean isValidToken = tokenRecordService.verifyToken(token);
+                    boolean isValidToken = tokenRecordService.verifySameToken(token);
                     if (!isValidToken){
                         result = getFailureResult();
                     }else {
-                        Long userId = JwtUtils.verify(token);
+                        TokenRecord tokenRecord = tokenRecordService.verify(token);
 
-                        if (userId == null) {
+                        if (tokenRecord == null) {
                             result = getFailureResult();
                         }else {
                             Object target = point.getTarget();
                             if (target instanceof BaseBizController){
                                 BaseBizController controller = (BaseBizController) target;
-                                controller.setCurrentUserId(userId);
+                                controller.setCurrentUser(tokenRecord.getUser());
                             }
                         }
                     }

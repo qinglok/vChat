@@ -1,18 +1,11 @@
 package me.linx.vchat.app
 
 import android.app.Application
-import androidx.fragment.app.FragmentManager
-import com.blankj.utilcode.util.*
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.squareup.leakcanary.LeakCanary
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import me.linx.vchat.app.constant.AppKeys
-import me.linx.vchat.app.constant.CodeMap
-import me.linx.vchat.app.net.HttpTask
-import me.linx.vchat.app.net.HttpWrapper
-import me.linx.vchat.app.ui.sign.SignInFragment
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.CrashUtils
+import com.blankj.utilcode.util.LogUtils
+import com.blankj.utilcode.util.Utils
+import me.linx.vchat.app.widget.NotifyManager
 
 @Suppress("unused")
 class App : Application() {
@@ -23,73 +16,38 @@ class App : Application() {
         initLog()
         initCrash()
         initLeakCanary()
-        initHttpTask()
         initStetho()
-    }
-
-    /**
-     *  添加登录超时处理
-     */
-    private fun initHttpTask() {
-        HttpWrapper.addHttpTask(CodeMap.ErrorTokenFailed, object : HttpTask {
-            override fun handle() {
-                SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
-
-                ActivityUtils.getTopActivity()?.let { activity ->
-                    if (activity is AppActivity) {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            MaterialAlertDialogBuilder(activity)
-                                .setTitle(R.string.login_timeout)
-                                .setMessage(R.string.login_first)
-                                .setOnDismissListener {
-                                    activity.supportFragmentManager.popBackStack(
-                                        null,
-                                        FragmentManager.POP_BACK_STACK_INCLUSIVE
-                                    )
-                                    activity.supportFragmentManager.beginTransaction()
-                                        .replace(
-                                            R.id.fragment_container,
-                                            SignInFragment(),
-                                            SignInFragment::class.java.name
-                                        )
-                                        .commit()
-                                }
-                                .setPositiveButton(R.string.ok, null)
-                                .show()
-                        }
-                    }
-                }
-            }
-        })
+        NotifyManager.init()
     }
 
     /**
      * 初始化数据库浏览器(Only Chrome)
      */
     private fun initStetho() {
-        com.facebook.stetho.Stetho.initialize(
-            com.facebook.stetho.Stetho.newInitializerBuilder(this)
-                .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
-                .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
-                .build()
-        )
+//        com.facebook.stetho.Stetho.initialize(
+//            com.facebook.stetho.Stetho.newInitializerBuilder(this)
+//                .enableDumpapp(com.facebook.stetho.Stetho.defaultDumperPluginsProvider(this))
+//                .enableWebKitInspector(com.facebook.stetho.Stetho.defaultInspectorModulesProvider(this))
+//                .build()
+//        )
     }
 
     /**
      * 初始化内存泄露检查工具
      */
     private fun initLeakCanary() {
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return
-        }
-        LeakCanary.install(this)
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return
+//        }
+//        LeakCanary.install(this)
     }
 
     // init it in ur application
     private fun initLog() {
-        val isDebug = AppUtils.isAppDebug()
+//        val isDebug = AppUtils.isAppDebug()
+        val isDebug = true
         val config = LogUtils.getConfig()
             .setLogSwitch(isDebug)// 设置 log 总开关，包括输出到控制台和文件，默认开
             .setConsoleSwitch(isDebug)// 设置是否输出到控制台开关，默认开

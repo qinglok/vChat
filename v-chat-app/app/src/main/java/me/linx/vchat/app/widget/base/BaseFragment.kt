@@ -7,9 +7,9 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.blankj.utilcode.util.BarUtils
 import kotlinx.android.synthetic.main.fragment_base.view.*
 import me.linx.vchat.app.R
-import me.linx.vchat.app.utils.fitStatusBar
 import me.linx.vchat.app.utils.hideSoftInput
 
 /**
@@ -27,7 +27,7 @@ abstract class BaseFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_base, container, false).also { baseView ->
-            layoutInflater.inflate(setLayout(), container, false).apply {
+            inflater.inflate(setLayout(), container, false).apply {
                 currentView = this
                 initView(toolBarConfig, savedInstanceState)
                 initActionBar(baseView.toolbar, toolBarConfig)
@@ -42,9 +42,14 @@ abstract class BaseFragment : Fragment() {
 
             if (showDefaultToolBar) {
                 toolbar.visibility = View.VISIBLE
-                toolbar.fitStatusBar()
+                BarUtils.addMarginTopEqualStatusBarHeight(toolbar)
+//                toolbar.fitStatusBar()
                 mActivity.setSupportActionBar(toolbar)
-                mActivity.supportActionBar?.setTitle(titleRes)
+                if (title.isNullOrEmpty()){
+                    mActivity.supportActionBar?.setTitle(titleRes)
+                }else{
+                    mActivity.supportActionBar?.setTitle(title)
+                }
                 mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(enableBackOff)
                 if (enableBackOff){
                     toolbar.setNavigationOnClickListener {

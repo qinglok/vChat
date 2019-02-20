@@ -39,32 +39,48 @@ android {
     }
 }
 
+def appcompat_version = "1.1.0-alpha02"
+def lifecycle_version = "2.1.0-alpha02"
+def work_version = "1.0.0-beta05"
+def room_version = "2.1.0-alpha04"
+def material_version = "1.1.0-alpha03"
+def constraintlayout_version = "2.0.0-alpha3"
+
 dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    // 内存泄漏检测
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
-
-    //Google浏览器查看数据库
-    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
-    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     /**
+     * Goodle 套餐
      * 替代目录查询 https://developer.android.com/jetpack/androidx/migrate
      */
-    // 替代 support
-    implementation "androidx.appcompat:appcompat:1.0.2"
-    // 替代 support design
-    implementation 'com.google.android.material:material:1.1.0-alpha03'
-    // 约束布局
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
+    // Goodle appcompat (替代 support)
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+
+    // Goodle material 风格组件(替代 support design)
+    implementation "com.google.android.material:material:$material_version"
+
+    // Google 约束布局
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+
+    // Google Lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    // Google LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+
+    // Google WorkManager
+    implementation "android.arch.work:work-runtime-ktx:$work_version"
+
+    // Google Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     // Kotlin 协程
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
     // Anko Commons 替代 Butterknife
@@ -75,14 +91,6 @@ dependencies {
 
     // Json 处理
     implementation 'com.google.code.gson:gson:2.8.5'
-
-    // Google Lifecycle
-    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0" // ViewModel + LiveData
-    // Google WorkManager
-    implementation "android.arch.work:work-runtime:1.0.0-beta04"
-    // Google Room
-    implementation "androidx.room:room-runtime:2.1.0-alpha04"
-    kapt "androidx.room:room-compiler:2.1.0-alpha04"
 
     // 查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
@@ -95,7 +103,18 @@ dependencies {
     // 图片裁剪
     implementation 'com.github.yalantis:ucrop:2.2.2'
 
-    // 常用工具
-    implementation "com.blankj:utilcode:1.23.3"
+    // BaseRecyclerViewAdapterHelper
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
 
+    // 常用工具
+    implementation "com.blankj:utilcode:1.23.4"
+
+    // 内存泄漏检测
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
+
+    //Google浏览器查看数据库
+    debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+    debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 }

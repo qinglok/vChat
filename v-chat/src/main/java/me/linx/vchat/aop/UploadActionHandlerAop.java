@@ -1,6 +1,8 @@
 package me.linx.vchat.aop;
 
+import me.linx.vchat.bean.User;
 import me.linx.vchat.constants.CodeMap;
+import me.linx.vchat.controller.biz.BaseBizController;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.utils.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -103,7 +105,6 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
         for (Object arg : args) {
             if (arg instanceof HttpServletRequest) {
                 HttpServletRequest request = (HttpServletRequest) arg;
-                Object userId = request.getSession().getAttribute("currentUserId");
 
                 //获取action
                 String action = request.getHeader("action");
@@ -112,16 +113,25 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
 
                     if (result instanceof JsonResult) {
                         JsonResult js = (JsonResult) result;
+
                         if (js.getCode() == CodeMap.Yes.value) {
                             String fileName = js.getData().toString();
                             List<Handler> handlerList = map.get(action);
 
-                            if (userId != null && handlerList != null && !handlerList.isEmpty()) {
+                            Object target = point.getTarget();
+                            User user = null;
+                            if (target instanceof BaseBizController){
+                                BaseBizController controller = (BaseBizController) target;
+
+                                user = controller.getCurrentUser();
+                            }
+
+                            if (user != null && handlerList != null && !handlerList.isEmpty()) {
                                 for (Handler handler : handlerList) {
                                     Object bean = handler.bean;
                                     Method method = handler.method;
                                     method.setAccessible(true); //不需要安全检查
-                                    result = method.invoke(bean, fileName, userId);
+                                    result = method.invoke(bean, fileName, user);
                                 }
                             }
                         }
@@ -131,6 +141,9 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                 }
             }
         }
+
+
+
         try {
             if (result == null)
                 // 一切正常的情况下，继续执行被拦截的方法

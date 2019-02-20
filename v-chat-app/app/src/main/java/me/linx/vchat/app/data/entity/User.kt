@@ -14,7 +14,12 @@ import me.linx.vchat.app.BR
 class User() : BaseObservable(), Parcelable {
     @PrimaryKey(autoGenerate = true)
     @NonNull
+    @get:Bindable
     var id: Long = 0
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.id)
+        }
 
     @get:Bindable
     var bizId: Long? = null
@@ -38,30 +43,33 @@ class User() : BaseObservable(), Parcelable {
         }
 
     @get:Bindable
-    var nickName: String? = null
+    var nickname: String? = null
         set(value) {
             field = value
-            notifyPropertyChanged(BR.nickName)
+            notifyPropertyChanged(BR.nickname)
         }
 
     @get:Bindable
-    var headImg: String? = null
+    var avatar: String? = null
         set(value) {
             field = value
-            notifyPropertyChanged(BR.headImg)
+            notifyPropertyChanged(BR.avatar)
         }
 
-    var createTime: Long? = null
+    @get:Bindable
     var updateTime: Long? = null
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.updateTime)
+        }
 
     constructor(parcel: Parcel) : this() {
         id = parcel.readLong()
         bizId = parcel.readValue(Long::class.java.classLoader) as? Long
         email = parcel.readString()
         token = parcel.readString()
-        nickName = parcel.readString()
-        headImg = parcel.readString()
-        createTime = parcel.readValue(Long::class.java.classLoader) as? Long
+        nickname = parcel.readString()
+        avatar = parcel.readString()
         updateTime = parcel.readValue(Long::class.java.classLoader) as? Long
     }
 
@@ -70,9 +78,8 @@ class User() : BaseObservable(), Parcelable {
         parcel.writeValue(bizId)
         parcel.writeString(email)
         parcel.writeString(token)
-        parcel.writeString(nickName)
-        parcel.writeString(headImg)
-        parcel.writeValue(createTime)
+        parcel.writeString(nickname)
+        parcel.writeString(avatar)
         parcel.writeValue(updateTime)
     }
 

@@ -11,6 +11,9 @@ import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ScreenUtils
 import kotlinx.android.synthetic.main.fragment_start.*
 import kotlinx.android.synthetic.main.fragment_start.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.model.AppViewModel
@@ -22,7 +25,7 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
 
     override fun setLayout() = R.layout.fragment_start
 
-    override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?){
+    override fun initView(toolBarConfig: ToolBarConfig, savedInstanceState: Bundle?) {
         currentView.apply {
             sun_view.startAnimation(this@StartFragment)
 
@@ -40,9 +43,11 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
                                 ScreenUtils.setNonFullScreen(mActivity)
 
                                 ViewModelProviders.of(mActivity).get(AppViewModel::class.java).appStartRoute { f ->
-                                    fragmentManager?.beginTransaction()
-                                        ?.replace(this@StartFragment.id, f, f::class.java.name)
-                                        ?.commit()
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        fragmentManager?.beginTransaction()
+                                            ?.replace(this@StartFragment.id, f, f::class.java.name)
+                                            ?.commit()
+                                    }
                                 }
                             }
                         })

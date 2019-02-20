@@ -12,16 +12,19 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import me.linx.vchat.core.codec.PacketProtobufDecoder;
-import me.linx.vchat.core.codec.PacketProtobufEncoder;
+import me.linx.vchat.core.codec.Decoder;
+import me.linx.vchat.core.codec.Encoder;
+import me.linx.vchat.netty.handler.AESRequestHandler;
 import me.linx.vchat.netty.handler.ConnectHandler;
-import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.LongAdder;
 
 
-@Component
 public class NettyServerListener {
 
     public static final LongAdder clientSum = new LongAdder();
@@ -29,18 +32,23 @@ public class NettyServerListener {
     public static final LongAdder sendSum = new LongAdder();
 
 
-    static class ShowTask extends TimerTask{
+    static class ShowTask extends TimerTask {
         private long rs = 0;
         private long ss = 0;
+        private DateFormat format = SimpleDateFormat.getDateTimeInstance();
 
         @Override
         public void run() {
             long rsl = receiveSum.longValue();
             long ssl = sendSum.longValue();
 
-            System.out.println("Client Count：" + clientSum.longValue() +
-                    " | Receive Count/S：" + (rsl - rs) +
-                    " | Send Count/S：" + (ssl - ss)    );
+            String time = format.format(new Date());
+
+            System.out.println(time + " -> C：" + clientSum.longValue() +
+                    " | R：" + rsl +
+                    " | S：" + ssl +
+                    " | R/s：" + (rsl - rs) +
+                    " | S/s：" + (ssl - ss));
 
             rs = rsl;
             ss = ssl;
@@ -48,7 +56,7 @@ public class NettyServerListener {
     }
 
     public void start(int port) throws InterruptedException {
-//        new Timer().schedule(new ShowTask(), 0, 1000);
+        new Timer().schedule(new ShowTask(), 0, 1000);
 
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -65,11 +73,12 @@ public class NettyServerListener {
                         @Override
                         public void initChannel(SocketChannel ch) {
                             ch.pipeline()
+                                    .addLast(new ConnectHandler())
                                     .addLast(new ProtobufVarint32FrameDecoder())
-                                    .addLast(new PacketProtobufDecoder())
+                                    .addLast(new Decoder.ProtobufDecoder())
                                     .addLast(new ProtobufVarint32LengthFieldPrepender())
-                                    .addLast(new PacketProtobufEncoder())
-                                    .addLast(new ConnectHandler());
+                                    .addLast(new Encoder.ProtobufEncoder())
+                                    .addLast(new AESRequestHandler());
                         }
                     });
 

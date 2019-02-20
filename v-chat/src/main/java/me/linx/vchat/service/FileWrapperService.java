@@ -22,10 +22,10 @@ public class FileWrapperService {
     @Value("${upload-dir}")
     private String uploadDir;
 
-    private final FileWrapperRepository fileWrapperRepository;
+    private FileWrapperRepository fileWrapperRepository;
 
     @Autowired
-    public FileWrapperService(FileWrapperRepository fileWrapperRepository) {
+    public void setFileWrapperRepository(FileWrapperRepository fileWrapperRepository) {
         this.fileWrapperRepository = fileWrapperRepository;
     }
 

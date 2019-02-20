@@ -36,11 +36,13 @@ dependencies {
     providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
 
+//    implementation  'org.bouncycastle:bcprov-jdk15on:1.60'
+
     //netty
-    implementation  'io.netty:netty-all:5.0.0.Alpha2'
+//    implementation  'io.netty:netty-all:5.0.0.Alpha2'
 
     //google 高性能序列化库
-    implementation 'com.google.protobuf:protobuf-java:3.6.1'
+//    implementation 'com.google.protobuf:protobuf-java:3.6.1'
 
     //数据库
     implementation'org.mariadb.jdbc:mariadb-java-client:2.3.0'
@@ -48,13 +50,15 @@ dependencies {
     //Token 生成
     implementation 'com.auth0:java-jwt:3.4.1'
 
-    //ECC加密
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
-
     //盐加密
     implementation 'org.mindrot:jbcrypt:0.4'
 
     //alibaba fastjson
     implementation 'com.alibaba:fastjson:1.2.54'
 
+}
+
+//指定编译的编码
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
 }

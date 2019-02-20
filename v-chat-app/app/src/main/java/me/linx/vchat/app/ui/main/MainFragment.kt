@@ -7,6 +7,8 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_main.view.*
 import me.linx.vchat.app.R
+import me.linx.vchat.app.ui.main.me.MeFragment
+import me.linx.vchat.app.ui.main.message.MessageFragment
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
 

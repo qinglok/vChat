@@ -1,7 +1,6 @@
 package me.linx.vchat.app.net
 
 import me.linx.vchat.app.widget.loader.LoaderDialogFragment
-import okhttp3.Call
 
 data class HttpHandler<T>(
     var onStart: () -> Unit = {},
@@ -9,30 +8,29 @@ data class HttpHandler<T>(
     var onSuccess: (T) -> Unit = {},
     var onError: (Throwable) -> Unit = {},
     var onCancel: () -> Unit = {},
-    var withLoader : Boolean = false
-){
-    private var loader : LoaderDialogFragment? = null
-    private var call : Call? = null
+    var withLoader: Boolean = false
+) {
+    private var tag : Any = 0
+    private var loader: LoaderDialogFragment? = null
     var isCancel = false
 
-    fun showLoader(){
+    fun showLoader() {
         loader = LoaderDialogFragment()
         loader?.showWithOnDismiss {
             cancel()
         }
     }
 
-    fun hideLoader(){
+    fun hideLoader() {
         loader?.dismiss()
     }
 
-    fun setupCall(c : Call){
-        call = c
+    fun setTag(tag : Any){
+        this.tag = tag
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun cancel(){
+    private fun cancel() {
         isCancel = true
-        call?.cancel()
+        HttpWrapper.cancel(tag)
     }
 }

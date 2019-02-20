@@ -19,7 +19,9 @@ public enum CodeMap {
     ErrorFileUploadFailure(8, "上传失败"),
 
     ErrorLoggedOther(9, "已经在其他设备登录"),
-    ErrorVerifySecret(10, "验证密保失败");
+    ErrorVerifySecret(10, "验证密保失败"),
+
+    ErrorUserNotFound(10, "找不到该用户");
 
     public int value;
     public String msg;

@@ -1,17 +1,23 @@
 package me.linx.vchat.app.data.repository
 
+import android.graphics.Bitmap
 import com.blankj.utilcode.util.DeviceUtils
-import kotlinx.coroutines.*
+import com.blankj.utilcode.util.Utils
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.api.UploadAction
 import me.linx.vchat.app.data.db.AppDatabase
 import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.net.*
+import me.linx.vchat.app.utils.GlideApp
+import me.linx.vchat.app.widget.GlideRoundTransform
 import java.io.File
 import java.util.*
 
 class UserRepository private constructor() {
-    private val userDao by lazy { AppDatabase.db.userDao() }
+    private val dao by lazy { AppDatabase.db.userDao() }
 
     companion object {
         val instance by lazy { UserRepository() }
@@ -20,13 +26,20 @@ class UserRepository private constructor() {
     fun saveAsync(user: User?) =
         GlobalScope.async {
             user?.let {
-                userDao.insert(it)
+                dao.insert(it)
+            }
+        }
+
+    fun saveAsync(users: List<User>?) =
+        GlobalScope.async {
+            users?.let {
+                dao.insert(it)
             }
         }
 
     fun getByAsync(userId: Long) =
         GlobalScope.async {
-            userDao.findByBizId(userId)
+            dao.findByBizId(userId)
         }
 
     fun login(email: String?, password: String?, init: HttpHandler<JsonResult<User>>.() -> Unit) =
@@ -70,36 +83,70 @@ class UserRepository private constructor() {
             )
             .post(init)
 
-    fun postNickName(user :User, name: String?, init: HttpHandler<JsonResult<String>>.() -> Unit) =
-            Api.editNickName.http()
-                .headers("token" to user.token)
-                .params("nickName" to name)
-                .post(init)
+    fun postNickname(user: User, name: String?, init: HttpHandler<JsonResult<String>>.() -> Unit) =
+        Api.editNickname.http()
+            .headers("token" to user.token)
+            .params("nickname" to name)
+            .post(init)
 
-    fun postHeadImg(user :User, file: File, init: HttpHandler<JsonResult<String>>.() -> Unit) =
-            Api.editHeadImg.http()
-                .headers(
-                    "token" to user.token,
-                    "action" to UploadAction.editHeadImage
-                )
-                .params("file" to file)
-                .post(init)
+    fun postAvatar(user: User, file: File, init: HttpHandler<JsonResult<String>>.() -> Unit) =
+        Api.editAvatar.http()
+            .headers(
+                "token" to user.token,
+                "action" to UploadAction.editHeadImage
+            )
+            .params("file" to file)
+            .post(init)
 
-    fun logout(user :User, init: HttpHandler<JsonResult<Unit>>.() -> Unit) {
-            Api.logout.http()
-                .headers(
-                    "token" to user.token
-                )
-                .post(init)
+    fun logout(user: User, init: HttpHandler<JsonResult<Unit>>.() -> Unit) {
+        Api.logout.http()
+            .headers(
+                "token" to user.token
+            )
+            .post(init)
     }
 
-    fun getUserProfile(user :User?, init: HttpHandler<JsonResult<User>>.() -> Unit) {
+    fun getUserProfile(token: String, lastUpdateTime: Long?, init: HttpHandler<JsonResult<User>>.() -> Unit) {
         Api.getUserProfile.http()
             .headers(
-                "token" to user?.token
+                "token" to token
             )
-            .params("updateTime" to user?.updateTime)
+            .params("updateTime" to lastUpdateTime)
             .get(init)
     }
+
+    fun getUserProfile(
+        token: String,
+        targetUserId: Long,
+        lastUpdateTime: Long?,
+        init: HttpHandler<JsonResult<User>>.() -> Unit
+    ) {
+        Api.getUserProfileById.http()
+            .headers(
+                "token" to token
+            )
+            .params(
+                "userId" to targetUserId,
+                "updateTime" to lastUpdateTime
+            )
+            .get(init)
+    }
+
+    fun loadAvatarBitmapAsync(userId: Long): Deferred<Bitmap> =
+        GlobalScope.async {
+            val user = getByAsync(userId).await()
+            loadAvatarBitmapAsync(user?.avatar).await()
+        }
+
+    fun loadAvatarBitmapAsync(avatar: String?): Deferred<Bitmap> =
+        GlobalScope.async {
+            val bitmap = GlideApp.with(Utils.getApp())
+                .asBitmap()
+                .load(Api.baseFileDir + avatar)
+                .transform(GlideRoundTransform(4))
+                .submit()
+                .get()
+            bitmap
+        }
 
 }

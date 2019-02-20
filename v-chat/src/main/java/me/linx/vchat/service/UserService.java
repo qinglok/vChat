@@ -3,17 +3,18 @@ package me.linx.vchat.service;
 import com.alibaba.fastjson.JSONObject;
 import me.linx.vchat.aop.UploadAction;
 import me.linx.vchat.bean.FileWrapper;
+import me.linx.vchat.bean.TokenRecord;
 import me.linx.vchat.bean.User;
 import me.linx.vchat.bean.UserProfile;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.model.validation.LoginAndVerifySecretModel;
 import me.linx.vchat.model.validation.LoginModel;
-import me.linx.vchat.model.validation.NickNameModel;
+import me.linx.vchat.model.validation.NicknameModel;
 import me.linx.vchat.model.validation.RegisterModel;
+import me.linx.vchat.netty.session.IMDispatcher;
 import me.linx.vchat.repository.FileWrapperRepository;
 import me.linx.vchat.repository.UserRepository;
-import me.linx.vchat.utils.JwtUtils;
 import me.linx.vchat.utils.PasswordUtils;
 import me.linx.vchat.utils.StringUtils;
 import me.linx.vchat.utils.ValidationUtils;
@@ -22,20 +23,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final FileWrapperRepository fileWrapperRepository;
-    private final TokenRecordService tokenRecordService;
+    private UserRepository userRepository;
+    private FileWrapperRepository fileWrapperRepository;
+    private TokenRecordService tokenRecordService;
 
     @Autowired
-    public UserService(UserRepository userRepository, FileWrapperRepository fileWrapperRepository, TokenRecordService tokenRecordService) {
+    public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setFileWrapperRepository(FileWrapperRepository fileWrapperRepository) {
         this.fileWrapperRepository = fileWrapperRepository;
+    }
+
+    @Autowired
+    public void setTokenRecordService(TokenRecordService tokenRecordService) {
         this.tokenRecordService = tokenRecordService;
     }
 
@@ -43,46 +54,35 @@ public class UserService {
      * 修改头像
      *
      * @param fileName 文件名
-     * @param userId   userId
-     * @return 结果
+     * @param user     {@link User}
+     * @return {@link JsonResult}
      */
     @SuppressWarnings("unused")
     @UploadAction(action = "editHeadImage")
-    JsonResult editHeadImage(String fileName, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            FileWrapper fileWrapper = fileWrapperRepository.findByName(fileName);
-            User user = userOptional.get();
-
-            user.getUserProfile().setHeadImg(fileWrapper);
-            userRepository.save(user);
-        }
+    JsonResult editHeadImage(String fileName, User user) {
+        FileWrapper fileWrapper = fileWrapperRepository.findByName(fileName);
+        user.getUserProfile().setAvatar(fileWrapper);
+        userRepository.save(user);
         return JsonResult.success(fileName);
     }
 
     /**
      * 修改昵称
      *
-     * @param model  参数
-     * @param userId userId
-     * @return 结果
+     * @param model 参数模型
+     * @param user  {@link User}
+     * @return {@link JsonResult}
      */
-    public JsonResult editNickName(NickNameModel model, Long userId) {
+    public JsonResult editNickname(NicknameModel model, User user) {
         // 验证参数
         ValidationUtils.ValidationResult validationResult = ValidationUtils.validateEntity(model);
         if (validationResult.hasErrors()) {
             return JsonResult.failure(CodeMap.ErrorParameter.value, validationResult.errorFormatMsg());
         }
 
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            user.getUserProfile().setNickName(model.getNickName());
-            userRepository.save(user);
-            return JsonResult.success();
-        }
-        return JsonResult.failure(CodeMap.ErrorSys);
+        user.getUserProfile().setNickname(model.getNickname());
+        userRepository.save(user);
+        return JsonResult.success();
     }
 
     /**
@@ -110,7 +110,7 @@ public class UserService {
         User user = new User();
         UserProfile userProfile = new UserProfile();
 
-        userProfile.setNickName(email.substring(0, email.indexOf("@")));
+        userProfile.setNickname(email.substring(0, email.indexOf("@")));
         userProfile.setSecretQuestion(registerModel.getSecretQuestion());
         userProfile.setSecretAnswer(registerModel.getSecretAnswer());
 
@@ -122,12 +122,12 @@ public class UserService {
         userRepository.save(user);
 
         // 根据userId， 设备标识生成token
-        String token = JwtUtils.sign(user.getId(), deviceId);
+//        String token = JwtUtils.sign(user.getId(), deviceId);
         // 保存登录信息
-        tokenRecordService.save(user, token, deviceId);
+        TokenRecord tokenRecord = tokenRecordService.save(user, deviceId);
 
         JSONObject jsonObject = createJsonObject(user.getId(), userProfile);
-        jsonObject.put("token", token);
+        jsonObject.put("token", tokenRecord.getToken());
 
         //返回信息
         return JsonResult.success(jsonObject);
@@ -174,6 +174,8 @@ public class UserService {
             if (StringUtils.isNotTrimEmpty(user.getUserProfile().getSecretQuestion())) {
                 return JsonResult.failure(CodeMap.ErrorLoggedOther.value, user.getUserProfile().getSecretQuestion());
             } else {
+                // 移除IM通道，通知异地登录
+                IMDispatcher.unBindWithLoggedOther(user.getId());
                 // 未设置密保，放行，并清除原有登录信息
                 tokenRecordService.clearLoggedInfo(user);
             }
@@ -182,28 +184,30 @@ public class UserService {
         // 用户附属信息
         UserProfile userProfile = user.getUserProfile();
 
-        String headImgPath = ""; // 头像
-        FileWrapper headImgFile = userProfile.getHeadImg();
-        if (headImgFile != null) {
-            headImgPath = headImgFile.getName();
+        String avatarPath = ""; // 头像
+        FileWrapper avatarFile = userProfile.getAvatar();
+        if (avatarFile != null) {
+            avatarPath = avatarFile.getName();
         }
 
         // 根据userId， 设备标识生成token
-        String token = JwtUtils.sign(user.getId(), deviceId);
+//        String token = JwtUtils.sign(user.getId(), deviceId);
         // 保存登录信息
-        tokenRecordService.save(user, token, deviceId);
+        TokenRecord tokenRecord = tokenRecordService.save(user, deviceId);
 
         //返回信息
-        return getJsonResult(user, userProfile, headImgPath, token);
+        return getJsonResult(user, userProfile, avatarPath, tokenRecord.getToken());
     }
 
     private synchronized boolean checkEmail(@NotNull String email) {
         return StringUtils.isNotTrimEmpty(email) && userRepository.countByEmail(email) > 0;
     }
 
-    public JsonResult handleLogout(Long currentUserId) {
+    public JsonResult handleLogout(User user) {
+        // 移除IM通道
+        IMDispatcher.unBind(user.getId());
         // 清除登录信息
-        tokenRecordService.clearLoggedInfo(currentUserId);
+        tokenRecordService.clearLoggedInfo(user);
         return JsonResult.success();
     }
 
@@ -246,69 +250,110 @@ public class UserService {
         // 验证密保
         if (!model.getAnswer().equals(userProfile.getSecretAnswer()))
             return JsonResult.failure(CodeMap.ErrorVerifySecret);
+
+        // 移除IM通道，通知异地登录
+        IMDispatcher.unBindWithLoggedOther(user.getId());
         // 清除旧的登录记录
         tokenRecordService.clearLoggedInfo(user.getId());
 
-        String headImgPath = ""; // 头像
-        FileWrapper headImgFile = userProfile.getHeadImg();
-        if (headImgFile != null) {
-            headImgPath = headImgFile.getName();
+        String avatarPath = ""; // 头像
+        FileWrapper avatarFile = userProfile.getAvatar();
+        if (avatarFile != null) {
+            avatarPath = avatarFile.getName();
         }
 
         // 根据userId， 设备标识生成token
-        String token = JwtUtils.sign(user.getId(), model.getDeviceId());
+//        String token = JwtUtils.sign(user.getId(), model.getDeviceId());
         // 保存登录信息
-        tokenRecordService.save(user, token, model.getDeviceId());
+        TokenRecord tokenRecord = tokenRecordService.save(user, model.getDeviceId());
 
         //返回信息
-        return getJsonResult(user, userProfile, headImgPath, token);
+        return getJsonResult(user, userProfile, avatarPath, tokenRecord.getToken());
     }
 
     /**
-     *  获取用户信息
-     * @param currentUserId 用户ID
+     * 获取当前用户信息
+     *
+     * @param user       {@link User}
      * @param updateTime 客户端更新时间
      * @return {@link JsonResult}
      */
-    public JsonResult getUserProfile(Long currentUserId, Long updateTime) {
-        Optional<User> userOptional = userRepository.findById(currentUserId);
+    public JsonResult getUserProfile(User user, Long updateTime) {
+        return getJsonResult(updateTime, user);
+    }
+
+    /**
+     * 获取其他用户信息
+     *
+     * @param userId     {@link User} ID
+     * @param updateTime @link User} updateTime
+     * @return {@link JsonResult}
+     */
+    public JsonResult getUserProfile(Long userId, Long updateTime) {
+        Optional<User> userOptional = userRepository.findById(userId);
+
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            UserProfile userProfile = user.getUserProfile();
-
-            if (updateTime != null) {
-                if (user.getUserProfile().getUpdateTime().getTime() > updateTime) {
-                    return getJsonResult(userProfile);
-                } else {
-                    return JsonResult.success();
-                }
-            } else {
-                return getJsonResult(userProfile);
-            }
+            return getJsonResult(updateTime, user);
         }
-        return JsonResult.failure(CodeMap.ErrorSys);
+
+        return JsonResult.failure(CodeMap.ErrorUserNotFound);
+    }
+
+    /**
+     *  获取在线用户
+     * @return @link JsonResult}
+     */
+    public JsonResult getActiveUserProfile(User currentUser) {
+        List<JSONObject> list = new ArrayList<>();
+        for (User user : IMDispatcher.getActiveUser()) {
+            if (currentUser.getId() ==  user.getId())
+                continue;
+
+            UserProfile userProfile = user.getUserProfile();
+            list.add(getJsonObject(userProfile));
+        }
+        return JsonResult.success(list);
+    }
+
+    private JsonResult getJsonResult(Long updateTime, User user) {
+        UserProfile userProfile = user.getUserProfile();
+
+        if (updateTime != null) {
+            if (user.getUserProfile().getUpdateTime().getTime() > updateTime) {
+                return getJsonResult(userProfile);
+            } else {
+                return JsonResult.success();
+            }
+        } else {
+            return getJsonResult(userProfile);
+        }
+    }
+
+    private JSONObject getJsonObject(UserProfile userProfile) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("bizId", userProfile.getId());
+        jsonObject.put("nickname", userProfile.getNickname());
+        jsonObject.put("avatar", userProfile.getAvatar() != null ? userProfile.getAvatar().getName() : "");
+        jsonObject.put("updateTime", userProfile.getUpdateTime().getTime());
+        return jsonObject;
     }
 
     private JsonResult getJsonResult(UserProfile userProfile) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("nickName", userProfile.getNickName());
-        jsonObject.put("headImg", userProfile.getHeadImg() != null ? userProfile.getHeadImg().getName() : "");
-        jsonObject.put("updateTime", userProfile.getUpdateTime().getTime());
-        return JsonResult.success(jsonObject);
+        return JsonResult.success(getJsonObject(userProfile));
     }
 
     private JSONObject createJsonObject(Long userId, UserProfile userProfile) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("bizId", userId);
-        jsonObject.put("nickName", userProfile.getNickName());
-        jsonObject.put("createTime", userProfile.getCreateTime().getTime());
+        jsonObject.put("nickname", userProfile.getNickname());
         jsonObject.put("updateTime", userProfile.getUpdateTime().getTime());
         return jsonObject;
     }
 
-    private JsonResult getJsonResult(User user, UserProfile userProfile, String headImgPath, String token) {
+    private JsonResult getJsonResult(User user, UserProfile userProfile, String avatarPath, String token) {
         JSONObject jsonObject = createJsonObject(user.getId(), userProfile);
-        jsonObject.put("headImg", headImgPath);
+        jsonObject.put("avatar", avatarPath);
         jsonObject.put("token", token);
 
         return JsonResult.success(jsonObject);

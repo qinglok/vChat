@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.blankj.utilcode.util.ActivityUtils
 import kotlinx.android.synthetic.main.fragment_loader_dialog.view.*
 import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
@@ -46,8 +45,10 @@ class LoaderDialogFragment : DialogFragment() {
 
     fun showWithOnDismiss(onDismiss : () -> Unit) {
         this.onDismiss = onDismiss
-        val appActivity = ActivityUtils.getTopActivity() as AppActivity
-        super.show(appActivity.supportFragmentManager, null)
+
+        AppActivity.instance?.let {
+            super.show(it.supportFragmentManager, null)
+        }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

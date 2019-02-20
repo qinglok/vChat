@@ -18,27 +18,39 @@ fun View.snackbar(@StringRes msg: Int) {
 }
 
 fun View.snackbarSuccess(msg: String?) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.success))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.success))
+    }
 }
 
 fun View.snackbarSuccess(@StringRes msg: Int) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.success))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.success))
+    }
 }
 
 fun View.snackbarFailure(msg: String?) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.failure))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.failure))
+    }
 }
 
 fun View.snackbarFailure(@StringRes msg: Int) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.failure))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.failure))
+    }
 }
 
 fun View.snackbarError(msg: String?) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.error))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.error))
+    }
 }
 
 fun View.snackbarError(@StringRes msg: Int) {
-    snackbarWithColor(msg, Utils.getApp().getColor(R.color.error))
+    Utils.getApp()?.let {
+        snackbarWithColor(msg, it.getColor(R.color.error))
+    }
 }
 
 fun View.snackbarWithColor(msg: String?, @ColorInt color : Int) {

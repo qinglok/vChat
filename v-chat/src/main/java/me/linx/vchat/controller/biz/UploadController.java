@@ -3,7 +3,6 @@ package me.linx.vchat.controller.biz;
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.model.JsonResult;
 import me.linx.vchat.service.FileWrapperService;
-import me.linx.vchat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,17 +12,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/biz")
-public class UploadController extends BaseBizController{
+public class UploadController extends BaseBizController {
 
-    private final FileWrapperService fileWrapperService;
+    private FileWrapperService fileWrapperService;
 
     @Autowired
-    public UploadController(UserService userService, HttpSession session, FileWrapperService fileWrapperService) {
-        super(userService, session);
+    public void setFileWrapperService(FileWrapperService fileWrapperService) {
         this.fileWrapperService = fileWrapperService;
     }
 

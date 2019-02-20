@@ -20,19 +20,20 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.blankj.utilcode.util.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yalantis.ucrop.UCrop
-import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.constant.CodeMap
 import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.entity.User
+import me.linx.vchat.app.data.im.IMGuardService
+import me.linx.vchat.app.data.im.IMService
 import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.databinding.FragmentMeBinding
 import me.linx.vchat.app.net.JsonResult
 import me.linx.vchat.app.net.http
 import me.linx.vchat.app.net.post
-import me.linx.vchat.app.ui.main.HeadImageActivity
-import me.linx.vchat.app.ui.main.MeFragment
+import me.linx.vchat.app.ui.main.me.AvatarActivity
+import me.linx.vchat.app.ui.main.me.MeFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.utils.*
 import me.linx.vchat.app.widget.base.BaseFragment
@@ -50,25 +51,21 @@ class FragmentMeViewModel : ViewModel() {
     // 临时文件的绝对路径
     private var mCurrentPhotoPath: String? = null
 
-    init {
-        ActivityUtils.getTopActivity().also { activity ->
-            ViewModelProviders.of(activity as AppActivity).get(AppViewModel::class.java).obUser.observeForever {
-                obUser = it
-            }
-        }
-    }
-
     fun init(f: MeFragment, toolBarConfig: ToolBarConfig) {
+        ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).obUser.observeForever {
+            obUser = it
+        }
+
         val viewClick by lazy {
             View.OnClickListener { v ->
                 when (v?.id) {
-                    R.id.iv_head_img -> {
+                    R.id.iv_avatar -> {
                         showBigImg(v, f)
                     }
-                    R.id.gl_head_img -> {
+                    R.id.gl_avatar -> {
                         showOptionsDialog(f)
                     }
-                    R.id.gl_nick_name -> {
+                    R.id.gl_nickname -> {
                         showNewNameDialog(f)
                     }
                 }
@@ -100,10 +97,10 @@ class FragmentMeViewModel : ViewModel() {
 
         DataBindingUtil.bind<FragmentMeBinding>(f.currentView)?.apply {
             viewModel = this@FragmentMeViewModel
-            ivHeadImg.transitionName = f.getString(R.string.photo_transition_name)
-            ivHeadImg.setOnClickListener(viewClick)
-            glHeadImg.setOnClickListener(viewClick)
-            glNickName.setOnClickListener(viewClick)
+            ivAvatar.transitionName = f.getString(R.string.photo_transition_name)
+            ivAvatar.setOnClickListener(viewClick)
+            glAvatar.setOnClickListener(viewClick)
+            glNickname.setOnClickListener(viewClick)
             srl.setColorSchemeResources(R.color.color_primary)
             srl.setOnRefreshListener {
                 updateUserInfo(srl)
@@ -112,7 +109,7 @@ class FragmentMeViewModel : ViewModel() {
 
         toolBarConfig.apply {
             showDefaultToolBar = true
-            titleRes = R.string.me_cn
+            titleRes = R.string.me
             menuRes = R.menu.menu_me_options
             onMenuItemClick = menuItemClick
         }
@@ -121,17 +118,17 @@ class FragmentMeViewModel : ViewModel() {
     /**
      *  查看头像大图
      */
-    private fun showBigImg(iv_head_img: View, f: BaseFragment) {
-        obUser.headImg?.let {
+    private fun showBigImg(iv_avatar: View, f: BaseFragment) {
+        obUser.avatar?.let {
             if (it.isNotEmpty()) {
-                val intent = Intent(f.context, HeadImageActivity::class.java)
+                val intent = Intent(f.context, AvatarActivity::class.java)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     f.mActivity,
-                    iv_head_img,
+                    iv_avatar,
                     f.getString(R.string.photo_transition_name)
                 )
 
-                intent.putExtra(AppKeys.KEY_user_head_img, obUser.headImg)
+                intent.putExtra(AppKeys.KEY_user_avatar, obUser.avatar)
 
                 f.startActivity(intent, options.toBundle())
             }
@@ -144,7 +141,7 @@ class FragmentMeViewModel : ViewModel() {
     private fun showOptionsDialog(f: BaseFragment) {
         arrayOf<CharSequence>("相册", "拍照").also {
             MaterialAlertDialogBuilder(f.context)
-                .setTitle(R.string.edit_head_img)
+                .setTitle(R.string.edit_avatar)
                 .setItems(
                     it
                 ) { _, which ->
@@ -161,19 +158,20 @@ class FragmentMeViewModel : ViewModel() {
     /**
      *  显示修改昵称Dialog
      */
-    private fun showNewNameDialog(f : BaseFragment) {
+    private fun showNewNameDialog(f: BaseFragment) {
         var editText: EditText? = null
         editText = MaterialAlertDialogBuilder(f.context).apply {
-            setView(R.layout.view_edit_nick_name)
-            setTitle(R.string.edit_nick_name)
+            setView(R.layout.view_edit_nickname)
+            setTitle(R.string.edit_nickname)
             setPositiveButton(
                 R.string.save
             ) { _, _ ->
-                newNickName(editText?.text.toString(), f)
+                newNickname(editText?.text.toString(), f)
             }
             setNegativeButton(R.string.cancel, null)
         }.show().findViewById<EditText>(R.id.et_name).apply {
-            this?.setText(obUser.nickName)
+            this?.setText(obUser.nickname)
+            this?.setSelection(obUser.nickname?.length ?: 0)
             this?.showOrHideSoftInput()
         }
     }
@@ -210,7 +208,7 @@ class FragmentMeViewModel : ViewModel() {
                 // Continue only if the File was successfully created
                 photoFile?.let { file ->
                     val photoURI: Uri = FileProvider.getUriForFile(
-                        Utils.getApp(),
+                        f.mActivity,
                         AppUtils.getAppPackageName() + ".provider",
                         file
                     )
@@ -251,7 +249,6 @@ class FragmentMeViewModel : ViewModel() {
             // 从拍照返回
             requestTakePhotoFromCamera -> {
                 toCrop(f, Uri.fromFile(File(mCurrentPhotoPath)))
-                LogUtils.d(data.toString())
             }
             // 从相册返回
             requestTakePhotoFromCollection -> {
@@ -261,7 +258,7 @@ class FragmentMeViewModel : ViewModel() {
             }
             // 裁剪完毕
             UCrop.REQUEST_CROP -> {
-                newHeadImg(mCurrentPhotoPath, f)
+                newAvatar(mCurrentPhotoPath, f)
             }
         }
     }
@@ -298,7 +295,7 @@ class FragmentMeViewModel : ViewModel() {
     /**
      *  修改头像
      */
-    private fun newHeadImg(photoPath: String?, f: BaseFragment) {
+    private fun newAvatar(photoPath: String?, f: BaseFragment) {
         val file = File(photoPath)
         if (!file.exists()) {
             f.view?.snackbarError(R.string.file_not_found)
@@ -307,14 +304,14 @@ class FragmentMeViewModel : ViewModel() {
 
         val userRepository = UserRepository.instance
 
-        userRepository.postHeadImg(obUser, file) {
+        userRepository.postAvatar(obUser, file) {
             withLoader = true
             onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     result.data?.let { path ->
                         obUser.apply {
-                            headImg = path
-                            userRepository.saveAsync(this).then()
+                            avatar = path
+                            userRepository.saveAsync(this).launch()
                         }
                     }
                 } else {
@@ -330,19 +327,19 @@ class FragmentMeViewModel : ViewModel() {
     /**
      *  修改昵称
      */
-    private fun newNickName(name: String, f: BaseFragment) {
+    private fun newNickname(name: String, f: BaseFragment) {
         if (name.isEmpty()) {
-            f.view?.snackbarFailure(f.getString(R.string.please_input_nick_name))
+            f.view?.snackbarFailure(f.getString(R.string.please_input_nickname))
         } else {
             val userRepository = UserRepository.instance
 
-            userRepository.postNickName(obUser, name) {
+            userRepository.postNickname(obUser, name) {
                 withLoader = true
                 onSuccess = { result ->
                     if (result.code == CodeMap.Yes) {
                         obUser.apply {
-                            nickName = name
-                            userRepository.saveAsync(this).then()
+                            nickname = name
+                            userRepository.saveAsync(this).launch()
                         }
                     } else {
                         f.view?.snackbarFailure(result.msg)
@@ -363,7 +360,9 @@ class FragmentMeViewModel : ViewModel() {
             withLoader = true
             onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
-                    SPUtils.getInstance().put(AppKeys.SP_currentUserId, 0L)
+                    SPUtils.getInstance().put(AppKeys.SP_current_user_id, 0L)
+                    ServiceUtils.stopService(IMService::class.java)
+                    ServiceUtils.stopService(IMGuardService::class.java)
 
                     f.fragmentManager?.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     f.fragmentManager?.beginTransaction()
@@ -382,15 +381,15 @@ class FragmentMeViewModel : ViewModel() {
     /**
      *  更新用户信息
      */
-    private fun updateUserInfo(srl : SwipeRefreshLayout) {
-        UserRepository.instance.getUserProfile(obUser) {
+    private fun updateUserInfo(srl: SwipeRefreshLayout) {
+        UserRepository.instance.getUserProfile(obUser.token ?: "", obUser.updateTime) {
             onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
                     result.data?.let { info ->
-                        obUser.nickName = info.nickName
-                        obUser.headImg = info.headImg
+                        obUser.nickname = info.nickname
+                        obUser.avatar = info.avatar
                         obUser.updateTime = info.updateTime
-                        UserRepository.instance.saveAsync(obUser).then()
+                        UserRepository.instance.saveAsync(obUser).launch()
                     }
                 }
             }

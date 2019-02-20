@@ -2,9 +2,7 @@ package me.linx.vchat.controller.biz;
 
 import me.linx.vchat.constants.CodeMap;
 import me.linx.vchat.model.JsonResult;
-import me.linx.vchat.model.validation.NickNameModel;
-import me.linx.vchat.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.linx.vchat.model.validation.NicknameModel;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,22 +10,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/user")
 public class UserController extends BaseBizController{
 
-    @Autowired
-    public UserController(UserService userService, HttpSession session) {
-        super(userService, session);
-    }
-
-    @RequestMapping(value = "/editNickName", method = RequestMethod.POST)
+    @RequestMapping(value = "/editNickname", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult editNickName(@SuppressWarnings("unused") HttpServletRequest request, @ModelAttribute NickNameModel model) {
+    public JsonResult editNickname(@SuppressWarnings("unused") HttpServletRequest request, @ModelAttribute NicknameModel model) {
         try {
-            return userService.editNickName(model, getCurrentUserId());
+            return userService.editNickname(model, getCurrentUser());
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);
@@ -38,7 +30,29 @@ public class UserController extends BaseBizController{
     @ResponseBody
     public JsonResult getUserProfile(@SuppressWarnings("unused") HttpServletRequest request, Long updateTime) {
         try {
-            return userService.getUserProfile(getCurrentUserId(), updateTime);
+            return userService.getUserProfile(getCurrentUser(), updateTime);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return JsonResult.failure(CodeMap.ErrorSys);
+        }
+    }
+
+    @RequestMapping(value = "/getUserProfileById", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResult getUserProfileById(@SuppressWarnings("unused") HttpServletRequest request, Long userId, Long updateTime) {
+        try {
+            return userService.getUserProfile(userId, updateTime);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            return JsonResult.failure(CodeMap.ErrorSys);
+        }
+    }
+
+    @RequestMapping(value = "/getActiveUserProfile", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResult getActiveUserProfile(@SuppressWarnings("unused") HttpServletRequest request) {
+        try {
+            return userService.getActiveUserProfile(getCurrentUser());
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);
@@ -49,7 +63,7 @@ public class UserController extends BaseBizController{
     @ResponseBody
     public JsonResult logout(@SuppressWarnings("unused") HttpServletRequest request) {
         try {
-            return userService.handleLogout(getCurrentUserId());
+            return userService.handleLogout(getCurrentUser());
         } catch (IllegalStateException e) {
             e.printStackTrace();
             return JsonResult.failure(CodeMap.ErrorSys);
@@ -58,7 +72,7 @@ public class UserController extends BaseBizController{
 
     @RequestMapping(value = "/loginTimeoutTest", method = RequestMethod.POST)
     @ResponseBody
-    public JsonResult loginTimeoutTest(@ModelAttribute NickNameModel model) {
+    public JsonResult loginTimeoutTest(@ModelAttribute NicknameModel model) {
         return JsonResult.failure(CodeMap.ErrorTokenFailed);
     }
 

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0a872245c4f8ffdf97a6e8b209ccdc4d",
+    "identityHash": "2e5126b4a0b3b161ac6f0268e4f2ae5d",
     "entities": [
       {
         "tableName": "User",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bizId` INTEGER, `email` TEXT, `token` TEXT, `nickName` TEXT, `headImg` TEXT, `createTime` INTEGER, `updateTime` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bizId` INTEGER, `email` TEXT, `token` TEXT, `nickname` TEXT, `avatar` TEXT, `updateTime` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,21 +33,15 @@
             "notNull": false
           },
           {
-            "fieldPath": "nickName",
-            "columnName": "nickName",
+            "fieldPath": "nickname",
+            "columnName": "nickname",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "headImg",
-            "columnName": "headImg",
+            "fieldPath": "avatar",
+            "columnName": "avatar",
             "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "createTime",
-            "columnName": "createTime",
-            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -74,12 +68,107 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "Message",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `bizId` INTEGER, `fromId` INTEGER, `fromName` TEXT, `fromAvatar` TEXT, `toId` INTEGER, `toName` TEXT, `toAvatar` TEXT, `content` TEXT, `read` INTEGER NOT NULL, `sent` INTEGER NOT NULL, `updateTime` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bizId",
+            "columnName": "bizId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fromId",
+            "columnName": "fromId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fromName",
+            "columnName": "fromName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fromAvatar",
+            "columnName": "fromAvatar",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "toId",
+            "columnName": "toId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "toName",
+            "columnName": "toName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "toAvatar",
+            "columnName": "toAvatar",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "read",
+            "columnName": "read",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sent",
+            "columnName": "sent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updateTime",
+            "columnName": "updateTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_Message_bizId",
+            "unique": true,
+            "columnNames": [
+              "bizId"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_Message_bizId` ON `${TABLE_NAME}` (`bizId`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"0a872245c4f8ffdf97a6e8b209ccdc4d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2e5126b4a0b3b161ac6f0268e4f2ae5d\")"
     ]
   }
 }

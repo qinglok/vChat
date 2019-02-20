@@ -12,6 +12,7 @@ class ToolBarConfig(
     var onBackOffClick: () -> Unit = {},
     // 设置工具栏标题，默认为App Name
     var titleRes: Int = R.string.app_name,
+    var title: String? = null,
     // 设置工具栏选项菜单
     var menuRes: Int = 0,
     // 设置工具栏选项点击事件

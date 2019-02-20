@@ -177,7 +177,7 @@ class FragmentSignViewModel : ViewModel() {
 
     private fun saveData(user: User?, f: BaseFragment) =
         user?.apply {
-            SPUtils.getInstance().put(AppKeys.SP_currentUserId, bizId ?: 0L)
+            SPUtils.getInstance().put(AppKeys.SP_current_user_id, bizId ?: 0L)
             email = obEmail.get()
             UserRepository.instance.saveAsync(this).then(Dispatchers.Main) {
                 ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).setup(this)

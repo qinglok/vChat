@@ -31,9 +31,10 @@ import me.linx.vchat.core.constants.PacketConstants;
 import me.linx.vchat.core.packet.Packet;
 import me.linx.vchat.core.session.Attributes;
 import me.linx.vchat.core.session.Session;
-import me.linx.vchat.core.utils.ECC;
+import me.linx.vchat.core.utils.RSA;
 
 import java.security.KeyPair;
+import java.security.Security;
 
 /**
  * Sends one message when a connection is open and echoes back any received
@@ -44,6 +45,7 @@ import java.security.KeyPair;
 public final class EchoClient {
 
     public static void main(String[] args) throws Exception {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
         // Configure the client.
         EventLoopGroup group = new NioEventLoopGroup();
@@ -69,7 +71,7 @@ public final class EchoClient {
 
             if (f.isSuccess()){
 
-                KeyPair keyPair = ECC.getKeyPair();
+                KeyPair keyPair = RSA.newKeyPair(null);
                 byte[] encoded = keyPair.getPublic().getEncoded();
 
                 //保存私钥

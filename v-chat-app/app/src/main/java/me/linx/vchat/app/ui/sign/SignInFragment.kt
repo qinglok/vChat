@@ -48,10 +48,10 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
                 fragmentManager
                     ?.beginTransaction()
                     ?.setCustomAnimations(
-                        R.anim.scale_alpha_in,
-                        R.anim.alpha_out,
-                        R.anim.alpha_in,
-                        R.anim.scale_alpha_out
+                        R.anim.abc_grow_fade_in_from_bottom,
+                        R.anim.abc_fade_out,
+                        R.anim.abc_fade_in,
+                        R.anim.abc_shrink_fade_out_from_bottom
                     )
                     ?.replace(id, signUpFragment, SignUpFragment::class.java.name)
                     ?.addToBackStack(SignUpFragment::class.java.name)

@@ -3,11 +3,21 @@
     <!-- Base application theme. -->
     <style name="Theme.MyApp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@android:color/white</item>
-        <item name="colorPrimaryVariant">@color/color_primary_variant</item>
         <item name="colorOnPrimary">@color/color_on_primary</item>
+        <!--<item name="colorSurface">@color/gray_ededed</item>-->
+        <item name="android:statusBarColor">@android:color/transparent</item>
 
+        <item name="bottomNavigationStyle">@style/Widget.MyApp.BottomNavigation</item>
+
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:screenOrientation">portrait</item>
+    </style>
+
+    <style name="Widget.MyApp.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/gray_ededed</item>
+        <item name="itemIconTint">@color/bottom_nav_item_tint</item>
+        <item name="itemTextColor">@color/bottom_nav_item_tint</item>
     </style>
 
 </resources>

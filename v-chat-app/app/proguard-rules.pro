@@ -41,3 +41,23 @@
 -keepclassmembernames class kotlinx.** {
     volatile <fields>;
 }
+
+#netty混淆 --------------------------------------------------------------------
+-keepattributes Signature,InnerClasses
+-keepclasseswithmembers class io.netty.** {
+    *;
+}
+-dontwarn io.netty.**
+-dontwarn sun.**
+
+#BaseRecyclerViewAdapterHelper --------------------------------------------------------------------
+-keep class com.chad.library.adapter.** {
+*;
+}
+-keep public class * extends com.chad.library.adapter.base.BaseQuickAdapter
+-keep public class * extends com.chad.library.adapter.base.BaseViewHolder
+-keepclassmembers  class **$** extends com.chad.library.adapter.base.BaseViewHolder {
+     <init>(...);
+}
+-keep class me.linx.vchat.app.data.model.utils.DataBindingBaseQuickAdapter { *; }
+-keep class me.linx.vchat.app.data.model.utils.DataBindingBaseViewHolder { *; }

@@ -10,6 +10,8 @@ option java_package = "me.linx.vchat.core.packet";
 option java_outer_classname = "Packet";
 
 //文件级别优化
+option optimize_for = SPEED;
+
 //1 > SPEED: 表示生成的代码运行效率高，但是由此生成的代码编译后会占用更多的空间。
 //2 > CODE_SIZE: 和SPEED恰恰相反，代码运行效率较低，但是由此生成的代码编译后会占用更少的空间，通常用于资源有限的平台，如Mobile。
 //3 > LITE_RUNTIME: 生成的代码执行效率高，同时生成代码编译后的所占用的空间也是非常少。
@@ -17,7 +19,7 @@ option java_outer_classname = "Packet";
 //      SPEED和LITE_RUNTIME相比，在于调试级别上，例如 msg.SerializeToString(&str) 在SPEED模式下会利用反射机制打印出详细字段和字段值，
 //      但是LITE_RUNTIME则仅仅打印字段值组成的字符串;
 //      因此：可以在程序调试阶段使用 SPEED模式，而上线以后使用提升性能使用 LITE_RUNTIME 模式优化。
-option optimize_for = SPEED;
+
 
 
 // ------------------------------ 为了平台兼容性，使用下划线命名法，而非驼峰命名法 ------------------------------------
@@ -28,35 +30,32 @@ option optimize_for = SPEED;
 // ----------------------------- 不要在生成的Java文件中写代码，修改后需要重新生成，修改麻烦 ---------------------------
 
 
-message Box{
-  uint32 type = 1;
-  oneof packet {
-      RequestAESKeyPacket requestAESKeyPacket = 2;
-      ResponseAESKeyPacket responseAESKeyPacket = 3;
-      AuthPacket authPacket = 4;
-      TextPacket textPacket = 5;
-  }
-}
-
-message RequestAESKeyPacket {
+message AESRequestPacket {
   bytes public_key = 1;
 }
 
-message ResponseAESKeyPacket {
+message AESResponsePacket {
   bytes aes_key = 1;
 }
 
-message AuthPacket {
-  int64 user_id = 1;
-  string token = 2;
-  string deviceId = 3;
+message AuthRequestPacket {
+  string token = 1;
+}
+
+message AuthResponsePacket {
+  bool is_pass = 1;
 }
 
 message TextPacket {
   int64 from_id = 1;  //发送者ID
   int64 to_id = 2;  //接收者ID
   string msg = 3;
-  google.protobuf.Timestamp create_time = 4;
+}
+
+message LoggedOtherPacket {
+}
+
+message HeartBeatPacket {
 }
 
 //message RspTextPacket {

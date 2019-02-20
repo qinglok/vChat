@@ -7,7 +7,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 
-fun <T> Deferred<T?>.then(context: CoroutineContext = EmptyCoroutineContext) {
+fun <T> Deferred<T?>.launch(context: CoroutineContext = EmptyCoroutineContext) {
     GlobalScope.launch(context) {
         await()
     }

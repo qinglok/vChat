@@ -14,14 +14,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
-    implementation 'io.netty:netty-codec:5.0.0.Alpha2'
+    implementation  'io.netty:netty-all:5.0.0.Alpha2'
 
     implementation 'com.google.protobuf:protobuf-java:3.6.1'
 
-    //ECC加密
-    implementation 'org.bouncycastle:bcprov-jdk15on:1.60'
 }
 
 sourceSets {
@@ -44,6 +40,11 @@ protobuf {
 }
 
 shadowJar {
-    configurations = [project.configurations.compile]
+//    configurations = [project.configurations.compile]
     exclude '*.proto'
+}
+
+//指定编译的编码
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
 }

@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary">#d81b60</color>
-    <color name="color_primary_variant">#c2185b</color>
+
+    <color name="color_primary">#5CB85C</color>
     <color name="color_on_primary">#ffffff</color>
+
+    <color name="gray_646464">#646464</color>
+    <color name="gray_ededed">#ededed</color>
+    <color name="gray_f7f7f7">#F7F7F7</color>
+
 
     <color name="success">#5CB85C</color>
     <color name="failure">#F0AD4E</color>

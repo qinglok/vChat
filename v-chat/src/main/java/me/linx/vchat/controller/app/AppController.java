@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class AppController {
 
-    private final UserService userService;
+    private UserService userService;
 
     @Autowired
-    public AppController(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 

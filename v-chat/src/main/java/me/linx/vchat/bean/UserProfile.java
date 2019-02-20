@@ -7,8 +7,8 @@ import javax.persistence.*;
 @Table(name = "user_profile")
 public class UserProfile extends Bean {
 
-    @Column(name = "nick_name", length = 50)
-    private String nickName;
+    @Column(name = "nickname", length = 50)
+    private String nickname;
 
     @Column(name = "secret_question", length = 100, columnDefinition = "varchar(100) DEFAULT '' COMMENT '密保问题'")
     private String secretQuestion ;
@@ -17,8 +17,8 @@ public class UserProfile extends Bean {
     private String secretAnswer ;
 
     @ManyToOne()
-    @JoinColumn(name = "head_img_file_id")
-    private FileWrapper headImg;
+    @JoinColumn(name = "avatar_file_id")
+    private FileWrapper avatar;
 
     public String getSecretQuestion() {
         return secretQuestion;
@@ -36,19 +36,19 @@ public class UserProfile extends Bean {
         this.secretAnswer = secretAnswer;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public FileWrapper getHeadImg() {
-        return headImg;
+    public FileWrapper getAvatar() {
+        return avatar;
     }
 
-    public void setHeadImg(FileWrapper headImg) {
-        this.headImg = headImg;
+    public void setAvatar(FileWrapper avatar) {
+        this.avatar = avatar;
     }
 }

@@ -30,8 +30,8 @@ object HttpWrapper {
     }
 
     private fun OkHttpClient.Builder.sslSocketFactory() = apply {
-        Utils.getApp().assets.open("vchat.cer").let {
-            with(HttpsUtils.getSslSocketFactory(it)){
+        Utils.getApp()?.assets?.open("vchat.cer")?.let {
+            with(HttpsUtils.getSslSocketFactory(it)) {
                 sslSocketFactory(sSLSocketFactory, trustManager)
             }
         }
@@ -44,9 +44,8 @@ object HttpWrapper {
     fun addHttpTask(code: Int, task: HttpTask) {
         httpTasks[code].apply {
             if (this == null) {
-                arrayListOf<HttpTask>().apply {
+                httpTasks[code] = arrayListOf<HttpTask>().apply {
                     add(task)
-                    httpTasks[code] = this
                 }
             } else {
                 add(task)
@@ -54,21 +53,18 @@ object HttpWrapper {
         }
     }
 
-    fun cancel(tag: Any){
+    fun cancel(tag: Any) {
         GlobalScope.launch {
             requestCache[tag]?.cancel()
             requestCache.remove(tag)
         }
     }
 
-    fun cancelAll(){
-        GlobalScope.launch{
+    fun cancelAll() {
+        GlobalScope.launch {
             requestCache.keys.iterator().also {
-                while (it.hasNext()){
-                    it.next().also { key ->
-                        requestCache[key]?.cancel()
-                        requestCache.remove(key)
-                    }
+                while (it.hasNext()) {
+                    HttpWrapper.cancel(it.next())
                 }
             }
         }

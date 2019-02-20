@@ -1,6 +1,7 @@
 package me.linx.vchat.bean;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @SuppressWarnings("unused")
 @Entity
@@ -15,6 +16,10 @@ public class TokenRecord extends Bean{
 
     @Column(name = "token", length = 500)
     private String token;
+
+    // token 过期时间
+    @Column(name = "exp_time")
+    private Date expTime;
 
     public User getUser() {
         return user;
@@ -38,5 +43,13 @@ public class TokenRecord extends Bean{
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Date getExpTime() {
+        return expTime;
+    }
+
+    public void setExpTime(Date expTime) {
+        this.expTime = expTime;
     }
 }

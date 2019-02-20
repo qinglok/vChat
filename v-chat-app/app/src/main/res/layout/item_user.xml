@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable name="user" type="me.linx.vchat.app.data.entity.User"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?android:attr/selectableItemBackground"
+    >
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_avatar"
+                app:layout_constraintTop_toBottomOf="@id/tv_time"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.1"
+                app:layout_constrainedWidth="true"
+                roundImageUrl="@{user.avatar}"
+                roundImageRadius="@{4}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+        />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_name"
+                app:layout_constraintTop_toTopOf="@id/iv_avatar"
+                app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
+                app:layout_constraintLeft_toRightOf="@id/iv_avatar"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constrainedWidth="true"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0.5"
+                android:text="@{user.nickname}"
+                android:gravity="start"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+        />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

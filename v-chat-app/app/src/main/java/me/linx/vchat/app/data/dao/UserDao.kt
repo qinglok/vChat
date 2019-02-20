@@ -10,6 +10,9 @@ interface UserDao {
     fun findByBizId(bizId: Long): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User) : Long?
+    fun insert(user: User): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(users: List<User>): Array<Long>
 
 }
