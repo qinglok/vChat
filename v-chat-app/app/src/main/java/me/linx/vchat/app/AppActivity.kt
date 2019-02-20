@@ -1,18 +1,13 @@
 package me.linx.vchat.app
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
-import com.blankj.utilcode.util.BarUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.model.AppViewModel
-import me.linx.vchat.app.ui.main.message.MessageDetailFragment
-import me.linx.vchat.app.widget.base.BaseFragment
 
 class AppActivity : AppCompatActivity() {
     private val viewModel by lazy {
@@ -20,15 +15,14 @@ class AppActivity : AppCompatActivity() {
     }
 
     companion object {
-        var instance : AppActivity? = null
+        lateinit var instance : AppActivity
+        lateinit var appViewModel : AppViewModel
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //启用透明状态栏
-        BarUtils.setStatusBarColor(this, Color.argb(0, 0, 0, 0))
-        BarUtils.setStatusBarLightMode(window, true)
+        viewModel.initLifeSelf(this)
 
         FrameLayout(this).apply {
             id  = R.id.fragment_container
@@ -36,48 +30,16 @@ class AppActivity : AppCompatActivity() {
             setContentView(it)
         }
 
-        var targetFragment : BaseFragment? = null
-        val action = intent.getIntExtra(AppKeys.ACTION_app_activity, 0)
-        when(action){
-            AppKeys.ACTION_VALUE_new_message ->{
-                targetFragment = MessageDetailFragment()
-
-                Bundle().apply {
-                    putParcelable(AppKeys.KEY_target_user, intent.getParcelableExtra(AppKeys.KEY_target_user))
-                }.also {
-                    targetFragment.arguments = it
-                }
-            }
-        }
-
         //避免被强杀重启后重复load
         if (savedInstanceState == null) {
-            if (targetFragment!= null){
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, targetFragment, targetFragment::class.java.name)
-                    .commit()
-            }else{
-                viewModel.appStartRoute {
-                    GlobalScope.launch(Dispatchers.Main){
-                        supportFragmentManager.beginTransaction()
-                            .add(R.id.fragment_container, it, it::class.java.name)
-                            .commit()
-                    }
+            viewModel.appStartRoute(intent) {
+                GlobalScope.launch(Dispatchers.Main){
+                    supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, it, it::class.java.name)
+                        .commitAllowingStateLoss()
                 }
             }
         }
-
-        instance = this
-    }
-
-    override fun onDestroy() {
-        instance = null
-        super.onDestroy()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.onStop()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

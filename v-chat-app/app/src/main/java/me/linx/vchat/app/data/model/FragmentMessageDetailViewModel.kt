@@ -13,6 +13,7 @@ import com.blankj.utilcode.util.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.BR
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
@@ -24,7 +25,6 @@ import me.linx.vchat.app.data.model.utils.DataBindingBaseViewHolder
 import me.linx.vchat.app.data.repository.MessageRepository
 import me.linx.vchat.app.databinding.FragmentMessageDetailBinding
 import me.linx.vchat.app.ui.main.message.MessageDetailFragment
-import me.linx.vchat.app.utils.hideSoftInput
 import me.linx.vchat.app.utils.launch
 import me.linx.vchat.app.utils.then
 import me.linx.vchat.app.widget.NotifyManager
@@ -38,7 +38,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
     fun init(f: MessageDetailFragment, toolBarConfig: ToolBarConfig) {
         // 此处targetUser不能为空，开始MessageDetailFragment之前处理掉这类问题
         this.targetUser = f.arguments!!.getParcelable(AppKeys.KEY_target_user)!!
-        ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).obUser.observeForever {
+        AppActivity.appViewModel.obUser.observeForever {
             obUser = it
         }
 
@@ -48,7 +48,6 @@ class FragmentMessageDetailViewModel : ViewModel() {
             title = targetUser.nickname
             enableBackOff = true
             onBackOffClick = {
-                f.currentView.hideSoftInput()
                 f.fragmentManager?.popBackStack()
             }
         }
@@ -66,7 +65,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
 
         // 数据绑定
         DataBindingUtil.bind<FragmentMessageDetailBinding>(f.currentView)?.apply {
-            this.rv.layoutManager = LinearLayoutManager(f.mActivity)
+            this.rv.layoutManager = LinearLayoutManager(AppActivity.instance)
             adapter.bindToRecyclerView(rv)
 
             // 发送按钮点击事件
@@ -127,26 +126,28 @@ class FragmentMessageDetailViewModel : ViewModel() {
             }
 
         // 注册生命周期事件
-        f.lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-            fun registerSoftInputChange() {
-                KeyboardUtils.registerSoftInputChangedListener(f.mActivity) {
-                    // 弹出键盘时列表滚动到最后一条
-                    if (it > 0) {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
+        f.lifecycle.addObserver(
+            @Suppress("unused")
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+                fun registerSoftInputChange() {
+                    KeyboardUtils.registerSoftInputChangedListener(AppActivity.instance) {
+                        // 弹出键盘时列表滚动到最后一条
+                        if (it > 0) {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
+                            }
                         }
+                        // 适应键盘高度避免视图被遮挡
+                        f.currentView.setPadding(0, 0, 0, it)
                     }
-                    // 适应键盘高度避免视图被遮挡
-                    f.currentView.setPadding(0, 0, 0, it)
                 }
-            }
 
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun unregisterSoftInputChanged() {
-                KeyboardUtils.unregisterSoftInputChangedListener(f.mActivity)
-            }
-        })
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun unregisterSoftInputChanged() {
+                    KeyboardUtils.unregisterSoftInputChangedListener(AppActivity.instance)
+                }
+            })
     }
 
     /**

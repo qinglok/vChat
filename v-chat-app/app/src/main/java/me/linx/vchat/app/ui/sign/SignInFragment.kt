@@ -55,7 +55,7 @@ class SignInFragment : BaseFragment(), View.OnClickListener {
                     )
                     ?.replace(id, signUpFragment, signUpFragment.javaClass.name)
                     ?.addToBackStack(signUpFragment.javaClass.name)
-                    ?.commit()
+                    ?.commitAllowingStateLoss()
             }
             R.id.btn_sign_in -> viewModel.login(v, this)
         }

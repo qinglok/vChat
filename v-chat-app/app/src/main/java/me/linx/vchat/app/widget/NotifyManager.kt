@@ -38,27 +38,30 @@ object NotifyManager {
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun sendChatMsg(title: String, msg: String, identifier: Int, fromUserAvatar: Bitmap, intent: PendingIntent) {
+    fun sendChatMsg(title: String, msg: String, identifier: Int, fromUserAvatar: Bitmap, intent: PendingIntent?) {
         val manager = Utils.getApp().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val notification = NotificationCompat.Builder(Utils.getApp(), AppConfigs.notifyChannelChat.channelId)
-            .setContentTitle(title)
-            .setContentText(msg)
-            .setContentIntent(intent)
-            .setWhen(System.currentTimeMillis())
-            .setVisibility(VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.ic_message_black_24dp)
-            .setLargeIcon(fromUserAvatar)
-            .setAutoCancel(true)
-            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-            .setVibrate(longArrayOf(800L, 200L, 200L, 200L))
-            .build()
+        val notification = NotificationCompat.Builder(Utils.getApp(), AppConfigs.notifyChannelChat.channelId).apply {
+            setContentTitle(title)
+            setContentText(msg)
+            setWhen(System.currentTimeMillis())
+            setVisibility(VISIBILITY_PUBLIC)
+            setSmallIcon(R.drawable.ic_message_black_24dp)
+            setLargeIcon(fromUserAvatar)
+            setAutoCancel(true)
+            setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            setVibrate(longArrayOf(800L, 200L, 200L, 200L))
+
+            intent?.let {
+                setContentIntent(intent)
+            }
+        }.build()
         manager.notify(identifier, notification)
     }
 
     fun clearByIdentifier(identifier: Int) {
         val manager = Utils.getApp().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         for (activeNotification in manager.activeNotifications) {
-            if (activeNotification.id == identifier){
+            if (activeNotification.id == identifier) {
                 manager.cancel(activeNotification.id)
                 break
             }

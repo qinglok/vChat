@@ -15,11 +15,14 @@ import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.blankj.utilcode.util.*
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.PathUtils
+import com.blankj.utilcode.util.SPUtils
+import com.blankj.utilcode.util.ServiceUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yalantis.ucrop.UCrop
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.constant.CodeMap
@@ -35,7 +38,10 @@ import me.linx.vchat.app.net.post
 import me.linx.vchat.app.ui.main.me.AvatarActivity
 import me.linx.vchat.app.ui.main.me.MeFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
-import me.linx.vchat.app.utils.*
+import me.linx.vchat.app.utils.launch
+import me.linx.vchat.app.utils.showOrHideSoftInput
+import me.linx.vchat.app.utils.snackbarError
+import me.linx.vchat.app.utils.snackbarFailure
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
 import java.io.File
@@ -52,7 +58,7 @@ class FragmentMeViewModel : ViewModel() {
     private var mCurrentPhotoPath: String? = null
 
     fun init(f: MeFragment, toolBarConfig: ToolBarConfig) {
-        ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).obUser.observeForever {
+        AppActivity.appViewModel.obUser.observeForever {
             obUser = it
         }
 
@@ -123,7 +129,7 @@ class FragmentMeViewModel : ViewModel() {
             if (it.isNotEmpty()) {
                 val intent = Intent(f.context, AvatarActivity::class.java)
                 val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    f.mActivity,
+                    AppActivity.instance,
                     iv_avatar,
                     f.getString(R.string.photo_transition_name)
                 )
@@ -185,7 +191,7 @@ class FragmentMeViewModel : ViewModel() {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false) // 单选
             putExtra(Intent.EXTRA_LOCAL_ONLY, true) // 只限本地
         }.let { intent ->
-            intent.resolveActivity(f.mActivity.packageManager)?.let {
+            intent.resolveActivity(AppActivity.instance.packageManager)?.let {
                 f.startActivityForResult(intent, requestTakePhotoFromCollection)
             }
         }
@@ -197,7 +203,7 @@ class FragmentMeViewModel : ViewModel() {
     private fun dispatchTakePictureIntent(f: BaseFragment) {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { intent ->
             // Ensure that there's a camera activity to handle the intent
-            intent.resolveActivity(f.mActivity.packageManager)?.let {
+            intent.resolveActivity(AppActivity.instance.packageManager)?.let {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
@@ -208,7 +214,7 @@ class FragmentMeViewModel : ViewModel() {
                 // Continue only if the File was successfully created
                 photoFile?.let { file ->
                     val photoURI: Uri = FileProvider.getUriForFile(
-                        f.mActivity,
+                        AppActivity.instance,
                         AppUtils.getAppPackageName() + ".provider",
                         file
                     )
@@ -287,7 +293,7 @@ class FragmentMeViewModel : ViewModel() {
                 UCrop.of(sourceUri, destinationUri)
                     .withOptions(it)
                     .withAspectRatio(1f, 1f)
-                    .start(f.mActivity, f)
+                    .start(AppActivity.instance, f)
             }
         }
     }
@@ -367,7 +373,7 @@ class FragmentMeViewModel : ViewModel() {
                     f.fragmentManager?.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     f.fragmentManager?.beginTransaction()
                         ?.replace(R.id.fragment_container, SignInFragment(), SignInFragment::class.java.name)
-                        ?.commit()
+                        ?.commitAllowingStateLoss()
                 } else {
                     f.view?.snackbarFailure(result.msg)
                 }

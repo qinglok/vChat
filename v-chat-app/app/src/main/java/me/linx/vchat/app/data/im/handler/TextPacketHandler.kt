@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.Utils
 import io.netty.channel.ChannelHandlerContext
@@ -66,23 +65,30 @@ class TextPacketHandler : SimpleChannelInboundHandler<Packet.TextPacket>() {
                     MessageRepository.instance.saveAsync(message).then {
                         var isNotify = true
 
-                        if (AppUtils.isAppForeground()) {
-                            AppActivity.instance?.also { activity ->
-                                for (fragment in activity.supportFragmentManager.fragments) {
-                                    if (fragment != null && fragment is MessageDetailFragment && fragment.userVisibleHint && fragment.isAdded) {
-                                        val viewModel = ViewModelProviders.of(fragment).get(FragmentMessageDetailViewModel::class.java)
-                                        if (viewModel.targetUser.bizId == message.fromId){
-                                            isNotify = false
-                                            viewModel.newMessage(message)
-                                            break
+                        // App 是否处于前台
+                        val isAppForeground = AppUtils.isAppForeground()
+
+                        if (isAppForeground) {
+                            AppActivity.instance.also { activity ->
+                                activity.supportFragmentManager
+                                    .findFragmentByTag(MessageDetailFragment::class.java.name)
+                                    .also { fragment ->
+                                        // 处于聊天界面
+                                        if (fragment != null && fragment.isAdded && fragment.userVisibleHint) {
+                                            val viewModel = ViewModelProviders.of(fragment)
+                                                .get(FragmentMessageDetailViewModel::class.java)
+                                            // 聊天对象与新消息的发送者一致
+                                            if (viewModel.targetUser.bizId == message.fromId) {
+                                                isNotify = false
+                                                viewModel.newMessage(message)
+                                            }
                                         }
                                     }
-                                }
                             }
                         }
 
-                        if (isNotify){
-                            notify(message, currentUser, targetUser)
+                        if (isNotify) {
+                            notify(createIntent(isAppForeground, targetUser), message, currentUser, targetUser)
                         }
                     }
                 }
@@ -90,20 +96,8 @@ class TextPacketHandler : SimpleChannelInboundHandler<Packet.TextPacket>() {
         }
     }
 
-    private fun notify(msg: Message, currentUser: User?, targetUser: User) {
-        val resultIntent = Intent(Utils.getApp(), AppActivity::class.java)
-        resultIntent.action = AppKeys.ACTION_new_message
-        resultIntent.putExtra(AppKeys.KEY_target_user, targetUser)
-
-        val stackBuilder = TaskStackBuilder.create(Utils.getApp())
-        stackBuilder.addParentStack(AppActivity::class.java)
-        stackBuilder.addNextIntent(resultIntent)
-        val resultPendingIntent = stackBuilder.getPendingIntent(
-            0,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        )
-
-        GlobalScope.launch {
+    private fun notify(intent : PendingIntent?, msg: Message, currentUser: User?, targetUser: User) {
+          GlobalScope.launch {
             val bitmap = UserRepository.instance.loadAvatarBitmapAsync(targetUser.avatar).await()
             val unRead = MessageRepository.instance.queryUnReadAsync(currentUser?.bizId ?: 0L).await()
             val content = if (unRead > 1) {
@@ -115,10 +109,34 @@ class TextPacketHandler : SimpleChannelInboundHandler<Packet.TextPacket>() {
             NotifyManager.sendChatMsg(
                 targetUser.nickname ?: "",
                 content,
-                targetUser.bizId?.toInt()?:0,
+                targetUser.bizId?.toInt() ?: 0,
                 bitmap,
-                resultPendingIntent!!
+                intent
             )
         }
+    }
+
+    private fun createIntent(isAppForeground: Boolean, targetUser: User) : PendingIntent?{
+        if (isAppForeground){
+            val resultIntent = Intent(AppKeys.ACTION_new_message).apply {
+                putExtra(AppKeys.KEY_target_user, targetUser)
+            }
+            return PendingIntent.getBroadcast(Utils.getApp(),targetUser.bizId?.toInt() ?: 0 ,resultIntent, PendingIntent.FLAG_UPDATE_CURRENT )
+        }else{
+            val resultIntent = Intent(Utils.getApp(), AppActivity::class.java).apply {
+                action = AppKeys.ACTION_new_message
+                putExtra(AppKeys.KEY_target_user, targetUser)
+            }
+            val stackBuilder = TaskStackBuilder.create(Utils.getApp()).apply {
+                addNextIntent(resultIntent)
+            }
+            return stackBuilder.getPendingIntent(
+                targetUser.bizId?.toInt() ?: 0 ,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+
+//        return resultPendingIntent
     }
 }

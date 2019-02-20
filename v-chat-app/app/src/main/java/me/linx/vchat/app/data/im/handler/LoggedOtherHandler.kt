@@ -35,7 +35,7 @@ class LoggedOtherHandler : SimpleChannelInboundHandler<Packet.LoggedOtherPacket>
         ServiceUtils.stopService(IMGuardService::class.java)
 
         if (AppUtils.isAppForeground()) {
-            AppActivity.instance?.let { activity ->
+            AppActivity.instance.let { activity ->
                 GlobalScope.launch(Dispatchers.Main) {
                     MaterialAlertDialogBuilder(activity)
                         .setTitle(R.string.logged_on_other)
@@ -50,7 +50,7 @@ class LoggedOtherHandler : SimpleChannelInboundHandler<Packet.LoggedOtherPacket>
                                     SignInFragment(),
                                     SignInFragment::class.java.name
                                 )
-                                .commit()
+                                .commitAllowingStateLoss()
                         }
                         .setPositiveButton(R.string.ok, null)
                         .show()
@@ -62,7 +62,7 @@ class LoggedOtherHandler : SimpleChannelInboundHandler<Packet.LoggedOtherPacket>
     }
 
      fun notifys() {
-        val mBuilder = NotificationCompat.Builder(Utils.getApp())
+        @Suppress("DEPRECATION") val mBuilder = NotificationCompat.Builder(Utils.getApp())
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(Utils.getApp().getString(R.string.logged_on_other))
 

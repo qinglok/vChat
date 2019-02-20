@@ -10,10 +10,6 @@ object AppKeys {
     val KEY_user_avatar by lazy { "KEY_user_avatar" }
     val KEY_target_user by lazy { "KEY_target_user" }
 
-    val ACTION_app_activity by lazy { "ACTION_app_activity" }
-
-    val ACTION_VALUE_new_message by lazy { 1 }
-
     val ACTION_new_message by lazy { "ACTION_new_message" }
 
 

@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ScreenUtils
 import kotlinx.android.synthetic.main.fragment_start.*
@@ -14,9 +13,9 @@ import kotlinx.android.synthetic.main.fragment_start.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
-import me.linx.vchat.app.data.model.AppViewModel
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
 
@@ -40,13 +39,13 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
                                 super.onAnimationEnd(animation)
 
                                 // 取消全屏显示
-                                ScreenUtils.setNonFullScreen(mActivity)
+                                ScreenUtils.setNonFullScreen(AppActivity.instance)
 
-                                ViewModelProviders.of(mActivity).get(AppViewModel::class.java).appStartRoute { f ->
+                                AppActivity.appViewModel.appStartRoute { f ->
                                     GlobalScope.launch(Dispatchers.Main) {
                                         fragmentManager?.beginTransaction()
                                             ?.replace(this@StartFragment.id, f, f::class.java.name)
-                                            ?.commit()
+                                            ?.commitAllowingStateLoss()
                                     }
                                 }
                             }
@@ -61,9 +60,9 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
         super.onCreate(savedInstanceState)
 
         //全屏显示
-        ScreenUtils.setFullScreen(mActivity)
+        ScreenUtils.setFullScreen(AppActivity.instance)
 
-        val window = mActivity.window
+        val window = AppActivity.instance.window
         // 刘海屏适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val lp = window.attributes

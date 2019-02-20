@@ -6,6 +6,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.blankj.utilcode.util.SPUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import kotlinx.android.synthetic.main.fragment_people.view.*
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.BR
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
@@ -61,20 +62,21 @@ class PeopleFragment : BaseFragment() {
                         ?.add(parent.id, targetFragment, targetFragment.javaClass.name)
                         ?.hide(parent)
                         ?.addToBackStack(targetFragment.javaClass.name)
-                        ?.commit()
+                        ?.commitAllowingStateLoss()
                 }
             }
         }
 
         currentView.apply {
-            this.rv.layoutManager = LinearLayoutManager(mActivity)
+            this.rv.layoutManager = LinearLayoutManager(AppActivity.instance)
             adapter.bindToRecyclerView(this.rv)
             this.srl.setColorSchemeResources(R.color.color_primary)
             this.srl.setOnRefreshListener {
                 updateUserInfo(this.srl, adapter)
             }
-            updateUserInfo(this.srl, adapter)
         }
+
+        updateUserInfo(currentView.srl, adapter)
     }
 
     private fun updateUserInfo(srl: SwipeRefreshLayout, adapter: BaseQuickAdapter<User, DataBindingBaseViewHolder>) {

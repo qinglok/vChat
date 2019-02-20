@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.SPUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.constant.CodeMap
@@ -53,7 +53,7 @@ class FragmentSignViewModel : ViewModel() {
             withLoader = true
             onSuccess = { result ->
                 if (result.code == CodeMap.Yes) {
-                    saveData(result.data, f)
+                    saveData(result.data)
                     startFragment(f, MainFragment())
                 } else {
                     f.view?.snackbarFailure(result.msg)
@@ -86,7 +86,7 @@ class FragmentSignViewModel : ViewModel() {
             onSuccess = { result ->
                 when (result.code) {
                     CodeMap.Yes -> {
-                        saveData(result.data, f)
+                        saveData(result.data)
                         startFragment(f, MainFragment())
                     }
                     CodeMap.ErrorLoggedOther -> {
@@ -148,7 +148,7 @@ class FragmentSignViewModel : ViewModel() {
             onSuccess = { result ->
                 when (result.code) {
                     CodeMap.Yes -> {
-                        saveData(result.data, f)
+                        saveData(result.data)
                         startFragment(f, MainFragment())
                     }
                     else -> {
@@ -175,12 +175,12 @@ class FragmentSignViewModel : ViewModel() {
         }
     }
 
-    private fun saveData(user: User?, f: BaseFragment) =
+    private fun saveData(user: User?) =
         user?.apply {
             SPUtils.getInstance().put(AppKeys.SP_current_user_id, bizId ?: 0L)
             email = obEmail.get()
             UserRepository.instance.saveAsync(this).then(Dispatchers.Main) {
-                ViewModelProviders.of(f.mActivity).get(AppViewModel::class.java).setup(this)
+                AppActivity.appViewModel.setup(this)
             }
         }
 
@@ -198,7 +198,7 @@ class FragmentSignViewModel : ViewModel() {
 
                         fm.beginTransaction()
                             .replace(from.id, to, to::class.java.name)
-                            .commit()
+                            .commitAllowingStateLoss()
                     }
                 }
             })

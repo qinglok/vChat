@@ -1,14 +1,13 @@
 package me.linx.vchat.app.widget.base
 
-import android.content.Context
 import android.os.Bundle
 import android.view.*
 import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.blankj.utilcode.util.BarUtils
 import kotlinx.android.synthetic.main.fragment_base.view.*
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.utils.hideSoftInput
 
@@ -16,14 +15,11 @@ import me.linx.vchat.app.utils.hideSoftInput
  * linx 2018/9/24 20:35
  */
 abstract class BaseFragment : Fragment() {
-    lateinit var mActivity: AppCompatActivity
-    lateinit var currentView : View
-    private val toolBarConfig = ToolBarConfig()
+    lateinit var currentView: View
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mActivity = context as AppCompatActivity
-    }
+    private val toolBarConfig = ToolBarConfig()
+    private var menu: Menu? = null
+    private var menuInflater: MenuInflater? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_base, container, false).also { baseView ->
@@ -38,20 +34,20 @@ abstract class BaseFragment : Fragment() {
 
     private fun initActionBar(toolbar: Toolbar, toolBarConfig: ToolBarConfig) {
         with(toolBarConfig) {
-            setHasOptionsMenu(toolBarConfig.menuRes != 0)
+            setHasOptionsMenu(menuRes > 0)
 
             if (showDefaultToolBar) {
                 toolbar.visibility = View.VISIBLE
                 BarUtils.addMarginTopEqualStatusBarHeight(toolbar)
 //                toolbar.fitStatusBar()
-                mActivity.setSupportActionBar(toolbar)
-                if (title.isNullOrEmpty()){
-                    mActivity.supportActionBar?.setTitle(titleRes)
-                }else{
-                    mActivity.supportActionBar?.setTitle(title)
+                AppActivity.instance.setSupportActionBar(toolbar)
+                if (title.isNullOrEmpty()) {
+                    AppActivity.instance.supportActionBar?.setTitle(titleRes)
+                } else {
+                    AppActivity.instance.supportActionBar?.setTitle(title)
                 }
-                mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(enableBackOff)
-                if (enableBackOff){
+                AppActivity.instance.supportActionBar?.setDisplayHomeAsUpEnabled(enableBackOff)
+                if (enableBackOff) {
                     toolbar.setNavigationOnClickListener {
                         onBackOffClick()
                     }
@@ -65,10 +61,19 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser && menu != null && menuInflater != null && toolBarConfig.menuRes > 0 && menu!!.size() == 0) {
+            menuInflater!!.inflate(toolBarConfig.menuRes, menu)
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        if (toolBarConfig.menuRes != 0) {
+        if (toolBarConfig.menuRes > 0 && menu.size() == 0) {
             inflater.inflate(toolBarConfig.menuRes, menu)
         }
+        this.menu = menu
+        this.menuInflater = inflater
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -92,7 +97,7 @@ abstract class BaseFragment : Fragment() {
 
     @Suppress("unused")
     fun getPre(): BaseFragment? {
-        val fragments = mActivity.supportFragmentManager.fragments
+        val fragments = AppActivity.instance.supportFragmentManager.fragments
         val index = fragments.indexOf(this)
 
         for (i in index - 1 downTo 0) {

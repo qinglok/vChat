@@ -46,7 +46,7 @@ class LoaderDialogFragment : DialogFragment() {
     fun showWithOnDismiss(onDismiss : () -> Unit) {
         this.onDismiss = onDismiss
 
-        AppActivity.instance?.let {
+        AppActivity.instance.let {
             super.show(it.supportFragmentManager, null)
         }
     }

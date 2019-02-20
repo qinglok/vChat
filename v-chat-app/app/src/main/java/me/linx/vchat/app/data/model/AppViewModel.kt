@@ -1,11 +1,15 @@
 package me.linx.vchat.app.data.model
 
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.MutableLiveData
-import com.blankj.utilcode.util.SPUtils
-import com.blankj.utilcode.util.ServiceUtils
+import androidx.lifecycle.*
+import com.blankj.utilcode.util.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -22,6 +26,7 @@ import me.linx.vchat.app.data.repository.UserRepository
 import me.linx.vchat.app.net.HttpTask
 import me.linx.vchat.app.net.HttpWrapper
 import me.linx.vchat.app.ui.main.MainFragment
+import me.linx.vchat.app.ui.main.message.MessageDetailFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.ui.start.StartFragment
 import me.linx.vchat.app.utils.then
@@ -33,14 +38,42 @@ class AppViewModel : ObservableViewModel() {
         MutableLiveData<User>()
     }
 
+    private val newMessageReceiver by lazy {
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                AppActivity.instance.supportFragmentManager.also { fm ->
+                    val topShowFragment = FragmentUtils.getTopShow(fm)
+                    val targetFragment = MessageDetailFragment()
+
+                    Bundle().apply {
+                        putParcelable(AppKeys.KEY_target_user, intent?.getParcelableExtra(AppKeys.KEY_target_user))
+                    }.also {
+                        targetFragment.arguments = it
+                        fm.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.abc_grow_fade_in_from_bottom,
+                                R.anim.abc_fade_out,
+                                R.anim.abc_fade_in,
+                                R.anim.abc_shrink_fade_out_from_bottom
+                            )
+                            .add(R.id.fragment_container, targetFragment, targetFragment.javaClass.name)
+                            .hide(topShowFragment)
+                            .addToBackStack(targetFragment.javaClass.name)
+                            .commitAllowingStateLoss()
+                    }
+                }
+            }
+        }
+    }
+
     /**
      *  根据登录状态获取Fragment
      */
-    fun appStartRoute(action: (BaseFragment) -> Unit) {
+    fun appStartRoute(intent: Intent? = null, callback: (BaseFragment) -> Unit) {
         SPUtils.getInstance().getBoolean(AppKeys.SP_is_first_in, true).also { isFirstIn ->
             if (isFirstIn) {
                 // 首次打开APP
-                action(StartFragment())
+                callback(StartFragment())
             } else {
                 SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L).also { userId ->
                     if (userId > 0L) {
@@ -48,20 +81,38 @@ class AppViewModel : ObservableViewModel() {
                         UserRepository.instance.getByAsync(userId).then {
                             // 数据库异常
                             if (it == null) {
-                                action(SignInFragment())
+                                callback(SignInFragment())
                             } else {
-                                action(MainFragment())
-//                                action(SignInFragment())
                                 setup(it)
+
+                                when(intent?.action){
+                                    AppKeys.ACTION_new_message -> {
+                                        val targetFragment = MessageDetailFragment()
+
+                                        Bundle().apply {
+                                            putParcelable(AppKeys.KEY_target_user, intent.getParcelableExtra(AppKeys.KEY_target_user))
+                                        }.also {
+                                            targetFragment.arguments = it
+                                            callback(targetFragment)
+                                        }
+                                    }
+                                    else->{
+                                        callback(MainFragment())
+                                    }
+                                }
                             }
                         }
                     } else {
                         // 未登录
-                        action(SignInFragment())
+                        callback(SignInFragment())
                     }
                 }
             }
         }
+
+
+
+
     }
 
     /**
@@ -87,7 +138,7 @@ class AppViewModel : ObservableViewModel() {
                 ServiceUtils.stopService(IMService::class.java)
                 ServiceUtils.stopService(IMGuardService::class.java)
 
-                AppActivity.instance?.let { activity ->
+                AppActivity.instance.let { activity ->
                     GlobalScope.launch(Dispatchers.Main) {
                         MaterialAlertDialogBuilder(activity)
                             .setTitle(R.string.login_timeout)
@@ -103,7 +154,7 @@ class AppViewModel : ObservableViewModel() {
                                         SignInFragment(),
                                         SignInFragment::class.java.name
                                     )
-                                    .commit()
+                                    .commitAllowingStateLoss()
                             }
                             .setPositiveButton(R.string.ok, null)
                             .show()
@@ -131,8 +182,40 @@ class AppViewModel : ObservableViewModel() {
         }
     }
 
-    fun onStop() {
-        HttpWrapper.cancelAll()
+    fun initLifeSelf(activity: AppActivity) {
+        // 注册生命周期事件
+        activity.lifecycle.addObserver(
+            @Suppress("unused")
+            object : LifecycleObserver {
+
+                @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+                fun onCreate() {
+                    AppActivity.instance = activity
+                    AppActivity.appViewModel = ViewModelProviders.of(activity).get(AppViewModel::class.java)
+
+                    //启用透明状态栏
+                    BarUtils.setStatusBarColor(activity, Color.argb(0, 0, 0, 0))
+                    //状态栏浅色模式
+                    BarUtils.setStatusBarLightMode(activity.window, true)
+                }
+
+                @OnLifecycleEvent(Lifecycle.Event.ON_START)
+                fun onStart() {
+                    activity.registerReceiver(newMessageReceiver, IntentFilter(AppKeys.ACTION_new_message))
+                }
+
+                @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+                fun onStop() {
+                    activity.unregisterReceiver(newMessageReceiver)
+                    // 取消网络任务
+                    HttpWrapper.cancelAll()
+                }
+
+//                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+//                fun onDestroy() {
+//                    AppActivity.instance = null
+//                }
+            })
     }
 
 }

@@ -1,13 +1,14 @@
 package me.linx.vchat.app.data.im
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import androidx.databinding.Observable
-import androidx.databinding.ObservableField
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ServiceUtils
@@ -50,24 +51,13 @@ class IMService : Service() {
         var instance: IMService? = null
     }
 
-    // AES加密通道建立状态
-    private val aesReady by lazy { ObservableField<Boolean>(false) }
     // 电源锁
     private var wakeLock: PowerManager.WakeLock? = null
 
-    init {
-        aesReady.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                if (sender === aesReady && sender.get()!!) {
-                    // 建立AES加密通道完毕后回调
-                    setupUser()
-                }
-            }
-        })
-    }
-
     override fun onCreate() {
         super.onCreate()
+
+        instance = this
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "IMService"
@@ -127,8 +117,6 @@ class IMService : Service() {
         notification?.let {
             startForeground(1, it)
         }
-        setupUser()
-        instance = this
         return Service.START_STICKY
     }
 
@@ -152,8 +140,6 @@ class IMService : Service() {
         } catch (e: Throwable) {
             LogUtils.e(e)
         } finally {
-            aesReady.set(false)
-
             // 8秒后重连
             delay(8000)
             connect(b)
@@ -174,7 +160,7 @@ class IMService : Service() {
 
                     // 添加 AES 回送处理器
                     channel.pipeline().addLast(AESResponseHandler {
-                        aesReady.set(true)
+                        setupUser()
                     })
 
                     // 构建公钥消息包
@@ -193,11 +179,10 @@ class IMService : Service() {
     /**
      *  发送校验 Token 请求
      */
-    @Synchronized
     private fun setupUser() {
         GlobalScope.launch {
             channel?.let { channel ->
-                if (channel.isOpen && aesReady.get()!!) {
+                if (channel.isOpen) {
                     channel.pipeline()?.addLast(AuthResponseHandler())
 
 
@@ -243,7 +228,6 @@ class IMService : Service() {
         super.onDestroy()
         instance = null
         wakeLock?.release()
-        aesReady.set(false)
         channel?.close()
         group?.shutdownGracefully()
         job?.cancel()
