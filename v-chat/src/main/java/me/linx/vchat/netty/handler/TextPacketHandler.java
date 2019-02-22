@@ -3,6 +3,8 @@ package me.linx.vchat.netty.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import me.linx.vchat.core.packet.Packet;
 import me.linx.vchat.netty.NettyServerListener;
 import me.linx.vchat.netty.session.IMDispatcher;
@@ -10,14 +12,17 @@ import me.linx.vchat.netty.session.IMDispatcher;
 public class TextPacketHandler extends SimpleChannelInboundHandler<Packet.TextPacket> {
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Packet.TextPacket packet) {
+    protected void messageReceived(ChannelHandlerContext ctx, Packet.TextPacket packet) throws InterruptedException {
         NettyServerListener.receiveSum.increment();
 
         long toId = packet.getToId();
         Channel toChannel = IMDispatcher.getChannel(toId);
-        if (toChannel != null){
-            toChannel.writeAndFlush(packet);
-            NettyServerListener.sendSum.increment();
+        if (toChannel != null && toChannel.isOpen()){
+            toChannel.writeAndFlush(packet).addListener(future -> {
+                if (future.isSuccess()){
+                    NettyServerListener.sendSum.increment();
+                }
+            });
         }
     }
 

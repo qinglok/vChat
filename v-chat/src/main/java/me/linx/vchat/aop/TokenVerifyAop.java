@@ -35,11 +35,11 @@ public class TokenVerifyAop {
 //        String methodName = method.getName();
 
         // 局域网内访问速度太快...看不到效果
-        try{
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try{
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         //返回的结果
         Object result = null;

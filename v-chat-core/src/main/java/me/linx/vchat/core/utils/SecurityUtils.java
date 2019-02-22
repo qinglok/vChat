@@ -1,5 +1,9 @@
 package me.linx.vchat.core.utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.base64.Base64;
+
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
@@ -59,6 +63,11 @@ public class SecurityUtils {
         public static byte[] encrypt(byte[] data, SecretKeySpec key) throws Exception, UnsupportedEncodingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");// 创建密码器
             cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化为加密模式的密码器
+
+            ByteBuf base64Buf = Base64.encode(Unpooled.wrappedBuffer(data));
+            data = new byte[base64Buf.readableBytes()];
+            base64Buf.readBytes(data);
+
             return cipher.doFinal(data);// 加密
         }
 
@@ -75,10 +84,14 @@ public class SecurityUtils {
         public static byte[] decrypt(byte[] data, SecretKeySpec key) throws Exception {
             //实例化
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-
             //使用密钥初始化，设置为解密模式
             cipher.init(Cipher.DECRYPT_MODE, key);
-            return cipher.doFinal(data);
+
+            byte[] base64Data = cipher.doFinal(data);
+            ByteBuf dataBuf = Base64.decode(Unpooled.wrappedBuffer(base64Data));
+            data = new byte[dataBuf.readableBytes()];
+            dataBuf.readBytes(data);
+            return data;
         }
 
         /**

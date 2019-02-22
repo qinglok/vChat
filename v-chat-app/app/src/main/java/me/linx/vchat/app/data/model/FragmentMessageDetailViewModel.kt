@@ -99,7 +99,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
                                 }
 
                                 // 发送
-                                IMService.instance?.send(msg) { isSuccess ->
+                                IMService.send(msg) { isSuccess ->
                                     if (isSuccess) {
                                         msg.sent = true
                                         MessageRepository.instance.saveAsync(msg).launch()

@@ -2,7 +2,6 @@ package me.linx.vchat.app.constant
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.os.Build
 import com.blankj.utilcode.util.Utils
 import me.linx.vchat.app.R
 import me.linx.vchat.app.widget.NotifyManager
@@ -12,8 +11,6 @@ object AppConfigs {
     val connectTimeout by lazy { 8000L }
     val readTimeout by lazy { 8000L }
     val writeTimeout by lazy { 8000L }
-
-    val imIdleTime by lazy { 15L } // IM心跳间隔15分钟
 
     val databaseName by lazy { "vchat_db" }
 

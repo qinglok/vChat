@@ -5,11 +5,14 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
-import com.blankj.utilcode.util.*
+import com.blankj.utilcode.util.FragmentUtils
+import com.blankj.utilcode.util.SPUtils
+import com.blankj.utilcode.util.ServiceUtils
+import com.blankj.utilcode.util.Utils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -78,25 +81,28 @@ class AppViewModel : ObservableViewModel() {
                 SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L).also { userId ->
                     if (userId > 0L) {
                         // 已登录
-                        UserRepository.instance.getByAsync(userId).then {
+                        UserRepository.instance.getByAsync(userId).then { user ->
                             // 数据库异常
-                            if (it == null) {
+                            if (user == null) {
                                 callback(SignInFragment())
                             } else {
-                                setup(it)
+                                setup(user)
 
-                                when(intent?.action){
+                                when (intent?.action) {
                                     AppKeys.ACTION_new_message -> {
                                         val targetFragment = MessageDetailFragment()
 
                                         Bundle().apply {
-                                            putParcelable(AppKeys.KEY_target_user, intent.getParcelableExtra(AppKeys.KEY_target_user))
-                                        }.also {
-                                            targetFragment.arguments = it
+                                            putParcelable(
+                                                AppKeys.KEY_target_user,
+                                                intent.getParcelableExtra(AppKeys.KEY_target_user)
+                                            )
+                                        }.also { args ->
+                                            targetFragment.arguments = args
                                             callback(targetFragment)
                                         }
                                     }
-                                    else->{
+                                    else -> {
                                         callback(MainFragment())
                                     }
                                 }
@@ -109,10 +115,6 @@ class AppViewModel : ObservableViewModel() {
                 }
             }
         }
-
-
-
-
     }
 
     /**
@@ -124,7 +126,11 @@ class AppViewModel : ObservableViewModel() {
                 obUser.value = user
             }
             initHttpTask()
-            ServiceUtils.startService(IMService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Utils.getApp().startForegroundService(Intent(Utils.getApp(), IMService::class.java))
+            } else {
+                Utils.getApp().startService(Intent(Utils.getApp(), IMService::class.java))
+            }
         }
     }
 
@@ -192,11 +198,6 @@ class AppViewModel : ObservableViewModel() {
                 fun onCreate() {
                     AppActivity.instance = activity
                     AppActivity.appViewModel = ViewModelProviders.of(activity).get(AppViewModel::class.java)
-
-                    //启用透明状态栏
-                    BarUtils.setStatusBarColor(activity, Color.argb(0, 0, 0, 0))
-                    //状态栏浅色模式
-                    BarUtils.setStatusBarLightMode(activity.window, true)
                 }
 
                 @OnLifecycleEvent(Lifecycle.Event.ON_START)

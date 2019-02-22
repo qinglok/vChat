@@ -1,13 +1,18 @@
 package me.linx.vchat.app.data.im.handler
 
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
+import io.netty.handler.timeout.IdleStateHandler
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.linx.vchat.app.data.im.IMWorker
 import me.linx.vchat.app.data.im.session.Attributes
 import me.linx.vchat.app.data.repository.MessageRepository
 import me.linx.vchat.app.utils.launch
 import me.linx.vchat.core.packet.Packet
+import java.util.concurrent.TimeUnit
 
 class AuthResponseHandler : SimpleChannelInboundHandler<Packet.AuthResponsePacket>() {
     override fun messageReceived(ctx: ChannelHandlerContext?, msg: Packet.AuthResponsePacket?) {
@@ -15,12 +20,16 @@ class AuthResponseHandler : SimpleChannelInboundHandler<Packet.AuthResponsePacke
             if (packet.isPass) {
                 ctx?.pipeline()
                     ?.remove(this)
-                    ?.addLast(HeartBeatIdleStateHandler())
                     ?.addLast(HeartBeatHandler())
                     ?.addLast(TextPacketHandler())
                     ?.addLast(LoggedOtherHandler())
 
                 sendUnSend(ctx)
+
+                PeriodicWorkRequest.Builder(IMWorker::class.java, 8, TimeUnit.MINUTES)
+                    .build().also { request ->
+                        WorkManager.getInstance().enqueue(request)
+                    }
             } else {
                 ctx?.channel()?.close()
             }

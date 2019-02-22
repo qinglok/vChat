@@ -8,10 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.os.PowerManager
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.SPUtils
-import com.blankj.utilcode.util.ServiceUtils
+import com.blankj.utilcode.util.Utils
 import com.google.protobuf.ByteString
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.Channel
@@ -23,8 +22,6 @@ import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.api.Api
@@ -41,24 +38,41 @@ import me.linx.vchat.core.packet.Packet
 import me.linx.vchat.core.utils.SecurityUtils
 
 class IMService : Service() {
-    private var job: Job? = null
-    private var group: NioEventLoopGroup? = null
-    private var channel: Channel? = null
-
-    private var notification: Notification? = null
 
     companion object {
-        var instance: IMService? = null
-    }
+        private var job: Thread? = null
+        private var group: NioEventLoopGroup? = null
+        private var channel: Channel? = null
 
-    // 电源锁
-    private var wakeLock: PowerManager.WakeLock? = null
+        fun send(message: Message, listener: (Boolean) -> Unit) {
+            channel?.let { channel ->
+                if (channel.isOpen) {
+                    channel.writeAndFlush(
+                        Packet.TextPacket.newBuilder()
+                            .setFromId(message.fromId ?: 0L)
+                            .setToId(message.toId ?: 0L)
+                            .setMsg(message.content)
+                            .build()
+                    )?.addListener { future ->
+                        listener(future.isSuccess)
+                    }
+                }
+            }
+        }
+
+        fun sendHeartBeat() {
+            channel?.let { channel ->
+                if (channel.isOpen) {
+                    channel.writeAndFlush(Packet.HeartBeatPacket.newBuilder().build())
+                }
+            }
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
 
-        instance = this
-
+        val notification: Notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "IMService"
             val channelName = "聊天服务"
@@ -68,60 +82,70 @@ class IMService : Service() {
 
             val builder = Notification.Builder(this, channelId)
             notification = builder
-//                .setSmallIcon(R.mipmap.ic_launcher)
                 .build()
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForeground(
+                    1,
+                    notification
+                ) //这个id不要和应用内的其他同志id一样，不行就写 int.maxValue()        //context.startForeground(SERVICE_ID, builder.getNotification());
+            }
         } else {
             @Suppress("DEPRECATION")
-            notification = Notification.Builder(applicationContext)
-//                .setSmallIcon(R.mipmap.ic_launcher)
+            notification = Notification.Builder(this)
                 .build()
+            startForeground(1, notification)
         }
 
-        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock =
-            pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK or PowerManager.ON_AFTER_RELEASE, javaClass.canonicalName)
-
-        job = GlobalScope.launch {
-            while (true) {
-                if (!ServiceUtils.isServiceRunning(IMGuardService::class.java)) {
-                    ServiceUtils.startService(IMGuardService::class.java)
-                }
-
-                if (group == null) {
-                    group = NioEventLoopGroup().also { group ->
-                        Bootstrap().group(group)
-                            .channel(NioSocketChannel::class.java)
-                            .option(ChannelOption.TCP_NODELAY, true)
-                            .handler(object : ChannelInitializer<SocketChannel>() {
-                                override fun initChannel(ch: SocketChannel?) {
-                                    ch?.pipeline()
-                                        ?.addLast(ProtobufVarint32FrameDecoder())
-                                        ?.addLast(Decoder.ProtobufDecoder())
-                                        ?.addLast(ProtobufVarint32LengthFieldPrepender())
-                                        ?.addLast(Encoder.ProtobufEncoder())
-                                        ?.addLast(ConnectHandler())
-                                }
-                            }).also {
-
-                                connect(it)
-                            }
-                    }
-                }
-
-                delay(8000)
-            }
-        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        notification?.let {
-            startForeground(1, it)
+        if (job == null || !job!!.isAlive) {
+            job = object : Thread() {
+                override fun run() {
+                    super.run()
+
+                    while (true) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(Intent(Utils.getApp(), IMGuardService::class.java))
+                        } else {
+                            startService(Intent(Utils.getApp(), IMGuardService::class.java))
+                        }
+
+                        if (group == null || group!!.isShutdown) {
+                            group = NioEventLoopGroup().also { group ->
+                                Bootstrap().group(group)
+                                    .channel(NioSocketChannel::class.java)
+                                    .option(ChannelOption.TCP_NODELAY, true)
+                                    .handler(object : ChannelInitializer<SocketChannel>() {
+                                        override fun initChannel(ch: SocketChannel?) {
+                                            ch?.pipeline()
+                                                ?.addLast(ConnectHandler())
+                                                ?.addLast(ProtobufVarint32FrameDecoder())
+                                                ?.addLast(Decoder.ProtobufDecoder())
+                                                ?.addLast(ProtobufVarint32LengthFieldPrepender())
+                                                ?.addLast(Encoder.ProtobufEncoder())
+                                        }
+                                    }).also {
+                                        connect(it)
+                                    }
+                            }
+                        }
+
+                        try {
+                            sleep(8000L)
+                        } catch (e: Exception) {
+                        }
+                    }
+                }
+            }
+            job!!.start()
         }
-        return Service.START_STICKY
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
-    private suspend fun connect(b: Bootstrap) {
-        wakeLock?.acquire()
+    private fun connect(b: Bootstrap) {
         try {
             b.connect(Api.imHost, Api.imPort)?.sync()?.also { channelFuture ->
                 with(channelFuture) {
@@ -141,7 +165,10 @@ class IMService : Service() {
             LogUtils.e(e)
         } finally {
             // 8秒后重连
-            delay(8000)
+            try {
+                Thread.sleep(8000L)
+            } catch (e: Exception) {
+            }
             connect(b)
         }
     }
@@ -184,8 +211,6 @@ class IMService : Service() {
             channel?.let { channel ->
                 if (channel.isOpen) {
                     channel.pipeline()?.addLast(AuthResponseHandler())
-
-
                     UserRepository.instance.getByAsync(SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L))
                         .then { user ->
                             channel.attr(Attributes.user).set(user)
@@ -201,37 +226,16 @@ class IMService : Service() {
         }
     }
 
-    @Synchronized
-    fun send(message: Message?, listener :(Boolean) -> Unit) {
-        message?.let {
-            Packet.TextPacket.newBuilder()
-                .setFromId(message.fromId?:0L)
-                .setToId(message.toId?:0L)
-                .setMsg(message.content)
-                .build().also { packet ->
-                    channel?.let {channel->
-                        if (channel.isOpen){
-                            channel.writeAndFlush(packet)?.addListener { future ->
-                                listener(future.isSuccess)
-                            }
-                        }
-                    }
-                }
-        }
-    }
-
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        instance = null
-        wakeLock?.release()
+        LogUtils.file("IMService onDestroy")
         channel?.close()
         group?.shutdownGracefully()
-        job?.cancel()
-        stopForeground(true)
+        job?.interrupt()
+        super.onDestroy()
     }
 
 

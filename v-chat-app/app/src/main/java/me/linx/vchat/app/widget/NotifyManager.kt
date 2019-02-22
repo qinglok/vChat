@@ -50,6 +50,7 @@ object NotifyManager {
             setAutoCancel(true)
             setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             setVibrate(longArrayOf(800L, 200L, 200L, 200L))
+//            setFullScreenIntent(intent, true)
 
             intent?.let {
                 setContentIntent(intent)

@@ -8,7 +8,7 @@ import me.linx.vchat.core.packet.Packet
 class HeartBeatHandler : SimpleChannelInboundHandler<Packet.HeartBeatPacket>() {
 
     override fun messageReceived(ctx: ChannelHandlerContext?, p1: Packet.HeartBeatPacket?) {
-        LogUtils.d("Received HeartBeat")
+        LogUtils.i("Received HeartBeat")
     }
 
 

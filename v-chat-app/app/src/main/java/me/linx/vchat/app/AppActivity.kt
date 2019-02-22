@@ -1,9 +1,11 @@
 package me.linx.vchat.app
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
+import com.blankj.utilcode.util.BarUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,6 +23,11 @@ class AppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //启用透明状态栏
+        BarUtils.setStatusBarColor(this, Color.argb(0, 0, 0, 0))
+        //状态栏浅色模式
+        BarUtils.setStatusBarLightMode(window, true)
 
         viewModel.initLifeSelf(this)
 

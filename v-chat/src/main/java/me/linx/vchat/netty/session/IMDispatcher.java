@@ -1,9 +1,11 @@
 package me.linx.vchat.netty.session;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import me.linx.vchat.bean.User;
 import me.linx.vchat.core.packet.Packet;
+import me.linx.vchat.netty.NettyServerListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +20,12 @@ public class IMDispatcher {
     public synchronized static void bind(Long userId, Channel channel) {
         unBind(userId);
         channelMap.put(userId, channel);
-        channel.closeFuture().addListener((ChannelFutureListener) channelFuture ->
-                channelMap.remove(userId));
+        NettyServerListener.clientSum.increment();
+
+        channel.closeFuture().addListener((ChannelFutureListener) channelFuture -> {
+            channelMap.remove(userId);
+            NettyServerListener.clientSum.decrement();
+        });
     }
 
     public static void unBind(Long userId) {
