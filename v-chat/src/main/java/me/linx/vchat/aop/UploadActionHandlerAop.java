@@ -62,6 +62,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                             if (StringUtils.isNotTrimEmpty(actionName)) {
                                 List<Handler> handlerList = map.get(actionName);
 
+                                // 实际的操作要回到Spring代理类
                                 Method realMethod = null;
                                 for (Method m : bean.getClass().getDeclaredMethods()) {
                                     if (m.getName().equals(method.getName())){

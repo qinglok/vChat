@@ -209,7 +209,7 @@ class AppViewModel : ObservableViewModel() {
                 fun onStop() {
                     activity.unregisterReceiver(newMessageReceiver)
                     // 取消网络任务
-                    HttpWrapper.cancelAll()
+//                    HttpWrapper.cancelAll()
                 }
 
 //                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

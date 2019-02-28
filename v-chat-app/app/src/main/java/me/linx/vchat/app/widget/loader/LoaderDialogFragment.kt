@@ -15,7 +15,7 @@ import me.linx.vchat.app.R
 
 class LoaderDialogFragment : DialogFragment() {
     private lateinit var rootView: View
-    private var onDismiss : () -> Unit = {}
+    private var onDismiss: () -> Unit = {}
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -43,7 +43,7 @@ class LoaderDialogFragment : DialogFragment() {
         return rootView
     }
 
-    fun showWithOnDismiss(onDismiss : () -> Unit) {
+    fun showWithOnDismiss(onDismiss: () -> Unit) {
         this.onDismiss = onDismiss
 
         AppActivity.instance.let {
@@ -54,6 +54,12 @@ class LoaderDialogFragment : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         onDismiss()
+    }
+
+    override fun dismiss() {
+        if (isResumed) {
+            super.dismiss()
+        }
     }
 
 }

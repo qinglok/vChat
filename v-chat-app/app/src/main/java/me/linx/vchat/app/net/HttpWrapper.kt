@@ -18,14 +18,14 @@ object HttpWrapper {
             .connectTimeout(AppConfigs.connectTimeout, TimeUnit.MILLISECONDS)
             .readTimeout(AppConfigs.readTimeout, TimeUnit.MILLISECONDS)
             .writeTimeout(AppConfigs.writeTimeout, TimeUnit.MILLISECONDS)
-            .sslSocketFactory()
+//            .sslSocketFactory()
             .addInterceptor()
             .build()
     }
 
     val okHttpGlideClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .sslSocketFactory()
+//            .sslSocketFactory()
             .build()
     }
 

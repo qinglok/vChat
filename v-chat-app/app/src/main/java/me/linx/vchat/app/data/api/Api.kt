@@ -2,12 +2,14 @@ package me.linx.vchat.app.data.api
 
 object Api {
     // 服务器地址
-    val baseUrl by lazy { "https://192.168.0.5:8443/vchat/" }
+//    val baseUrl by lazy { "https://192.168.0.5:8443/vchat/" }
+    val baseUrl by lazy { "http://192.168.1.20:8443/vchat/" }
 //    val baseUrl by lazy { "https://120.78.94.116:8080/" }
     // 静态资源地址
     val baseFileDir by lazy { baseUrl }
     // netty
-    val imHost by lazy { "192.168.0.5" }
+//    val imHost by lazy { "192.168.0.5" }
+    val imHost by lazy { "192.168.1.20" }
 //    val imHost by lazy { "120.78.94.116" }
     val imPort by lazy { 8888 }
 
