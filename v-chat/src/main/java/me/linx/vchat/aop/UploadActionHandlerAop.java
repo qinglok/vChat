@@ -50,7 +50,8 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                 String name = fullName.substring(0, fullName.indexOf("Service") + "Service".length());
                 try {
                     //Spring代理类无法获取方法上的注解，这里通过反射从真实类中获取
-                    Class<?> aClass = Objects.requireNonNull(ClassLoader.getSystemClassLoader()).loadClass(name);
+                    Class<?> aClass = getClass().getClassLoader().loadClass(name);
+//                    Class<?> aClass = Objects.requireNonNull(ClassLoader.getSystemClassLoader()).loadClass(name);
 
                     // 所有方法
                     Method[] methods = aClass.getDeclaredMethods();
@@ -65,7 +66,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                                 // 实际的操作要回到Spring代理类
                                 Method realMethod = null;
                                 for (Method m : bean.getClass().getDeclaredMethods()) {
-                                    if (m.getName().equals(method.getName())){
+                                    if (m.getName().equals(method.getName())) {
                                         realMethod = m;
                                         break;
                                     }
@@ -121,7 +122,7 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
 
                             Object target = point.getTarget();
                             User user = null;
-                            if (target instanceof BaseBizController){
+                            if (target instanceof BaseBizController) {
                                 BaseBizController controller = (BaseBizController) target;
 
                                 user = controller.getCurrentUser();
@@ -142,7 +143,6 @@ public class UploadActionHandlerAop implements ApplicationListener<ContextRefres
                 }
             }
         }
-
 
 
         try {

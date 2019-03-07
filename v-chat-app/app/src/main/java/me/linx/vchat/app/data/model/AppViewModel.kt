@@ -32,6 +32,7 @@ import me.linx.vchat.app.ui.main.MainFragment
 import me.linx.vchat.app.ui.main.message.MessageDetailFragment
 import me.linx.vchat.app.ui.sign.SignInFragment
 import me.linx.vchat.app.ui.start.StartFragment
+import me.linx.vchat.app.utils.runOnMain
 import me.linx.vchat.app.utils.then
 import me.linx.vchat.app.widget.base.BaseFragment
 
@@ -122,7 +123,7 @@ class AppViewModel : ObservableViewModel() {
      */
     fun setup(user: User) {
         GlobalScope.launch {
-            launch(Dispatchers.Main) {
+            runOnMain {
                 obUser.value = user
             }
             initHttpTask()
@@ -145,7 +146,7 @@ class AppViewModel : ObservableViewModel() {
                 ServiceUtils.stopService(IMGuardService::class.java)
 
                 AppActivity.instance.let { activity ->
-                    GlobalScope.launch(Dispatchers.Main) {
+                    runOnMain {
                         MaterialAlertDialogBuilder(activity)
                             .setTitle(R.string.login_timeout)
                             .setMessage(R.string.login_first)

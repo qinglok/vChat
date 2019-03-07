@@ -26,6 +26,7 @@ import me.linx.vchat.app.data.repository.MessageRepository
 import me.linx.vchat.app.databinding.FragmentMessageDetailBinding
 import me.linx.vchat.app.ui.main.message.MessageDetailFragment
 import me.linx.vchat.app.utils.launch
+import me.linx.vchat.app.utils.runOnMain
 import me.linx.vchat.app.utils.then
 import me.linx.vchat.app.widget.NotifyManager
 import me.linx.vchat.app.widget.base.ToolBarConfig
@@ -48,7 +49,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
             title = targetUser.nickname
             enableBackOff = true
             onBackOffClick = {
-                f.fragmentManager?.popBackStack()
+                AppActivity.instance.onBackPressed()
             }
         }
 
@@ -93,7 +94,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
                                 msg.id = newId
 
                                 // 更新UI
-                                GlobalScope.launch(Dispatchers.Main) {
+                                runOnMain {
                                     adapter.addData(msg)
                                     adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
                                 }
@@ -134,7 +135,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
                     KeyboardUtils.registerSoftInputChangedListener(AppActivity.instance) {
                         // 弹出键盘时列表滚动到最后一条
                         if (it > 0) {
-                            GlobalScope.launch(Dispatchers.Main) {
+                            runOnMain {
                                 adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
                             }
                         }
@@ -154,7 +155,7 @@ class FragmentMessageDetailViewModel : ViewModel() {
      *  收到新消息
      */
     fun newMessage(message: Message) {
-        GlobalScope.launch(Dispatchers.Main) {
+        runOnMain {
             adapter.addData(message)
             adapter.getRecycler().scrollToPosition(adapter.data.size - 1)
             val vibrator = Utils.getApp().getSystemService(Service.VIBRATOR_SERVICE) as Vibrator

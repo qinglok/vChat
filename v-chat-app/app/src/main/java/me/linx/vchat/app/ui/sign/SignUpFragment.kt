@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_sign_up.view.*
+import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.data.model.FragmentSignViewModel
 import me.linx.vchat.app.databinding.FragmentSignUpBinding
@@ -38,7 +39,7 @@ class SignUpFragment : BaseFragment() {
                 enableBackOff = true
                 onBackOffClick = {
                     view?.hideSoftInput()
-                    fragmentManager?.popBackStack()
+                    AppActivity.instance.onBackPressed()
                 }
             }
 

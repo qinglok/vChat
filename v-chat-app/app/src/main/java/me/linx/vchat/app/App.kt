@@ -7,7 +7,6 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import me.linx.vchat.app.widget.NotifyManager
 
-@Suppress("unused")
 class App : Application() {
 
     override fun onCreate() {

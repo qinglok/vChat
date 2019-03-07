@@ -21,8 +21,6 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.channel.socket.nio.NioSocketChannel
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.linx.vchat.app.constant.AppKeys
 import me.linx.vchat.app.data.api.Api
 import me.linx.vchat.app.data.entity.Message
@@ -178,28 +176,26 @@ class IMService : Service() {
      *  AES 秘钥通过 RSA 加密传输
      */
     private fun requestAESKey(channel: Channel) {
-        GlobalScope.launch {
-            if (channel.isOpen) {
-                // 生成 RSA 密钥对
-                SecurityUtils.RSA.getKeyPair().also { keyPair ->
-                    //保存私钥到Session
-                    channel.attr(Attributes.private_key).set(keyPair.private)
+        if (channel.isOpen) {
+            // 生成 RSA 密钥对
+            SecurityUtils.RSA.getKeyPair().also { keyPair ->
+                //保存私钥到Session
+                channel.attr(Attributes.private_key).set(keyPair.private)
 
-                    // 添加 AES 回送处理器
-                    channel.pipeline().addLast(AESResponseHandler {
-                        setupUser()
-                    })
+                // 添加 AES 回送处理器
+                channel.pipeline().addLast(AESResponseHandler {
+                    setupUser()
+                })
 
-                    // 构建公钥消息包
-                    Packet.AESRequestPacket.newBuilder()
-                        .setPublicKey(ByteString.copyFrom(keyPair.public.encoded))
-                        .build().also { packet ->
-                            // 发送给服务器
-                            channel.writeAndFlush(packet)
-                        }
-                }
-
+                // 构建公钥消息包
+                Packet.AESRequestPacket.newBuilder()
+                    .setPublicKey(ByteString.copyFrom(keyPair.public.encoded))
+                    .build().also { packet ->
+                        // 发送给服务器
+                        channel.writeAndFlush(packet)
+                    }
             }
+
         }
     }
 
@@ -207,21 +203,19 @@ class IMService : Service() {
      *  发送校验 Token 请求
      */
     private fun setupUser() {
-        GlobalScope.launch {
-            channel?.let { channel ->
-                if (channel.isOpen) {
-                    channel.pipeline()?.addLast(AuthResponseHandler())
-                    UserRepository.instance.getByAsync(SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L))
-                        .then { user ->
-                            channel.attr(Attributes.user).set(user)
+        channel?.let { channel ->
+            if (channel.isOpen) {
+                channel.pipeline()?.addLast(AuthResponseHandler())
+                UserRepository.instance.getByAsync(SPUtils.getInstance().getLong(AppKeys.SP_current_user_id, 0L))
+                    .then { user ->
+                        channel.attr(Attributes.user).set(user)
 
-                            Packet.AuthRequestPacket.newBuilder()
-                                .setToken(user?.token ?: "")
-                                .build().also { packet ->
-                                    channel.writeAndFlush(packet)
-                                }
-                        }
-                }
+                        Packet.AuthRequestPacket.newBuilder()
+                            .setToken(user?.token ?: "")
+                            .build().also { packet ->
+                                channel.writeAndFlush(packet)
+                            }
+                    }
             }
         }
     }

@@ -32,8 +32,7 @@ class TextPacketHandler : SimpleChannelInboundHandler<Packet.TextPacket>() {
 
     override fun messageReceived(p0: ChannelHandlerContext?, msg: Packet.TextPacket?) {
         GlobalScope.launch {
-            val currentUser =
-                UserRepository.instance.getByAsync(SPUtils.getInstance().getLong(AppKeys.SP_current_user_id)).await()
+            val currentUser = UserRepository.instance.getByAsync(SPUtils.getInstance().getLong(AppKeys.SP_current_user_id)).await()
             val targetUser: User? = withContext(Dispatchers.Default) {
                 var user = UserRepository.instance.getByAsync(msg?.fromId ?: 0L).await()
                 if (user == null) {

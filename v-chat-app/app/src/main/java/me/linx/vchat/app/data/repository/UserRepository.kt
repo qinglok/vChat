@@ -25,16 +25,26 @@ class UserRepository private constructor() {
 
     fun saveAsync(user: User?) =
         GlobalScope.async {
-            user?.let {
-                dao.insert(it)
+            user?.also {
+                dao.insert(user)
             }
         }
 
     fun saveAsync(users: List<User>?) =
         GlobalScope.async {
-            users?.let {
-                dao.insert(it)
+            users?.also {
+                dao.insert(users)
             }
+        }
+
+    fun loadAvatarBitmapAsync(avatar: String?): Deferred<Bitmap> =
+        GlobalScope.async {
+            GlideApp.with(Utils.getApp())
+                .asBitmap()
+                .load(Api.baseFileDir + avatar)
+                .transform(GlideRoundTransform(4))
+                .submit()
+                .get()
         }
 
     fun getByAsync(userId: Long) =
@@ -131,22 +141,5 @@ class UserRepository private constructor() {
             )
             .get(init)
     }
-
-    fun loadAvatarBitmapAsync(userId: Long): Deferred<Bitmap> =
-        GlobalScope.async {
-            val user = getByAsync(userId).await()
-            loadAvatarBitmapAsync(user?.avatar).await()
-        }
-
-    fun loadAvatarBitmapAsync(avatar: String?): Deferred<Bitmap> =
-        GlobalScope.async {
-            val bitmap = GlideApp.with(Utils.getApp())
-                .asBitmap()
-                .load(Api.baseFileDir + avatar)
-                .transform(GlideRoundTransform(4))
-                .submit()
-                .get()
-            bitmap
-        }
 
 }

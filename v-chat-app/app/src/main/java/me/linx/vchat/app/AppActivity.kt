@@ -6,9 +6,6 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 import com.blankj.utilcode.util.BarUtils
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.linx.vchat.app.data.model.AppViewModel
 
 class AppActivity : AppCompatActivity() {
@@ -40,7 +37,7 @@ class AppActivity : AppCompatActivity() {
         //避免被强杀重启后重复load
         if (savedInstanceState == null) {
             viewModel.appStartRoute(intent) {
-                GlobalScope.launch(Dispatchers.Main){
+                runOnUiThread{
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container, it, it::class.java.name)
                         .commitAllowingStateLoss()

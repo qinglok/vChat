@@ -10,12 +10,10 @@ import com.blankj.utilcode.util.SPUtils
 import com.blankj.utilcode.util.ScreenUtils
 import kotlinx.android.synthetic.main.fragment_start.*
 import kotlinx.android.synthetic.main.fragment_start.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import me.linx.vchat.app.AppActivity
 import me.linx.vchat.app.R
 import me.linx.vchat.app.constant.AppKeys
+import me.linx.vchat.app.utils.runOnMain
 import me.linx.vchat.app.widget.base.BaseFragment
 import me.linx.vchat.app.widget.base.ToolBarConfig
 
@@ -42,7 +40,7 @@ class StartFragment : BaseFragment(), SunAnimationView.AnimationListener {
                                 ScreenUtils.setNonFullScreen(AppActivity.instance)
 
                                 AppActivity.appViewModel.appStartRoute { f ->
-                                    GlobalScope.launch(Dispatchers.Main) {
+                                    runOnMain {
                                         fragmentManager?.beginTransaction()
                                             ?.replace(this@StartFragment.id, f, f::class.java.name)
                                             ?.commitAllowingStateLoss()

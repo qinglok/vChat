@@ -21,8 +21,19 @@ public class VChatApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws InterruptedException {
-        new NettyServerListener().start(port);
+    public void run(String... args) {
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+
+                try {
+                    new NettyServerListener().start(port);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }
 

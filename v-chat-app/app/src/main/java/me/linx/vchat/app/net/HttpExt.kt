@@ -3,6 +3,7 @@ package me.linx.vchat.app.net
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
+import me.linx.vchat.app.utils.runOnMain
 import me.linx.vchat.app.utils.then
 import okhttp3.MediaType
 import okhttp3.Request
@@ -25,12 +26,12 @@ inline fun <reified T> RequestWrapper.call(request: Request, crossinline init: H
 
             setTag(tag)
 
-            launch(Dispatchers.Main) {
+            runOnMain{
                 onStart()
             }
 
             if (withLoader) {
-                launch(Dispatchers.Main){
+                runOnMain{
                     showLoader()
                 }
             }

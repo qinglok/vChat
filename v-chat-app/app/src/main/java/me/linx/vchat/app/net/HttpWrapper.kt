@@ -60,14 +60,14 @@ object HttpWrapper {
         }
     }
 
-    fun cancelAll() {
-        GlobalScope.launch {
-            requestCache.keys.iterator().also {
-                while (it.hasNext()) {
-                    HttpWrapper.cancel(it.next())
-                }
-            }
-        }
-    }
+//    fun cancelAll() {
+//        GlobalScope.launch {
+//            requestCache.keys.iterator().also {
+//                while (it.hasNext()) {
+//                    HttpWrapper.cancel(it.next())
+//                }
+//            }
+//        }
+//    }
 
 }

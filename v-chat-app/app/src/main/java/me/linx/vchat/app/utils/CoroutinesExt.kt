@@ -1,5 +1,7 @@
 package me.linx.vchat.app.utils
 
+import android.os.Handler
+import android.os.Looper
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -18,3 +20,12 @@ fun <T> Deferred<T?>.then(context: CoroutineContext = EmptyCoroutineContext, act
         action(await())
     }
 }
+
+val handler by lazy {
+    Handler(Looper.getMainLooper())
+}
+
+fun runOnMain(action: () -> Unit){
+    handler.post(action)
+}
+

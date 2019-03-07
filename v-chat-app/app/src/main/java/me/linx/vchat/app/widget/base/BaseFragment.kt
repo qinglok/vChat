@@ -39,7 +39,6 @@ abstract class BaseFragment : Fragment() {
             if (showDefaultToolBar) {
                 toolbar.visibility = View.VISIBLE
                 BarUtils.addMarginTopEqualStatusBarHeight(toolbar)
-//                toolbar.fitStatusBar()
                 AppActivity.instance.setSupportActionBar(toolbar)
                 if (title.isNullOrEmpty()) {
                     AppActivity.instance.supportActionBar?.setTitle(titleRes)

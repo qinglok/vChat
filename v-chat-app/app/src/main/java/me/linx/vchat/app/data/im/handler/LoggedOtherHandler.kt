@@ -25,6 +25,7 @@ import me.linx.vchat.app.data.entity.User
 import me.linx.vchat.app.data.im.IMGuardService
 import me.linx.vchat.app.data.im.IMService
 import me.linx.vchat.app.ui.sign.SignInFragment
+import me.linx.vchat.app.utils.runOnMain
 import me.linx.vchat.core.packet.Packet
 
 class LoggedOtherHandler : SimpleChannelInboundHandler<Packet.LoggedOtherPacket>() {
@@ -36,7 +37,7 @@ class LoggedOtherHandler : SimpleChannelInboundHandler<Packet.LoggedOtherPacket>
 
         if (AppUtils.isAppForeground()) {
             AppActivity.instance.let { activity ->
-                GlobalScope.launch(Dispatchers.Main) {
+                runOnMain{
                     MaterialAlertDialogBuilder(activity)
                         .setTitle(R.string.logged_on_other)
                         .setOnDismissListener {

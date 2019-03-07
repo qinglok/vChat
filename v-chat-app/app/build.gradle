@@ -89,9 +89,6 @@ dependencies {
     // 网络处理
     implementation("com.squareup.okhttp3:okhttp:3.12.1")
 
-    // Json 处理
-    implementation 'com.google.code.gson:gson:2.8.5'
-
     // 查看大图
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
@@ -107,7 +104,10 @@ dependencies {
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
 
     // 常用工具
-    implementation "com.blankj:utilcode:1.23.4"
+    implementation "com.blankj:utilcode:1.23.6"
+
+    // Json 处理
+//    implementation 'com.google.code.gson:gson:2.8.5'
 
     // 内存泄漏检测
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
